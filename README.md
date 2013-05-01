@@ -1,4 +1,4 @@
-# Sarah's Scala Utilities #
+# Sarah’s Scala Utilities #
 
 This project simply contains a bunch of miscellaneous Scala utility code.  It 
 contains components that are relatively independent and that are likely to be 
