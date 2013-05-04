@@ -25,19 +25,17 @@ trait LexerUtil extends Lexical {
     lex(new Scanner(input), Vector.empty)
   }
   
-  def str(s: String, sensitive: Boolean = false): Parser[String] = {
-    def chars(s: String): Parser[Vector[Char]] = 
-      if (s.length == 0) {
-        success(Vector.empty)
-      } else {
-        val head: Char = s.head
-        val headParser = 
-          if (sensitive) elem(head) 
-          else           elem(String.valueOf(head), {_.toLower == head.toLower}) 
-        headParser ~ chars(s.tail) ^^ { case h ~ t => h +: t }
-      }
-    
-    chars(s) ^^ { _.mkString }
-  }
+  // TBD: This might perform better as a macro 
+  @inline final def chars(s: String, sensitive: Boolean = false): Parser[Vector[Char]] = 
+    (s :\ success(Vector.empty[Char])) { (head, tailParser) =>
+      @inline def headParser = 
+        if (sensitive) elem(head)
+        else           elem(String.valueOf(head), {_.toLower == head.toLower})
+        
+      headParser ~ tailParser ^^ { case h ~ t => h +: t } 
+    }
   
+  // TBD: This might perform better as a macro 
+  final def str(s: String, sensitive: Boolean = false): Parser[String] = chars(s, sensitive) ^^ { _.mkString }
+     
 }
