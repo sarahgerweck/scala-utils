@@ -9,7 +9,7 @@ object Timed {
   
   @inline def apply[A](f: => A): A = apply(logger, "Task")(f)
   
-  @inline def apply[A](logger: Logger, taskName: String, level: LogLevel = Trace)(f: => A): A = {
+  @inline def apply[A](logger: Logger, taskName: String, level: LogLevel = Debug)(f: => A): A = {
     val startTime = nanoTime
     var failed = false
     try {
@@ -18,7 +18,8 @@ object Timed {
       failed = true
       throw e
     } finally {
-      logger.trace(s"$taskName ${if (failed) "failed" else "completed"} after ${formatSince(startTime)}")
+      val finishTime = nanoTime
+      logger(level)(s"$taskName ${if (failed) "failed" else "completed"} after ${formatDuration((finishTime - startTime) * 1e-9f)}")
     }
   }
   
@@ -26,9 +27,9 @@ object Timed {
     require(t >= 0f, "Cannot format a negative duration")
     if      (t == 0)    "0 s"
     else if (t < 1e-6f) "< 1 μs"
-    else if (t < 1e-3f) f"${1e6f * t}%.4f μs"
-    else if (t < 1f)    f"${1e3f * t}%.4f ms"
-    else if (t < 1e3f)  f"$t%.4f s"
+    else if (t < 1e-3f) f"${1e6f * t}%.3g μs"
+    else if (t < 1f)    f"${1e3f * t}%.3g ms"
+    else if (t < 1e3f)  f"$t%.3g s"
     else                f"$t%.4g s"
   }
   
