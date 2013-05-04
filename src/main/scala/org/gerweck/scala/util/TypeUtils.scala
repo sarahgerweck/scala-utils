@@ -4,6 +4,10 @@ import language.experimental.macros
 
 import scala.reflect.macros.Context
 
+/** Utilities for working with types
+  *
+  * @author Sarah Gerweck <sarah.a180@gmail.com>  
+  */
 object TypeUtils {
   import TypeUtilMacros._
   
@@ -12,6 +16,9 @@ object TypeUtils {
     * @note Be careful about calling this on inner classes.  If you have a sealed class hierarchy 
     * inside a trait, there will be no known objects if this is used inside the trait itself. 
     * It *will* work in classes that descend from that trait.
+    * 
+    * @tparam A a sealed class or interface
+    * @return all objects that are known to derive from the given type
     */
   def getCaseObjects[A]: Set[A] = macro getCaseObjects_impl[A]
 
