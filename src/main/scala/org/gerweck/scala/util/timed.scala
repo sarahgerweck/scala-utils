@@ -4,12 +4,12 @@ import java.lang.System.{ nanoTime, currentTimeMillis => millisTime }
 
 import org.log4s._
 
-object Timed {
+object timed {
   private[this] val logger = getLogger
   
-  @inline def apply[A](f: => A): A = apply(logger, "Task")(f)
+  @inline def apply[A](f: => A): A = apply()(f)
   
-  @inline def apply[A](logger: Logger, taskName: String, level: LogLevel = Debug)(f: => A): A = {
+  @inline def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => A): A = {
     val startTime = nanoTime
     var failed = false
     try {
@@ -19,7 +19,7 @@ object Timed {
       throw e
     } finally {
       val finishTime = nanoTime
-      logger(level)(s"$taskName ${if (failed) "failed" else "completed"} after ${formatDuration((finishTime - startTime) * 1e-9f)}")
+      logger(level)(s"${taskName.capitalize} ${if (failed) "failed" else "completed"} after ${formatDuration((finishTime - startTime) * 1e-9f)}")
     }
   }
   
