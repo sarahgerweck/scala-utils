@@ -13,6 +13,11 @@ package object util {
    * @author Sarah Gerweck <sarah.a180@gmail.com>
    */
   implicit final class CharUtils(val self: Char) extends AnyVal {
+    
+    /** Convert a character to a random case.  It will have a 50% probability of
+      * being uppercase and a 50% probability of being lowercase.
+      */
+    def toRandomCase: Char = if (scala.util.Random.nextBoolean) self.toUpper else self.toLower
 
     /** Case-insensitive equals.
       *  
@@ -36,6 +41,12 @@ package object util {
     * @author Sarah Gerweck <sarah.a180@gmail.com>
     */
   implicit final class StringUtils(val self: String) extends AnyVal {
+    
+    /** Convert a string to random case.  Each character will have a 50%
+      * probability of being uppercase and a 50% probability of being lowercase. 
+      */
+    def toRandomCase: String = self map { _.toRandomCase }
+    
     /** Case-insensitive equals.
       *  
       * @note `~` is the command-mode vim keystroke to flip the case of a 
