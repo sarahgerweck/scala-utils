@@ -17,7 +17,7 @@ object LexerUtil {
   implicit def stringToReader(s: String) = new util.parsing.input.CharSequenceReader(s)
 }
 
-trait LexerUtil extends Lexical {
+trait LexerUtil extends Lexical with ParserUtil {
   protected[this] val logger: Logger = getLogger("org.gerweck.scala.util.LexerUtil")
   def lex(input:String): Iterable[Token] = timed (logger = logger, taskName = "lexing", level = Debug) {
     @tailrec 
@@ -35,7 +35,7 @@ trait LexerUtil extends Lexical {
     (s :\ success(Vector.empty[Char])) { (head, tailParser) =>
       @inline def headParser = 
         if (sensitive) elem(head)
-        else           elem(String.valueOf(head), { _ =~= head })
+        else           elem(head.toString, { _ =~= head })
         
       headParser ~ tailParser ^^ { case h ~ t => h +: t } 
     }

@@ -8,7 +8,7 @@ import scala.util.parsing.combinator.syntactical.TokenParsers
   * 
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-trait TokenParserUtil extends TokenParsers {
+trait TokenParserUtil extends TokenParsers with ParserUtil {
   
   /** A parser that matches elements of a given type.  This is useful if you have 
     * a hierarchy of traits that extend from `Elem` and want to easily be able to
