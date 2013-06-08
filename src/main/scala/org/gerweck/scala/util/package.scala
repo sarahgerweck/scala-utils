@@ -57,4 +57,28 @@ package object util {
       if (self eq that) true 
       else self equalsIgnoreCase that
   }
+
+  /** Additional methods for `traversable`s.
+    *
+    * @author Sarah Gerweck <sarah.a180@gmail.com>
+    */
+  implicit final class TraversableUtil[A](val t: Traversable[A]) extends AnyVal {
+
+    /** A same-type fold for associative operators that requires at least one
+      * member present in the collection.
+      */
+    @inline def fold1(op: (A, A) => A): A = t.tail.fold(t.head)(op)
+
+    /** A same-type non-empty left fold.
+      *
+      * This requires at least one member present in the collection.
+      */
+    @inline def foldl1(op: (A, A) => A): A = (t.head /: t.tail)(op)
+
+    /** A same-type non-empty right fold.
+      *
+      * This requires at least one member present in the collection.
+      */
+    @inline def foldr1(op: (A, A) => A): A = (t.init :\ t.last)(op)
+  }
 }
