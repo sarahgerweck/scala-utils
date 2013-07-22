@@ -31,7 +31,7 @@ trait LexerUtil extends Lexical with ParserUtil {
   }
   
   // TBD: This might perform better as a macro 
-  @inline final def chars(s: String, sensitive: Boolean = false): Parser[Vector[Char]] = 
+  final def chars(s: String, sensitive: Boolean = false): Parser[Vector[Char]] = 
     (s :\ success(Vector.empty[Char])) { (head, tailParser) =>
       @inline def headParser = 
         if (sensitive) elem(head)
