@@ -1,6 +1,7 @@
 package org.gerweck.scala.util
 
 import language.implicitConversions
+import language.reflectiveCalls
 
 import java.util.concurrent.ConcurrentHashMap
 
@@ -52,4 +53,17 @@ trait LexerUtil extends Lexical with ParserUtil {
     chars(s, sensitive) ^^ { _.mkString }
   })
      
+  final def longest[A <: { def chars: String }](constants: Iterable[A], sensitive: Boolean = false): Parser[A] = {
+    longest(constants, { a: A => a.chars }, sensitive)
+  }
+
+  final def longest[A](constants: Iterable[A], chars: A => String, sensitive: Boolean = false): Parser[A] = {
+    val sorted = constants.toIndexedSeq sortWith { chars(_).length > chars(_).length }
+    implicit def toParser(a: A) = str(chars(a), sensitive) ^^^ a
+    (toParser(sorted.head) /: sorted.tail) { _ | _ }
+  }
+
+  final def longestString[A](constants: Iterable[String], sensitive: Boolean = false): Parser[String] = {
+    longest(constants, identity[String], sensitive)
+  }
 }
