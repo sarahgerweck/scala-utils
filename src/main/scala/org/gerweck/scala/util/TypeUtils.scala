@@ -6,20 +6,20 @@ import scala.reflect.macros.Context
 
 /** Utilities for working with types
   *
-  * @author Sarah Gerweck <sarah.a180@gmail.com>  
+  * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
 object TypeUtils {
   import TypeUtilMacros._
-  
-  /** Get all the known objects that derive from a given sealed class.  
-    *  
-    * This will actually return ''all'' descendant objects that descend from the sealed class, 
+
+  /** Get all the known objects that derive from a given sealed class.
+    *
+    * This will actually return ''all'' descendant objects that descend from the sealed class,
     * whether or not they were marked `case object` or not.
-    * 
-    * @note Be careful about calling this on inner classes.  If you have a sealed class hierarchy 
-    * inside a trait, there will be no known objects if this is used inside the trait itself. 
+    *
+    * @note Be careful about calling this on inner classes.  If you have a sealed class hierarchy
+    * inside a trait, there will be no known objects if this is used inside the trait itself.
     * It ''will'' work in classes that descend from that trait.
-    * 
+    *
     * @tparam A a sealed class or interface
     * @return all objects that are known to derive from the given type
     */
@@ -35,16 +35,16 @@ private object TypeUtilMacros {
     
     val parentType = weakTypeOf[A]
     val symbol = weakTypeOf[A].typeSymbol.asClass
-    if (!symbol.isSealed) 
-      c.error(c.enclosingPosition, s"Type $parentType is not a sealed type, cannot get its case objects") 
-      
-    def descendants(s: ClassSymbol): Set[Symbol] = 
+    if (!symbol.isSealed)
+      c.error(c.enclosingPosition, s"Type $parentType is not a sealed type, cannot get its case objects")
+
+    def descendants(s: ClassSymbol): Set[Symbol] =
       s.knownDirectSubclasses flatMap { sub =>
-        if (sub.isClass) descendants(sub.asClass) + sub 
+        if (sub.isClass) descendants(sub.asClass) + sub
         else Set(sub)
       }
-      
-    val modules = 
+
+    val modules =
       for {
         desc <- descendants(symbol)
         if desc.isModuleClass
@@ -57,5 +57,5 @@ private object TypeUtilMacros {
                                 newTermName("apply")), 
                          (modules map { mod => Ident(newTermName(mod.name.encoded)) }).toList))
   }
-  
+
 }
