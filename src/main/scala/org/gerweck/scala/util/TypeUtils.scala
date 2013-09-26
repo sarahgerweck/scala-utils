@@ -27,12 +27,23 @@ object TypeUtils {
 
 }
 
+/** Module containing macro implementations */
 private object TypeUtilMacros {
+  /** The module to use for constructing sets */
+  private[this] final val setModule = "scala.collection.immutable.Set"
+
+  /** Whether to emit info messages for type macros
+    *
+    * Info messages are controlled by the `-verbose` flag on the Scala compiler.
+    */
+  private[this] final val emitInfo = false
+
+  /** Whether to sort sets of objects by name */
+  private[this] final val sorted = true
+
   def getCaseObjects_impl[A: c.WeakTypeTag](c: Context): c.Expr[Set[A]] = {
     import c.universe._
-    
-    @inline def warn(s: Any) = c.warning(c.enclosingPosition, s.toString)
-    
+
     val parentType = weakTypeOf[A]
     val symbol = weakTypeOf[A].typeSymbol.asClass
     if (!symbol.isSealed)
@@ -49,13 +60,25 @@ private object TypeUtilMacros {
         desc <- descendants(symbol)
         if desc.isModuleClass
       } yield desc.asClass.module
-    
-    // c.warning(c.enclosingPosition, s"Found modules $modules")
+
+    if (emitInfo)
+      c.info(c.enclosingPosition, s"Found modules $modules for sealed type $parentType", false)
+
+    /* A function selector that will build a set of its parameters */
+    val setBuilder = Select(Ident(rootMirror.staticModule(setModule)), "apply":TermName)
+
+    /* The list of modules we are going to pass into the set builder */
+    val modList = {
+      import math.Ordering._
+      val list = (modules map { m => Ident(m.name) }).toList
+      if (sorted)
+        list sorted (Ordering[String] on { x:Ident => x.name.encoded })
+      else
+        list
+    }
 
     /* This is the AST for Set(a, b, c).  Select the Set.apply function, then apply it to our list of parameters */
-    c.Expr[Set[A]](Apply(Select(Ident(rootMirror.staticModule("scala.collection.immutable.Set")), 
-                                newTermName("apply")), 
-                         (modules map { mod => Ident(newTermName(mod.name.encoded)) }).toList))
+    c.Expr[Set[A]](Apply(setBuilder, modList))
   }
 
 }
