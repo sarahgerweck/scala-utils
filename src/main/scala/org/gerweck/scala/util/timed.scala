@@ -10,8 +10,8 @@ object timed {
   @inline def apply[A](f: => A): A = apply()(f)
   
   @inline def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => A): A = {
-    val startTime = nanoTime
     var failed = false
+    val startTime = nanoTime
     try {
       f
     } catch { case e: Throwable => 
@@ -19,7 +19,9 @@ object timed {
       throw e
     } finally {
       val finishTime = nanoTime
-      logger(level)(s"${taskName.capitalize} ${if (failed) "failed" else "completed"} after ${formatDuration(1e-9f * (finishTime - startTime))}")
+      @inline def time = formatDuration(1e-9f * (finishTime - startTime))
+      @inline def status = if (failed) "failed" else "completed"
+      logger(level)(s"${taskName.capitalize} $status after $time")
     }
   }
   
