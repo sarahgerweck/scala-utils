@@ -7,9 +7,9 @@ import org.log4s._
 object timed {
   private[this] val logger = getLogger
   
-  @inline def apply[A](f: => A): A = apply()(f)
+  def apply[A](f: => A): A = apply()(f)
   
-  @inline def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => A): A = {
+  def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => A): A = {
     var failed = false
     val startTime = nanoTime
     try {
