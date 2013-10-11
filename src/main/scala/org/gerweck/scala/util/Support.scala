@@ -9,13 +9,15 @@ import org.log4s._
 object Support {
   import SupportMacros._
 
+  def warnSupport = macro support_warn
+
   def support = macro support_simple
 
   def support(logger: Logger, level: LogLevel) = macro support_complex
 }
 
 private object SupportMacros {
-  def support_simple(c: Context): c.Expr[Unit] = {
+  def support_simple(c: Context): c.Expr[Nothing] = {
     import c.universe._
 
     val callerName = getCallerName(c)
@@ -27,7 +29,7 @@ private object SupportMacros {
     }
   }
 
-  def support_complex(c: Context)(logger: c.Expr[Logger], level: c.Expr[LogLevel]): c.Expr[Unit] = {
+  def support_complex(c: Context)(logger: c.Expr[Logger], level: c.Expr[LogLevel]): c.Expr[Nothing] = {
     import c.universe._
 
     val callerName = getCallerName(c)
@@ -39,6 +41,12 @@ private object SupportMacros {
       (logger.splice).apply(level.splice).apply(c.literal(logMessage).splice)
       throw new java.lang.UnsupportedOperationException(c.literal(exceptionMessage).splice)
     }
+  }
+
+  def support_warn(c: Context): c.Expr[Nothing] = {
+    import c.universe._
+
+    support_complex(c)(c.Expr[Logger](Ident(newTermName("logger"))), reify { Warn })
   }
 
   @inline private def getCallerName(c: Context): String = {
