@@ -22,7 +22,9 @@ private object SupportMacros {
 
     val message = s"Method `$callerName` not supported"
 
-    reify { throw new UnsupportedOperationException(c.literal(message).splice) }
+    reify {
+      throw new java.lang.UnsupportedOperationException(c.literal(message).splice)
+    }
   }
 
   def support_complex(c: Context)(logger: c.Expr[Logger], level: c.Expr[LogLevel]): c.Expr[Unit] = {
@@ -35,7 +37,7 @@ private object SupportMacros {
 
     reify {
       (logger.splice).apply(level.splice).apply(c.literal(logMessage).splice)
-      throw new UnsupportedOperationException(c.literal(exceptionMessage).splice)
+      throw new java.lang.UnsupportedOperationException(c.literal(exceptionMessage).splice)
     }
   }
 
