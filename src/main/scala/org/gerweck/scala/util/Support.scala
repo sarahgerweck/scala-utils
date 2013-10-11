@@ -43,10 +43,19 @@ private object SupportMacros {
     }
   }
 
+  // TODO: Reduce code duplication.
   def support_warn(c: Context): c.Expr[Nothing] = {
     import c.universe._
 
-    support_complex(c)(c.Expr[Logger](Ident(newTermName("logger"))), reify { Warn })
+    val logger = c.Expr[Logger](Ident(newTermName("logger")))
+
+    val callerName = getCallerName(c)
+    val logMessage = s"Got unsupported call to `$callerName`"
+
+    reify {
+      (logger.splice).warn(c.literal(logMessage).splice)
+      ???
+    }
   }
 
   @inline private def getCallerName(c: Context): String = {
