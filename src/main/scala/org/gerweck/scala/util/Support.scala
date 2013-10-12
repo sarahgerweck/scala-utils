@@ -51,10 +51,11 @@ private object SupportMacros {
 
     val callerName = getCallerName(c)
     val logMessage = s"Got unsupported call to `$callerName`"
+    val exceptionMessage = s"Method `$callerName` is not supported"
 
     reify {
       (logger.splice).warn(c.literal(logMessage).splice)
-      ???
+      throw new java.lang.UnsupportedOperationException(c.literal(exceptionMessage).splice)
     }
   }
 
