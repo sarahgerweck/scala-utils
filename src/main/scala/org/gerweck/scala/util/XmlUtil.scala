@@ -17,7 +17,7 @@ object XmlUtil {
       */
     def \^ (path: String): Node = {
       val seq = inner \ path
-      require(seq.length == 1, s"Attempt to get unique node returned ${seq.length} results")
+      require(seq.length == 1, s"Attempt to get unique node `path` returned ${seq.length} results")
       seq.head
     }
 
@@ -26,7 +26,7 @@ object XmlUtil {
       */
     def \^? (path: String): Option[Node] = {
       val seq = inner \ path
-      require(seq.length < 2, s"Got ${seq.length} nodes, expected zero or one")
+      require(seq.length < 2, s"Got ${seq.length} nodes from search `$path`: expected zero or one")
       seq.headOption
     }
   }
@@ -38,7 +38,7 @@ object XmlUtil {
       */
     def \^ (path: String): Node = {
       val seq = inner \ path
-      require(seq.length == 1, s"Attempt to get unique node returned ${seq.length} results")
+      require(seq.length == 1, s"Attempt to get unique node `path` returned ${seq.length} results")
       seq.head
     }
 
@@ -47,7 +47,7 @@ object XmlUtil {
       */
     def \^? (path: String): Option[Node] = {
       val seq = inner \ path
-      require(seq.length < 2, s"Got ${seq.length} nodes, expected zero or one")
+      require(seq.length < 2, s"Got ${seq.length} nodes from search `$path`: expected zero or one")
       seq.headOption
     }
   }
