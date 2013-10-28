@@ -21,6 +21,11 @@ object XmlUtil {
       seq.head
     }
 
+    /** Query for the text of exactly one child node.
+      * This will raise an error unless there is exactly one match.
+      */
+    def \! (path: String): String = (inner \^ path).text
+
     /** Query for one optional child node.
       * This will raise an error if there are multiple matches.
       */
@@ -29,6 +34,11 @@ object XmlUtil {
       require(seq.length < 2, s"Got ${seq.length} nodes from search `$path`: expected zero or one")
       seq.headOption
     }
+
+    /** Query for the text of one optional child node.
+      * This will raise an error if there are multiple matches.
+      */
+    def \!? (path: String): Option[String] = (inner \^? path) map {_.text}
   }
 
   /** Enhancements to [[scala.xml.NodeSeq]] object. */
@@ -42,6 +52,11 @@ object XmlUtil {
       seq.head
     }
 
+    /** Query for the text of exactly one child node.
+      * This will raise an error unless there is exactly one match.
+      */
+    def \! (path: String): String = (inner \^ path).text
+
     /** Query for one optional child node.
       * This will raise an error if there are multiple matches.
       */
@@ -50,5 +65,10 @@ object XmlUtil {
       require(seq.length < 2, s"Got ${seq.length} nodes from search `$path`: expected zero or one")
       seq.headOption
     }
+
+    /** Query for the text of one optional child node.
+      * This will raise an error if there are multiple matches.
+      */
+    def \!? (path: String): Option[String] = (inner \^? path) map {_.text}
   }
 }
