@@ -6,15 +6,15 @@ import org.log4s._
 
 object timed {
   private[this] val logger = getLogger
-  
+
   def apply[A](f: => A): A = apply()(f)
-  
+
   def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => A): A = {
     var failed = false
     val startTime = nanoTime
     try {
       f
-    } catch { case e: Throwable => 
+    } catch { case e: Throwable =>
       failed = true
       throw e
     } finally {
@@ -24,7 +24,7 @@ object timed {
       logger(level)(s"${taskName.capitalize} $status after $time")
     }
   }
-  
+
   def formatDuration(t: Float): String = {
     require(t >= 0f, "Cannot format a negative duration")
     if      (t == 0f)    "0 s"
@@ -35,7 +35,11 @@ object timed {
     else if (t < 1e6f)  f"${1e-3f * t}%.3g ks"
     else                f"$t%.4g s"
   }
-  
+
+  @inline def formatNanos(start: Long, finish: Long): String = formatNanos(finish - start)
+
+  @inline def formatNanos(total: Long): String = formatDuration(1e-9f * total)
+
   @inline def formatSince(startTime: Long): String = {
     val finishTime = nanoTime
     formatDuration(1e-9f * (finishTime - startTime))
