@@ -17,7 +17,7 @@ object XmlUtil {
       */
     def \^ (path: String): Node = {
       val seq = inner \ path
-      require(seq.length == 1, s"Attempt to get unique node `path` returned ${seq.length} results")
+      require(seq.length == 1, s"Attempt to get unique node `$path` returned ${seq.length} results")
       seq.head
     }
 
@@ -48,7 +48,7 @@ object XmlUtil {
       */
     def \^ (path: String): Node = {
       val seq = inner \ path
-      require(seq.length == 1, s"Attempt to get unique node `path` returned ${seq.length} results")
+      require(seq.length == 1, s"Attempt to get unique node `$path` returned ${seq.length} results")
       seq.head
     }
 
