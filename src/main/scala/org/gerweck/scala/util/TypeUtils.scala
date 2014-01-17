@@ -11,7 +11,8 @@ import scala.reflect.macros.Context
 object TypeUtils {
   import TypeUtilMacros._
 
-  /** Get all the known objects that derive from a given sealed class.
+  /** Get all the known objects that derive from a given sealed class. It '''must''' be called
+    * ''after'' the case objects are defined, or else they will not be visible to the macro.
     *
     * This will actually return ''all'' descendant objects that descend from the sealed class,
     * whether or not they were marked `case object` or not.
@@ -21,7 +22,7 @@ object TypeUtils {
     * It ''will'' work in classes that descend from that trait.
     *
     * @tparam A a sealed class or interface
-    * @return all objects that are known to derive from the given type
+    * @return all already-defined objects that derive from the given type
     */
   def getCaseObjects[A]: Set[A] = macro getCaseObjects_impl[A]
 
