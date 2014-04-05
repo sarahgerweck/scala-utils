@@ -11,18 +11,6 @@ object timed {
 
   def apply[A](f: => A): A = apply()(f)
 
-  def future[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => Future[A])(implicit ec: ExecutionContext): Future[A] = {
-    val startTime = nanoTime
-    val future = f
-    f onComplete { result =>
-      val finishTime = nanoTime
-      @inline def time = formatDuration(1e-9f * (finishTime - startTime))
-      @inline def status = if (result.isFailure) "failed" else "completed"
-      logger(level)(s"${taskName.capitalize} $status after $time")
-    }
-    f
-  }
-
   def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => A): A = {
     var failed = false
     val startTime = nanoTime
@@ -57,5 +45,28 @@ object timed {
   @inline def formatSince(startTime: Long): String = {
     val finishTime = nanoTime
     formatDuration(1e-9f * (finishTime - startTime))
+  }
+}
+
+/** Timer that operates on a [[scala.concurrent.Future]].
+  *
+  * Warning: This is not as accurate as `timed`, because it relies on
+  * scheduling another job to run _after_ the original future is complete.
+  * Whenever possible, use `timed` instead.
+  */
+object timedFuture {
+  private[this] val logger = getLogger
+  import timed._
+
+  def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => Future[A])(implicit ec: ExecutionContext): Future[A] = {
+    val startTime = nanoTime
+    val future = f
+    f onComplete { result =>
+      val finishTime = nanoTime
+      @inline def time = formatDuration(1e-9f * (finishTime - startTime))
+      @inline def status = if (result.isFailure) "failed" else "completed"
+      logger(level)(s"${taskName.capitalize} $status after $time")
+    }
+    f
   }
 }
