@@ -21,7 +21,7 @@ object LexerUtil {
   implicit def stringToReader(s: String) = new util.parsing.input.CharSequenceReader(s)
 }
 
-trait LexerUtil extends Lexical with ParserUtil {
+trait LexerUtil extends Scanners with ParserUtil {
   protected[this] val logger: Logger = getLogger("org.gerweck.scala.util.LexerUtil")
   def lex(input:String): Iterable[Token] = timed (logger = logger, taskName = "lexing", level = Debug) {
     @tailrec 
