@@ -17,4 +17,18 @@ package object date {
     def - (p: ReadablePeriod) = inner minus p
     def - (d: ReadableDuration) = inner minus d
   }
+
+  implicit final class RichInstant(val inner: Instant) extends AnyVal {
+    def - (other: Instant): Duration = new Duration(inner.getMillis - other.getMillis)
+    def - (duration: Long): Instant = inner minus duration
+    def - (duration: ReadableDuration): Instant = inner minus duration
+
+    def + (duration: Long): Instant = inner plus duration
+    def + (duration: ReadableDuration): Instant = inner plus duration
+
+    def <  (that: Instant) = (inner compareTo that) <  0
+    def <= (that: Instant) = (inner compareTo that) <= 0
+    def >  (that: Instant) = (inner compareTo that) >  0
+    def >= (that: Instant) = (inner compareTo that) >= 0
+  }
 }
