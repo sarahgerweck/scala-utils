@@ -67,4 +67,7 @@ class WrappedConnection(val inner: Connection) extends Connection {
   // Members declared in java.sql.Wrapper
   def isWrapperFor(x$1: Class[_]): Boolean = { inner.isWrapperFor(x$1) }
   def unwrap[T](x$1: Class[T]): T = { inner.unwrap(x$1) }
+
+  override def hashCode: Int = inner.hashCode
+  override def equals(o: Any) = inner.equals(o)
 }
