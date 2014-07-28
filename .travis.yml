@@ -1,0 +1,8 @@
+language: scala
+script: sbt -Dsbt.log.noformat=true +publish
+jdk:
+- oraclejdk7
+env:
+  global:
+  - secure: OgIB7BR21v68T6ZXdM5xLBs1qerMHcv9ej0sydJf+tIIUzuAI3mcpPEfpAzqTd5JDJbXjd3hWpVGTaY/+3HQi/1+IpbvWUnmJ1dJzMc4DOwqs+cqf1PRVHol0ejLvI/WDktMxlz8aBL3aM586TlU18lIOdUforZJcEvLjEDSG3U=
+  - secure: s6ZV/snVLecQXT5wmaavLcacFE59nqzp2iKENlRYOiCAAxBAaY5CADBh3IQrx2jvQms+44e6ENDxXsHhxFWvaunmKkyaxIQxeL5NG1YfyBkCigMYHLrl4qb6jt8YOGRlecksyyhAbIUTBvyMoAaTk5/IactKb6GJwtQ6pHXtkWk=
