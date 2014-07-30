@@ -30,7 +30,7 @@ object BuildSettings {
     "-source", buildJavaVersion
   )
 
-  val buildSettings = Defaults.defaultSettings ++ Seq (
+  val buildSettings = Seq (
     organization := buildOrganization,
     licenses     := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     homepage     := Some(url("https://github.com/sarahgerweck/scala-utils")),
@@ -186,7 +186,7 @@ object UtilsBuild extends Build {
 
   lazy val utilsDeps = Seq (
     slf4j,
-    jclBridge,
+    jclBridge % "runtime",
     log4s,
     logback % "test",
     commonsIo,
@@ -195,15 +195,13 @@ object UtilsBuild extends Build {
     commonsVfs
   )
 
-  lazy val root = Project (
-    id = "utils",
-    base = file("."),
-    settings = baseSettings ++ Seq (
+  lazy val root = (project in file ("."))
+    .settings(baseSettings: _*)
+    .settings(
       name := "gerweck-utils",
       libraryDependencies ++= utilsDeps ++ Seq (
         "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided"
       ),
       resolvers ++= allResolvers
     )
-  )
 }
