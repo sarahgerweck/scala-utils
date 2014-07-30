@@ -186,7 +186,7 @@ object UtilsBuild extends Build {
 
   lazy val utilsDeps = Seq (
     slf4j,
-    jclBridge % "runtime",
+    jclBridge,
     log4s,
     logback % "test",
     commonsIo,
