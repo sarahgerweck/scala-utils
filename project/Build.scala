@@ -1,26 +1,20 @@
 import sbt._
 import Keys._
 
+import com.typesafe.sbt.SbtSite.site
+import sbtrelease.ReleasePlugin._
+
 import scala.util.Properties.envOrNone
 
 object BuildSettings {
+  import Helpers._
+
   final val buildOrganization = "org.gerweck.scala"
-  final val baseVersion       = "1.0.0"
   final val buildScalaVersion = "2.10.4"
   final val buildJavaVersion  = "1.7"
   final val optimize          = true
 
   val buildScalaVersions = Seq("2.10.4")
-
-  val buildNumberOpt = envOrNone("TRAVIS_BUILD_NUMBER") orElse envOrNone("BUILD_NUMBER")
-  val isJenkins      = buildNumberOpt.isDefined
-
-  val buildVersion = buildNumberOpt match {
-    case Some("") | Some("SNAPSHOT") | None => baseVersion + "-SNAPSHOT"
-    case Some(s)                            => baseVersion + "." + s
-  }
-
-  lazy val isSnapshot = buildVersion endsWith "-SNAPSHOT"
 
   val buildScalacOptions = Seq (
     "-deprecation",
@@ -38,10 +32,9 @@ object BuildSettings {
 
   val buildSettings = Defaults.defaultSettings ++ Seq (
     organization := buildOrganization,
-    version      := buildVersion,
     licenses     := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     homepage     := Some(url("https://github.com/sarahgerweck/scala-utils")),
-    description  := "Various utility methods with Scala APIs.",
+    description  := "Miscellaneous utility functionality for Scala.",
     startYear    := Some(2012),
     scmInfo      := Some(ScmInfo(url("https://github.com/sarahgerweck/scala-utils"), "scm:git:git@github.com:sarahgerweck/scala-utils.git")),
 
@@ -59,11 +52,10 @@ object Helpers {
   def parseBool(str: String): Boolean = Set("yes", "y", "true", "t", "1") contains str.trim.toLowerCase
   def boolFlag(name: String): Option[Boolean] = getProp(name) map { parseBool _ }
   def boolFlag(name: String, default: Boolean): Boolean = boolFlag(name) getOrElse default
+  def opts(names: String*): Option[String] = names.view.map(getProp _).foldLeft(None: Option[String]) { _ orElse _ }
 }
 
 object Resolvers {
-  val sarahSnaps      = "Sarah Snaps" at "https://repository-gerweck.forge.cloudbees.com/snapshot/"
-  val log4sReleases   = "Log4s Releases" at "http://repo.log4s.org/releases/"
   val gerweckSnaps    = "Gerweck Snapshots" at "s3://repo.gerweck.org.s3-us-west-2.amazonaws.com/snapshot/"
   val gerweckReleases = "Gerweck Releases" at "s3://repo.gerweck.org.s3-us-west-2.amazonaws.com/releases/"
 }
@@ -71,26 +63,73 @@ object Resolvers {
 object PublishSettings {
   import BuildSettings._
   import Resolvers._
+  import Helpers._
 
-  val publishRepo =
-    if (isSnapshot) Some(gerweckSnaps)
-    else            Some(gerweckReleases)
+  val sonaCreds = (
+    for {
+      user <- getProp("SONATYPE_USER")
+      pass <- getProp("SONATYPE_PASS")
+    } yield {
+      credentials +=
+          Credentials("Sonatype Nexus Repository Manager",
+                      "oss.sonatype.org",
+                      user, pass)
+    }
+  ).toSeq
 
   val publishSettings = Seq (
     publishMavenStyle    := true,
     pomIncludeRepository := { _ => false },
 
-    publishTo            := publishRepo,
+    publishTo            := {
+      if (version.value.trim endsWith "SNAPSHOT")
+        Some(gerweckSnaps)
+      else
+        Some(gerweckReleases)
+    },
+
     pomExtra             := (
       <developers>
         <developer>
           <id>sarah</id>
           <name>Sarah Gerweck</name>
-          <url>http://github.com/sarahgerweck</url>
+          <email>sarah.a180@gmail.com</email>
+          <url>https://github.com/sarahgerweck</url>
+          <timezone>America/Los_Angeles</timezone>
         </developer>
       </developers>
     )
   )
+}
+
+object Release {
+  import sbtrelease._
+  import ReleaseStateTransformations._
+  import ReleasePlugin._
+  import ReleaseKeys._
+  import Utilities._
+  import com.typesafe.sbt.SbtPgp.PgpKeys._
+
+  val settings = releaseSettings ++ Seq (
+    ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+      checkSnapshotDependencies,
+      inquireVersions,
+      runTest,
+      setReleaseVersion,
+      commitReleaseVersion,
+      tagRelease,
+      publishArtifacts.copy(action = publishSignedAction),
+      setNextVersion,
+      commitNextVersion,
+      pushChanges
+    )
+  )
+
+  lazy val publishSignedAction = { st: State =>
+    val extracted = st.extract
+    val ref = extracted.get(thisProjectRef)
+    extracted.runAggregated(publishSigned in Global in ref, st)
+  }
 }
 
 object Eclipse {
@@ -106,7 +145,7 @@ object Eclipse {
 
 object Dependencies {
   final val slf4jVersion       = "1.7.7"
-  final val log4sVersion       = "[1.0,)"
+  final val log4sVersion       = "[1.0.3,)"
   final val logbackVersion     = "1.1.2"
   final val jodaTimeVersion    = "2.4"
   final val jodaConvertVersion = "1.6"
@@ -141,11 +180,9 @@ object UtilsBuild extends Build {
   import Dependencies._
   import PublishSettings._
 
-  lazy val baseSettings = buildSettings ++ Eclipse.settings ++ publishSettings
+  lazy val baseSettings = buildSettings ++ Eclipse.settings ++ publishSettings ++ Release.settings
 
-  lazy val allResolvers = Seq (
-    log4sReleases
-  )
+  lazy val allResolvers = Seq ()
 
   lazy val utilsDeps = Seq (
     slf4j,
