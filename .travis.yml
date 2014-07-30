@@ -1,3 +1,6 @@
+branches:
+  only:
+    - master
 language: scala
 script: sbt -Dsbt.log.noformat=true +publish
 jdk:
