@@ -10,7 +10,7 @@ import java.sql.Connection
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-class WrappedConnection(val inner: Connection) extends Connection {
+class WrappedConnection(val inner: Connection) extends Connection with WrapperWrapping[Connection] {
   def abort(x$1: java.util.concurrent.Executor): Unit = { inner.abort(x$1) }
   def clearWarnings(): Unit = { inner.clearWarnings() }
   def close(): Unit = { inner.close() }
@@ -63,14 +63,4 @@ class WrappedConnection(val inner: Connection) extends Connection {
   def setSchema(x$1: String): Unit = { inner.setSchema(x$1) }
   def setTransactionIsolation(x$1: Int): Unit = { inner.setTransactionIsolation(x$1) }
   def setTypeMap(x$1: java.util.Map[String,Class[_]]): Unit = { inner.setTypeMap(x$1) }
-
-  // Members declared in java.sql.Wrapper
-  def isWrapperFor(x$1: Class[_]): Boolean = { inner.isWrapperFor(x$1) }
-  def unwrap[T](x$1: Class[T]): T = { inner.unwrap(x$1) }
-
-  override def hashCode: Int = inner.hashCode
-  override def equals(that: Any) = that match {
-    case wc: WrappedConnection => inner equals wc.inner
-    case _                     => inner equals that
-  }
 }
