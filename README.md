@@ -18,4 +18,4 @@ do something that seems like it might be a bad idea, you're on your own. :-)
 
 To use Log4s, add the following to your SBT build:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "0.9.1"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "0.9.2"
