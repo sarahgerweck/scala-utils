@@ -69,8 +69,8 @@ class WrappedConnection(val inner: Connection) extends Connection {
   def unwrap[T](x$1: Class[T]): T = { inner.unwrap(x$1) }
 
   override def hashCode: Int = inner.hashCode
-  override def equals(o: Any) = o match {
+  override def equals(that: Any) = that match {
     case wc: WrappedConnection => inner equals wc.inner
-    case _                     => inner equals o
+    case _                     => inner equals that
   }
 }
