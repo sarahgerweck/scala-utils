@@ -1,11 +1,11 @@
 branches:
   only:
-    - master
+  - master
 language: scala
 script: sbt -Dsbt.log.noformat=true +publish
 jdk:
 - oraclejdk7
 env:
   global:
-  - secure: OgIB7BR21v68T6ZXdM5xLBs1qerMHcv9ej0sydJf+tIIUzuAI3mcpPEfpAzqTd5JDJbXjd3hWpVGTaY/+3HQi/1+IpbvWUnmJ1dJzMc4DOwqs+cqf1PRVHol0ejLvI/WDktMxlz8aBL3aM586TlU18lIOdUforZJcEvLjEDSG3U=
-  - secure: s6ZV/snVLecQXT5wmaavLcacFE59nqzp2iKENlRYOiCAAxBAaY5CADBh3IQrx2jvQms+44e6ENDxXsHhxFWvaunmKkyaxIQxeL5NG1YfyBkCigMYHLrl4qb6jt8YOGRlecksyyhAbIUTBvyMoAaTk5/IactKb6GJwtQ6pHXtkWk=
+  - secure: yVXaJ95bGW72Zy1/BAQU+0MM8yoZhWRD6xJOh9pkwpoOp/GIPJDNrkxfBpRSnAQykoT9LDH8LrXv9QTAaWL4SlYY6l3iylDSHLAulW9qynTZcrq7X2r/iTzC0wjR4ojemJDa6Fm6G8JMr6uY3MHAdyGpWSw35ilnLvIoFrAOqdk=
+  - secure: mlrKMJHkdU1u1niXILpiPNVz3KL1UG3G5FJ9jqgiYrL4nHpaQ9tjKVmWSGiA1vgvyVUPFNNSqg3k3BIbsBeF0QcxwqNujQNGmSnV+/aiOVCUncTcM9K2p2kvpXmwomWeH/Y0dNnbVOqYSnacR0cHi8CXJ0pEiPfMr82RwVbdvBQ=

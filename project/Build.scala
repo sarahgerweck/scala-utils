@@ -77,7 +77,7 @@ object PublishSettings {
     }
   ).toSeq
 
-  val publishSettings = Seq (
+  val publishSettings = sonaCreds ++ Seq (
     publishMavenStyle    := true,
     pomIncludeRepository := { _ => false },
     publishArtifact in Test := false,
