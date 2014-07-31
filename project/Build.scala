@@ -56,8 +56,8 @@ object Helpers {
 }
 
 object Resolvers {
-  val gerweckSnaps    = "Gerweck Snapshots" at "s3://repo.gerweck.org.s3-us-west-2.amazonaws.com/snapshot/"
-  val gerweckReleases = "Gerweck Releases" at "s3://repo.gerweck.org.s3-us-west-2.amazonaws.com/releases/"
+  val sonaSnaps     = "Sonatype Snaps" at "https://oss.sonatype.org/content/repositories/snapshots"
+  val sonaStage     = "Sonatype Staging" at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
 }
 
 object PublishSettings {
@@ -80,12 +80,13 @@ object PublishSettings {
   val publishSettings = Seq (
     publishMavenStyle    := true,
     pomIncludeRepository := { _ => false },
+    publishArtifact in Test := false,
 
     publishTo            := {
       if (version.value.trim endsWith "SNAPSHOT")
-        Some(gerweckSnaps)
+        Some(sonaSnaps)
       else
-        Some(gerweckReleases)
+        Some(sonaStage)
     },
 
     pomExtra             := (
