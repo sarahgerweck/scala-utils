@@ -53,7 +53,11 @@ trait LexerUtil extends Scanners with ParserUtil {
     chars(s, sensitive) ^^ { _.mkString }
   })
 
-  final def longest[A <: { def chars: String }](constants: Iterable[A], sensitive: Boolean = false): Parser[A] = {
+  final def longest[A <: { def chars: String }](constants: Iterable[A]): Parser[A] = {
+    longest(constants, { a: A => a.chars })
+  }
+
+  final def longest[A <: { def chars: String }](constants: Iterable[A], sensitive: Boolean): Parser[A] = {
     longest(constants, { a: A => a.chars }, sensitive)
   }
 

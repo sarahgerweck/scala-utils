@@ -14,7 +14,7 @@ object BuildSettings {
   final val buildJavaVersion  = "1.7"
   final val optimize          = true
 
-  val buildScalaVersions = Seq("2.10.4")
+  val buildScalaVersions = Seq("2.10.4", "2.11.2")
 
   val buildScalacOptions = Seq (
     "-deprecation",
@@ -203,9 +203,18 @@ object UtilsBuild extends Build {
     .settings(baseSettings: _*)
     .settings(
       name := "gerweck-utils",
-      libraryDependencies ++= utilsDeps ++ Seq (
-        "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided"
-      ),
+      libraryDependencies ++= utilsDeps,
+      libraryDependencies +=
+          "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
+
+      libraryDependencies <++= (scalaBinaryVersion) {
+        case "2.11" => Seq(
+          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2",
+          "org.scala-lang.modules" %% "scala-xml" % "1.0.2"
+        )
+        case _ => Seq.empty
+      },
+
       resolvers ++= allResolvers
     )
 }
