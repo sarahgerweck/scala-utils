@@ -81,4 +81,10 @@ package object util {
       */
     @inline def foldr1(op: (A, A) => A): A = (t.init :\ t.last)(op)
   }
+
+  /** Enhancements to Java's `MessageFormat` API. */
+  implicit final class RichMessageFormat(val mf: java.text.MessageFormat) extends AnyVal {
+    final def apply(str: String) = mf.format(Array(str))
+    final def apply(str: String, others: String*) = mf.format((str +: others).toArray)
+  }
 }
