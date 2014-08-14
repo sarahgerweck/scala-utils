@@ -23,6 +23,7 @@ final class ExitCode private (val code: Byte) extends AnyVal {
   * codes that exist.
   */
 object ExitCode {
+  final val Okay        = new ExitCode(b"0")
   final val Usage       = new ExitCode(b"64")
   final val DataErr     = new ExitCode(b"65")
   final val NoInput     = new ExitCode(b"66")
