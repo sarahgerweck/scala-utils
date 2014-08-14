@@ -37,5 +37,5 @@ object ExitCode {
   final val TempFail    = new ExitCode(b"75")
   final val Protocol    = new ExitCode(b"76")
   final val NoPerm      = new ExitCode(b"77")
-  final val COnfig      = new ExitCode(b"78")
+  final val Config      = new ExitCode(b"78")
 }
