@@ -152,6 +152,7 @@ object Dependencies {
   final val jodaConvertVersion = "1.6"
   final val commonsVfsVersion  = "2.0"
   final val commonsIoVersion   = "2.4"
+  final val spireVersion       = "0.8.2"
 
   val log4s       = "org.log4s"          %% "log4s"           % log4sVersion
   val slf4j       = "org.slf4j"          %  "slf4j-api"       % slf4jVersion
@@ -160,6 +161,7 @@ object Dependencies {
   val commonsIo   = "commons-io"         %  "commons-io"      % commonsIoVersion
   val jodaTime    = "joda-time"          %  "joda-time"       % jodaTimeVersion
   val jodaConvert = "org.joda"           %  "joda-convert"    % jodaConvertVersion
+  val spire       = "org.spire-math"     %% "spire"           % spireVersion
   val commonsVfs  = {
     val base      = "org.apache.commons" %  "commons-vfs2"    % commonsVfsVersion
     base.exclude("commons-logging", "commons-logging")
@@ -193,7 +195,8 @@ object UtilsBuild extends Build {
     commonsIo,
     jodaTime,
     jodaConvert,
-    commonsVfs
+    commonsVfs,
+    spire % "provided,optional"
   )
 
   lazy val root = (project in file ("."))
