@@ -73,7 +73,7 @@ private object TypeUtilMacros {
       import math.Ordering._
       val list = (modules map { m => Ident(m.name) }).toList
       if (sorted)
-        list sorted (Ordering[String] on { x:Ident => x.name.encoded })
+        list sorted (Ordering[String] on { x:Ident => x.name.encodedName.toString })
       else
         list
     }

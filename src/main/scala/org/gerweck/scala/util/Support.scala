@@ -61,6 +61,6 @@ private object SupportMacros {
 
   @inline private def getCallerName(c: Context): String = {
     val caller = c.enclosingMethod
-    caller.symbol.name.decoded
+    caller.symbol.name.decodedName.toString
   }
 }
