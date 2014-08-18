@@ -2,7 +2,8 @@ package org.gerweck.scala.util.jdbc
 
 import java.sql.Connection
 
-/** A wrapper around a JDBC connection.
+/** A wrapper around a JDBC
+  * `[[http://docs.oracle.com/javase/7/docs/api/java/sql/Connection.html java.sql.Connection]]`.
   *
   * This is useful to allow you to override or wrap certain methods: you can
   * use this as a base class and override just the methods you care about.

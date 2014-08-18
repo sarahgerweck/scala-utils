@@ -2,7 +2,8 @@ package org.gerweck.scala.util.jdbc
 
 import java.sql.Statement
 
-/** A wrapper around a JDBC [[java.sql.Statement]].
+/** A wrapper around a JDBC
+  * `[[http://docs.oracle.com/javase/7/docs/api/java/sql/Statement.html java.sql.Statement]]`.
   *
   * This is useful to allow you to override or wrap certain methods: you can
   * use this as a base class and override just the methods you care about.

@@ -17,9 +17,12 @@ object TypeUtils {
     * This will actually return ''all'' descendant objects that descend from the sealed class,
     * whether or not they were marked `case object` or not.
     *
-    * @note Be careful about calling this on inner classes.  If you have a sealed class hierarchy
-    * inside a trait, there will be no known objects if this is used inside the trait itself.
-    * It ''will'' work in classes that descend from that trait.
+`   * '''Warning''': This will not always work on inner classes. If you have a sealed class
+    * hierarchy inside a trait, there will be no known objects if this is used inside the trait
+    * itself. It ''should'' work in classes that descend from that trait. My recommendation is to
+    * either stick to top-level classes or verify (manually or by testing) that you get all the
+    * objects you expect.
+    * (This is due to [[https://issues.scala-lang.org/browse/SI-7046 SI-7406]].)
     *
     * @tparam A a sealed class or interface
     * @return all already-defined objects that derive from the given type

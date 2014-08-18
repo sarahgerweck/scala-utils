@@ -50,8 +50,9 @@ object timed {
 
 /** Timer that operates on a [[scala.concurrent.Future]].
   *
-  * Warning: This is not as accurate as `timed`, because it relies on
-  * scheduling another job to run _after_ the original future is complete.
+  * '''Warning''': This is not as accurate as [[org.gerweck.scala.util.timed]], because it relies
+  * on scheduling another job to run ''after'' the original future is complete.
+  *
   * Whenever possible, use `timed` instead.
   */
 object timedFuture {

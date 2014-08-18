@@ -18,9 +18,8 @@ final class ExitCode private (val code: Byte) extends AnyVal {
   *
   * These are based on the
   * [[http://www.freebsd.org/cgi/man.cgi?query=sysexits&manpath=FreeBSD+10.0-RELEASE BSD standardized exit codes]].
-  * Linux and SysV don't really have a OS-level standard, and many
-  * applications use different codes, but these are the most standardized
-  * codes that exist.
+  * Linux and SysV don't really have a OS-level standard, and many applications use different
+  * codes, but these are the most standardized codes that exist.
   */
 object ExitCode {
   final val Okay        = new ExitCode(b"0")
