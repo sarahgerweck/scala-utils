@@ -202,7 +202,7 @@ object UtilsBuild extends Build {
   lazy val root = (project in file ("."))
     .settings(baseSettings: _*)
     .settings(
-      name := "gerweck-utils",
+      name := "Gerweck Utils",
       libraryDependencies ++= utilsDeps,
       libraryDependencies +=
           "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
