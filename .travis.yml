@@ -1,10 +1,15 @@
 branches:
-  only:
-  - master
+  except:
+    - /^v\d/
 language: scala
-script: sbt -Dsbt.log.noformat=true +publish
+scala:
+  - 2.10.4
+  - 2.11.2
+script:
+  - 'sbt -Dsbt.log.noformat=true ++$TRAVIS_SCALA_VERSION test'
+  - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "${TRAVIS_BRANCH}" = "master" ]; then sbt ++$TRAVIS_SCALA_VERSION make-site publish; fi'
 jdk:
-- oraclejdk7
+  - oraclejdk7
 env:
   global:
   - secure: yVXaJ95bGW72Zy1/BAQU+0MM8yoZhWRD6xJOh9pkwpoOp/GIPJDNrkxfBpRSnAQykoT9LDH8LrXv9QTAaWL4SlYY6l3iylDSHLAulW9qynTZcrq7X2r/iTzC0wjR4ojemJDa6Fm6G8JMr6uY3MHAdyGpWSw35ilnLvIoFrAOqdk=
