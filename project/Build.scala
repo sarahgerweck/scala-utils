@@ -146,7 +146,7 @@ object Eclipse {
 
 object Dependencies {
   final val slf4jVersion       = "1.7.7"
-  final val log4sVersion       = "[1.0.3,)"
+  final val log4sVersion       = "[1.0.5,)"
   final val logbackVersion     = "1.1.2"
   final val jodaTimeVersion    = "2.4"
   final val jodaConvertVersion = "1.6"
