@@ -30,7 +30,10 @@ object BuildSettings {
     "-source", buildJavaVersion
   )
 
-  val buildSettings = Seq (
+  lazy val siteSettings = site.settings ++ site.includeScaladoc()
+
+  val buildSettings = siteSettings ++
+                      Seq (
     organization := buildOrganization,
     licenses     := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     homepage     := Some(url("https://github.com/sarahgerweck/scala-utils")),
