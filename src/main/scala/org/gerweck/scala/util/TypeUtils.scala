@@ -82,7 +82,7 @@ private object TypeUtilMacros {
     }
 
     /* This is the AST for Set(a, b, c).  Select the Set.apply function, then apply it to our list of parameters */
-    c.Expr[Set[A]](Apply(TypeApply(setBuilder, List(Ident(symbol))), modList))
+    c.Expr[Set[A]](Apply(setBuilder, modList))
   }
 
 }
