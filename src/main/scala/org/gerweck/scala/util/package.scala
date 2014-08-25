@@ -1,5 +1,9 @@
 package org.gerweck.scala
 
+import scala.collection.TraversableLike
+import scala.reflect.runtime.{universe => ru}
+import scala.reflect._
+
 /** Miscellaneous utility code for manipulating standard objects.
   *
   * This package is designed to be maximally convenient if you `import org.gerweck.scala.util._`.
@@ -86,5 +90,14 @@ package object util {
   implicit final class RichMessageFormat(val mf: java.text.MessageFormat) extends AnyVal {
     final def apply(str: String) = mf.format(Array(str))
     final def apply(str: String, others: String*) = mf.format((str +: others).toArray)
+  }
+
+  implicit final class SeqUtil[A](val coll: Seq[A]) {
+    import ru._
+    final def filterType[B <: A : ClassTag]: Seq[B] = {
+      val m = ru.runtimeMirror(getClass.getClassLoader)
+      val ct = classTag[B]
+      (coll filter { ct.runtimeClass isAssignableFrom _.getClass }).asInstanceOf[Seq[B]]
+    }
   }
 }
