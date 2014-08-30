@@ -2,10 +2,6 @@ package org.gerweck.scala.util
 
 import language.experimental.macros
 
-import scala.reflect.macros.Context
-
-import scala.math.Ordering
-
 /** Utilities for working with types
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
@@ -29,6 +25,6 @@ object TypeUtils {
     * @tparam A a sealed class or interface
     * @return all already-defined objects that derive from the given type
     */
-  def getCaseObjects[A]: Iterable[A] = macro getCaseObjects_impl[A]
+  def getCaseObjects[A]: Set[A] = macro getCaseObjects_impl[A]
 
 }

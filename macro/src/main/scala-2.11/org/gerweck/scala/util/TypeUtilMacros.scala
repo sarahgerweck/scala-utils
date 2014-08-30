@@ -2,16 +2,13 @@ package org.gerweck.scala.util
 
 import language.experimental.macros
 
-import scala.reflect.macros.Context
+import scala.reflect.macros.blackbox.Context
 
 import scala.math.Ordering
 
 
 /** Module containing macro implementations */
 private object TypeUtilMacros {
-  /** The module to use for constructing sets */
-  private[this] final val setModule = "scala.collection.immutable.Set"
-
   /** Whether to emit info messages for type macros
     *
     * Info messages are controlled by the `-verbose` flag on the Scala compiler.
@@ -44,11 +41,8 @@ private object TypeUtilMacros {
     if (emitInfo)
       c.info(c.enclosingPosition, s"Found modules $modules for sealed type $parentType", false)
 
-    /* A function selector that will build a set of its parameters */
-    val setBuilder = Select(Ident(rootMirror.staticModule(setModule)), "apply":TermName)
-
     /* The list of modules we are going to pass into the set builder */
-    val modList = {
+    val modList: List[Ident] = {
       import Ordering._
       val list = (modules map { m => Ident(m.name) }).toList
       if (sorted)
@@ -57,7 +51,6 @@ private object TypeUtilMacros {
         list
     }
 
-    /* This is the AST for Set(a, b, c).  Select the Set.apply function, then apply it to our list of parameters */
-    c.Expr[Set[A]](Apply(setBuilder, modList))
+    c.Expr[Set[A]](q"_root_.scala.Predef.Set[..${List(parentType)}](..$modList)")
   }
 }
