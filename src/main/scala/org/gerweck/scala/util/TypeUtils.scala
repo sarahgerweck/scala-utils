@@ -4,6 +4,8 @@ import language.experimental.macros
 
 import scala.reflect.macros.Context
 
+import scala.math.Ordering
+
 /** Utilities for working with types
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
@@ -73,7 +75,7 @@ private object TypeUtilMacros {
 
     /* The list of modules we are going to pass into the set builder */
     val modList = {
-      import math.Ordering._
+      import Ordering._
       val list = (modules map { m => Ident(m.name) }).toList
       if (sorted)
         list sorted (Ordering[String] on { x:Ident => x.name.encodedName.toString })
