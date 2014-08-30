@@ -206,6 +206,23 @@ object UtilsBuild extends Build {
     spire % "provided,optional"
   )
 
+  lazy val macros = (project in file ("macro"))
+    .settings(baseSettings: _*)
+    .settings (
+      libraryDependencies += log4s,
+      libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+
+      scalaSource in Compile := {
+        scalaBinaryVersion.value match {
+          case "2.10" => baseDirectory.value / "src" / "main" / "scala-2.10"
+          case _      => baseDirectory.value / "src" / "main" / "scala-2.11"
+        }
+      },
+
+      publish := {},
+      publishLocal := {}
+    )
+
   lazy val root = (project in file ("."))
     .settings(baseSettings: _*)
     .settings(
@@ -222,6 +239,14 @@ object UtilsBuild extends Build {
         case _ => Seq.empty
       },
 
-      resolvers ++= allResolvers
+      resolvers ++= allResolvers,
+
+      // include the macro classes and resources in the main jar
+      mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
+
+      // include the macro sources in the main source jar
+      mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value
     )
+    .dependsOn(macros)
+    .aggregate(macros)
 }

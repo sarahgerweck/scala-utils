@@ -1,8 +1,7 @@
-/target
+target
 /.classpath
 /.project
 /.cache
 /.settings
 *.swp
-/project/target
 /project/project
