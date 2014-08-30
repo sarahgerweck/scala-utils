@@ -25,7 +25,7 @@ private object SupportMacros {
     val exceptionMessage = s"Method `$callerName` not supported"
     val logMessage = s"Got unsupported call to `$callerName`"
 
-    c.Expr[Nothing](q"""$logger.apply($level).apply($logMessage)
+    c.Expr[Nothing](q"""$logger($level)($logMessage)
                         throw new java.lang.UnsupportedOperationException($exceptionMessage)""")
   }
 
