@@ -25,20 +25,20 @@ private object SupportMacros {
     val exceptionMessage = s"Method `$callerName` not supported"
     val logMessage = s"Got unsupported call to `$callerName`"
 
-    c.Expr[Nothing](q"$logger.apply($level).apply($logMessage); throw new java.lang.UnsupportedOperationException($exceptionMessage)")
+    c.Expr[Nothing](q"""$logger.apply($level).apply($logMessage)
+                        throw new java.lang.UnsupportedOperationException($exceptionMessage)""")
   }
 
   // TODO: Reduce code duplication.
   def support_warn(c: Context): c.Expr[Nothing] = {
     import c.universe._
 
-    val logger = c.Expr[Logger](Ident(TermName("logger")))
-
     val callerName = getCallerName(c)
     val logMessage = s"Got unsupported call to `$callerName`"
     val exceptionMessage = s"Method `$callerName` is not supported"
 
-    c.Expr[Nothing](q"$logger.warn($logMessage); throw new java.lang.UnsupportedOperationException($exceptionMessage)")
+    c.Expr[Nothing](q"""logger.warn($logMessage)
+                        throw new java.lang.UnsupportedOperationException($exceptionMessage)""")
   }
 
   @inline private def getCallerName(c: Context): String = {
