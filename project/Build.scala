@@ -56,6 +56,20 @@ object Helpers {
   def boolFlag(name: String): Option[Boolean] = getProp(name) map { parseBool _ }
   def boolFlag(name: String, default: Boolean): Boolean = boolFlag(name) getOrElse default
   def opts(names: String*): Option[String] = names.view.map(getProp _).foldLeft(None: Option[String]) { _ orElse _ }
+
+  import scala.xml._
+  def excludePomDeps(exclude: (String, String) => Boolean): Node => Node = { node: Node =>
+    val rewriteRule = new transform.RewriteRule {
+      override def transform(n: Node): NodeSeq = {
+        if ((n.label == "dependency") && exclude((n \ "groupId").text, (n \ "artifactId").text))
+          NodeSeq.Empty
+        else
+          n
+      }
+    }
+    val transformer = new transform.RuleTransformer(rewriteRule)
+    transformer.transform(node)(0)
+  }
 }
 
 object Resolvers {
@@ -188,6 +202,7 @@ object UtilsBuild extends Build {
   import Resolvers._
   import Dependencies._
   import PublishSettings._
+  import Helpers._
 
   lazy val baseSettings = buildSettings ++ Eclipse.settings ++ publishSettings
 
@@ -251,24 +266,6 @@ object UtilsBuild extends Build {
       mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
 
       // Do not include macros as a dependency.
-      pomPostProcess := { (node: scala.xml.Node) =>
-        val rewriteRule =
-          new scala.xml.transform.RewriteRule {
-            override def transform(n: scala.xml.Node): scala.xml.NodeSeq = {
-              val name = n.nameToString(new StringBuilder).toString
-              if (name == "dependency") {
-                if (((n \ "groupId").text == "org.gerweck.scala") && ((n \ "artifactId").text startsWith "macros"))
-                  scala.xml.NodeSeq.Empty
-                else
-                  n
-              }
-              else {
-                n
-              }
-            }
-          }
-        val transformer = new scala.xml.transform.RuleTransformer(rewriteRule)
-        transformer.transform(node)(0)
-      }
+      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "macros") }
     )
 }
