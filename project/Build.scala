@@ -224,6 +224,8 @@ object UtilsBuild extends Build {
     )
 
   lazy val root = (project in file ("."))
+    .dependsOn(macros)
+    .aggregate(macros)
     .settings(baseSettings: _*)
     .settings(
       name := "Gerweck Utils",
@@ -247,6 +249,4 @@ object UtilsBuild extends Build {
       // include the macro sources in the main source jar
       mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value
     )
-    .dependsOn(macros)
-    .aggregate(macros)
 }
