@@ -11,7 +11,7 @@ import java.sql.Connection
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-class WrappedConnection(val inner: Connection) extends Connection with WrapperWrapping[Connection] {
+class WrappedConnection(final val inner: Connection) extends Connection with WrapperWrapping[Connection] {
   def abort(x$1: java.util.concurrent.Executor): Unit = { inner.abort(x$1) }
   def clearWarnings(): Unit = { inner.clearWarnings() }
   def close(): Unit = { inner.close() }
