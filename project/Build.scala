@@ -222,7 +222,8 @@ object UtilsBuild extends Build {
   )
 
   lazy val macros = (project in file ("macro"))
-    .settings(baseSettings: _*)
+    .settings(buildSettings: _*)
+    .settings(Eclipse.settings: _*)
     .settings (
       libraryDependencies += log4s,
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
@@ -236,7 +237,8 @@ object UtilsBuild extends Build {
 
       publish := {},
       publishLocal := {},
-      exportJars := false
+      exportJars := false,
+      ReleaseKeys.releaseProcess := Seq.empty
     )
 
   lazy val root = (project in file ("."))
