@@ -189,7 +189,7 @@ object UtilsBuild extends Build {
   import Dependencies._
   import PublishSettings._
 
-  lazy val baseSettings = buildSettings ++ Eclipse.settings ++ publishSettings ++ Release.settings
+  lazy val baseSettings = buildSettings ++ Eclipse.settings ++ publishSettings
 
   lazy val allResolvers = Seq ()
 
@@ -210,7 +210,7 @@ object UtilsBuild extends Build {
     .settings(baseSettings: _*)
     .settings (
       libraryDependencies += log4s,
-      libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+      libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
 
       scalaSource in Compile := {
         scalaBinaryVersion.value match {
@@ -220,18 +220,19 @@ object UtilsBuild extends Build {
       },
 
       publish := {},
-      publishLocal := {}
+      publishLocal := {},
+      exportJars := false
     )
 
   lazy val root = (project in file ("."))
     .dependsOn(macros)
     .aggregate(macros)
     .settings(baseSettings: _*)
+    .settings(Release.settings: _*)
     .settings(
       name := "Gerweck Utils",
       libraryDependencies ++= utilsDeps,
-      libraryDependencies +=
-          "org.scala-lang" % "scala-reflect" % scalaVersion.value % "provided",
+      libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
 
       libraryDependencies <++= (scalaBinaryVersion) {
         case "2.11" => Seq(
@@ -247,6 +248,27 @@ object UtilsBuild extends Build {
       mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
 
       // include the macro sources in the main source jar
-      mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value
+      mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
+
+      // Do not include macros as a dependency.
+      pomPostProcess := { (node: scala.xml.Node) =>
+        val rewriteRule =
+          new scala.xml.transform.RewriteRule {
+            override def transform(n: scala.xml.Node): scala.xml.NodeSeq = {
+              val name = n.nameToString(new StringBuilder).toString
+              if (name == "dependency") {
+                if (((n \ "groupId").text == "org.gerweck.scala") && ((n \ "artifactId").text startsWith "macros"))
+                  scala.xml.NodeSeq.Empty
+                else
+                  n
+              }
+              else {
+                n
+              }
+            }
+          }
+        val transformer = new scala.xml.transform.RuleTransformer(rewriteRule)
+        transformer.transform(node)(0)
+      }
     )
 }
