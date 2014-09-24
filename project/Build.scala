@@ -22,7 +22,10 @@ object BuildSettings {
     "-feature",
     "-target:jvm-" + buildJavaVersion
   ) ++ (
-    if (optimize) Seq("-optimize") else Seq.empty
+    if (optimize)
+      Seq("-optimize", "-Xdisable-assertions")
+    else
+      Seq.empty
   )
 
   val buildJavacOptions = Seq(
