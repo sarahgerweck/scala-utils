@@ -181,6 +181,7 @@ object Dependencies {
   final val commonsVfsVersion  = "2.0"
   final val commonsIoVersion   = "2.4"
   final val spireVersion       = "0.8.2"
+  final val scalaCheckVersion  = "1.11.5"
   final val scalaTestVersion   = "2.2.1"
 
   val log4s       = "org.log4s"          %% "log4s"           % log4sVersion
@@ -198,6 +199,7 @@ object Dependencies {
         .exclude("org.apache.maven.scm", "maven-scm-api")
   }
 
+  val scalaCheck  = "org.scalacheck"     %% "scalacheck"      % scalaCheckVersion
   val scalaTest   = "org.scalatest"      %% "scalatest"       % scalaTestVersion
 
   private def noCL(m: ModuleID) = (
@@ -222,6 +224,7 @@ object UtilsBuild extends Build {
     jclBridge,
     log4s,
     logback % "test",
+    scalaCheck % "test",
     scalaTest % "test",
     commonsIo,
     jodaTime,
