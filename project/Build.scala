@@ -204,8 +204,6 @@ object UtilsBuild extends Build {
   import PublishSettings._
   import Helpers._
 
-  lazy val baseSettings = buildSettings ++ Eclipse.settings ++ publishSettings
-
   lazy val allResolvers = Seq ()
 
   lazy val utilsDeps = Seq (
@@ -244,7 +242,9 @@ object UtilsBuild extends Build {
   lazy val root = (project in file ("."))
     .dependsOn(macros)
     .aggregate(macros)
-    .settings(baseSettings: _*)
+    .settings(buildSettings: _*)
+    .settings(Eclipse.settings: _*)
+    .settings(publishSettings: _*)
     .settings(Release.settings: _*)
     .settings(
       name := "Gerweck Utils",
