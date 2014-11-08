@@ -129,6 +129,7 @@ object Release {
   import com.typesafe.sbt.SbtPgp.PgpKeys._
 
   val settings = releaseSettings ++ Seq (
+    ReleaseKeys.crossBuild := true,
     ReleaseKeys.releaseProcess := Seq[ReleaseStep](
       checkSnapshotDependencies,
       inquireVersions,
