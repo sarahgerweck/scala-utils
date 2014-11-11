@@ -118,6 +118,12 @@ object PublishSettings {
       </developers>
     )
   )
+
+  val falsePublishSettings = publishSettings ++ Seq (
+    publishArtifact in Compile := false,
+    publishTo := None
+  )
+
 }
 
 object Release {
@@ -223,6 +229,7 @@ object UtilsBuild extends Build {
   lazy val macros = (project in file ("macro"))
     .settings(buildSettings: _*)
     .settings(Eclipse.settings: _*)
+    .settings(falsePublishSettings: _*)
     .settings (
       name := "Gerweck Util Macros",
       libraryDependencies += log4s,
