@@ -11,7 +11,7 @@ import java.sql.Wrapper
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-trait WrapperWrapping[A <: Wrapper] extends Wrapper {
+trait WrapperWrapping[+A <: Wrapper] extends Wrapper {
   val inner: A
 
   override def isWrapperFor(clazz: Class[_]): Boolean = {
