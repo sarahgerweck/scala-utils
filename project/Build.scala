@@ -224,6 +224,7 @@ object UtilsBuild extends Build {
     .settings(buildSettings: _*)
     .settings(Eclipse.settings: _*)
     .settings (
+      name := "Gerweck Util Macros",
       libraryDependencies += log4s,
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
 
