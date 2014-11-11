@@ -118,6 +118,13 @@ object PublishSettings {
       </developers>
     )
   )
+
+  val falsePublishSettings = publishSettings ++ Seq (
+    publishArtifact in Compile := false,
+    publishArtifact in Test := false,
+    publishTo := Some(Resolver.file("phony-repo", file("target/repo")))
+  )
+
 }
 
 object Release {
@@ -223,6 +230,7 @@ object UtilsBuild extends Build {
   lazy val macros = (project in file ("macro"))
     .settings(buildSettings: _*)
     .settings(Eclipse.settings: _*)
+    .settings(falsePublishSettings: _*)
     .settings (
       name := "Gerweck Util Macros",
       libraryDependencies += log4s,
@@ -270,6 +278,6 @@ object UtilsBuild extends Build {
       mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
 
       // Do not include macros as a dependency.
-      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "macros") }
+      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-util-macro") }
     )
 }
