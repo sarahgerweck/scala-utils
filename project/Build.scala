@@ -5,6 +5,7 @@ import com.typesafe.sbt.SbtSite.site
 import sbtrelease.ReleasePlugin._
 
 import scala.util.Properties.envOrNone
+import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 
 object BuildSettings {
   import Helpers._
@@ -30,7 +31,8 @@ object BuildSettings {
 
   val buildJavacOptions = Seq(
     "-target", buildJavaVersion,
-    "-source", buildJavaVersion
+    "-source", buildJavaVersion,
+    "-Xlint:deprecation"
   )
 
   lazy val siteSettings = site.settings ++ site.includeScaladoc()
@@ -50,6 +52,9 @@ object BuildSettings {
 
     scalacOptions ++= buildScalacOptions,
     javacOptions  ++= buildJavacOptions
+
+    // This is a new feature in 0.13.7 that substantially speeds up builds.
+    //updateOptions   :=  updateOptions.value.withCachedResolution(true)
   )
 }
 
@@ -168,7 +173,8 @@ object Eclipse {
     EclipseKeys.createSrc            := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
     EclipseKeys.projectFlavor        := EclipseProjectFlavor.Scala,
     EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE17),
-    EclipseKeys.withSource           := true
+    EclipseKeys.withSource           := true,
+    EclipseKeys.skipParents          := false
   )
 }
 
@@ -260,6 +266,7 @@ object UtilsBuild extends Build {
     .aggregate(macros)
     .settings(buildSettings: _*)
     .settings(Eclipse.settings: _*)
+    .settings(EclipseKeys.skipParents in ThisBuild := false)
     .settings(publishSettings: _*)
     .settings(Release.settings: _*)
     .settings(
