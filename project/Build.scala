@@ -184,6 +184,7 @@ object Dependencies {
   final val logbackVersion     = "1.1.2"
   final val jodaTimeVersion    = "2.4"
   final val jodaConvertVersion = "1.6"
+  final val threeTenVersion    = "1.1"
   final val commonsVfsVersion  = "2.0"
   final val commonsIoVersion   = "2.4"
   final val spireVersion       = "0.8.2"
@@ -197,6 +198,7 @@ object Dependencies {
   val commonsIo   = "commons-io"         %  "commons-io"      % commonsIoVersion
   val jodaTime    = "joda-time"          %  "joda-time"       % jodaTimeVersion
   val jodaConvert = "org.joda"           %  "joda-convert"    % jodaConvertVersion
+  val threeTen    = "org.threeten"       %  "threetenbp"      % threeTenVersion
   val spire       = "org.spire-math"     %% "spire"           % spireVersion
   val commonsVfs  = {
     val base      = "org.apache.commons" %  "commons-vfs2"    % commonsVfsVersion
@@ -235,6 +237,7 @@ object UtilsBuild extends Build {
     commonsIo,
     jodaTime,
     jodaConvert,
+    threeTen % "optional",
     commonsVfs,
     spire % "provided,optional"
   )
