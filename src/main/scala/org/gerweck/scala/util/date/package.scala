@@ -55,7 +55,7 @@ package object date {
   }
 
   implicit final class RichTTInstant(val inner: tt.Instant) extends AnyVal {
-    def - (other: tt.Instant): tt.Duration = tt.Duration.between(inner, other)
+    def - (other: tt.Instant): tt.Duration = tt.Duration.between(other, inner)
     def - (duration: tt.temporal.TemporalAmount): tt.Instant = inner minus duration
     def - (d: FiniteDuration) = inner minus (d.toMillis, tt.temporal.ChronoUnit.MILLIS)
 
