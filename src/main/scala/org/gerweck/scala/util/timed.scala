@@ -27,9 +27,6 @@ object timed {
     }
   }
 
-  @deprecated("Use date.formatDuration instead", "1.2")
-  def formatDuration(t: Float): String = date.formatDuration(t)
-
   @inline def formatNanos(start: Long, finish: Long): String = formatNanos(finish - start)
 
   @inline def formatNanos(total: Long): String = date.formatDuration(1e-9f * total)
