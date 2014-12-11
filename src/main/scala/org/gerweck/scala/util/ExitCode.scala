@@ -9,7 +9,7 @@ import spire.syntax.literals._
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
 final class ExitCode private (val code: Byte) extends AnyVal {
-  final def exit() {
+  final def exit(): Nothing = {
     scala.sys.exit(code)
   }
 }
