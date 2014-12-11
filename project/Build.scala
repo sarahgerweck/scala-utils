@@ -188,6 +188,7 @@ object Dependencies {
   final val commonsVfsVersion  = "2.0"
   final val commonsIoVersion   = "2.4"
   final val spireVersion       = "0.8.2"
+  final val twitterUtilVersion = "6.22.1"
   final val scalaCheckVersion  = "1.11.5"
   final val scalaTestVersion   = "2.2.1"
 
@@ -200,6 +201,7 @@ object Dependencies {
   val jodaConvert = "org.joda"           %  "joda-convert"    % jodaConvertVersion
   val threeTen    = "org.threeten"       %  "threetenbp"      % threeTenVersion
   val spire       = "org.spire-math"     %% "spire"           % spireVersion
+  val twitterUtil = "com.twitter"        %% "util-core"       % twitterUtilVersion
   val commonsVfs  = {
     val base      = "org.apache.commons" %  "commons-vfs2"    % commonsVfsVersion
     base.exclude("commons-logging", "commons-logging")
@@ -209,6 +211,7 @@ object Dependencies {
 
   val scalaCheck  = "org.scalacheck"     %% "scalacheck"      % scalaCheckVersion
   val scalaTest   = "org.scalatest"      %% "scalatest"       % scalaTestVersion
+
 
   private def noCL(m: ModuleID) = (
     m exclude("commons-logging", "commons-logging")
@@ -238,6 +241,7 @@ object UtilsBuild extends Build {
     jodaTime,
     jodaConvert,
     threeTen % "optional",
+    twitterUtil % "optional",
     commonsVfs,
     spire % "provided,optional"
   )
