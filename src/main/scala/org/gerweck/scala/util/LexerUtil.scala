@@ -37,12 +37,14 @@ trait LexerUtil extends Scanners with ParserUtil {
   private[this] val charParsers = mapAsScalaConcurrentMap(new ConcurrentHashMap[(String,Boolean),Parser[Vector[Char]]])
   private[this] val strParsers = mapAsScalaConcurrentMap(new ConcurrentHashMap[(String,Boolean),Parser[String]])
 
+  def insensitive(c: Char) = elem(c.toString, { _ =~= c })
+
   // TBD: This might perform better as a macro
   final def chars(s: String, sensitive: Boolean = false): Parser[Vector[Char]] = charParsers.getOrElseUpdate((s, sensitive), {
     (s :\ success(Vector.empty[Char])) { (head, tailParser) =>
       @inline def headParser =
         if (sensitive) elem(head)
-        else           elem(head.toString, { _ =~= head })
+        else           insensitive(head)
 
       headParser ~ tailParser ^^ { case h ~ t => h +: t }
     }
