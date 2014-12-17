@@ -11,7 +11,7 @@ object BuildSettings {
   import Helpers._
 
   final val buildOrganization = "org.gerweck.scala"
-  final val buildScalaVersion = "2.10.4"
+  final val buildScalaVersion = "2.11.4"
   final val buildJavaVersion  = "1.7"
   final val optimize          = true
 
