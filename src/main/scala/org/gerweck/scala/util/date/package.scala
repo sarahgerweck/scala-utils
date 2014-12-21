@@ -2,7 +2,6 @@ package org.gerweck.scala.util
 
 import language.implicitConversions
 
-import org.joda.{ time => joda }
 import org.threeten.{ bp => tt }
 
 import scala.concurrent.duration.FiniteDuration
@@ -32,46 +31,6 @@ package object date {
 
   @inline def formatDuration(seconds: Double): String = formatDuration(seconds.toFloat)
 
-  /* ====================================================================== */
-  /*                       Joda-Time enhanced objects                       */
-  /* ====================================================================== */
-
-  implicit final class RichJodaDate(val inner: joda.LocalDateTime) extends AnyVal with UniversalOrdering[joda.LocalDateTime] {
-    def getQuarter = (inner.getMonthOfYear + 2) / 3
-
-    def + (p: joda.ReadablePeriod) = inner plus p
-    def + (d: joda.ReadableDuration) = inner plus d
-    def + (d: FiniteDuration) = inner plus joda.Duration.millis(d.toMillis)
-
-    def - (p: joda.ReadablePeriod) = inner minus p
-    def - (d: joda.ReadableDuration) = inner minus d
-    def - (d: FiniteDuration) = inner minus joda.Duration.millis(d.toMillis)
-  }
-
-  implicit final class RichJodaInstant(val inner: joda.Instant) extends AnyVal with UniversalOrdering[joda.Instant] {
-    def - (other: joda.Instant): joda.Duration = new joda.Duration(inner.getMillis - other.getMillis)
-    def - (duration: Long): joda.Instant = inner minus duration
-    def - (duration: joda.ReadableDuration): joda.Instant = inner minus duration
-    def - (d: FiniteDuration) = inner minus joda.Duration.millis(d.toMillis)
-
-    def + (duration: Long): joda.Instant = inner plus duration
-    def + (duration: joda.ReadableDuration): joda.Instant = inner plus duration
-    def + (d: FiniteDuration) = inner plus joda.Duration.millis(d.toMillis)
-  }
-
-  implicit final class RichJodaDuration(val inner: joda.Duration) extends AnyVal with UniversalOrdering[joda.Duration] {
-    def - (duration: joda.ReadableDuration): joda.Duration = inner minus duration
-    def - (d: FiniteDuration): joda.Duration = inner minus d.toMillis
-
-    def + (duration: joda.ReadableDuration): joda.Duration = inner plus duration
-    def + (d: FiniteDuration): joda.Duration = inner plus d.toMillis
-    @inline def + (i: joda.Instant): joda.Instant = i + inner
-    @inline def + (d: joda.LocalDateTime): joda.LocalDateTime = d + inner
-
-    def toDouble: Double = inner.getMillis * 1e-3
-    def toFloat: Float = inner.getMillis * 1e-3f
-    def toHuman: String = formatDuration(toFloat)
-  }
 
   /* ====================================================================== */
   /*                   ThreeTen Backport enhanced objects                   */
