@@ -238,6 +238,16 @@ object Dependencies {
   val scalaCheck  = "org.scalacheck"     %% "scalacheck"      % scalaCheckVersion
   val scalaTest   = "org.scalatest"      %% "scalatest"       % scalaTestVersion
 
+  /* Use like this: libraryDependencies <++= (scalaBinaryVersion) (scalaParser) */
+  def scalaParser(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
+    case "2.11" => Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3" % "optional")
+    case _      => Seq.empty
+  }
+
+  def scalaXml(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
+    case "2.11" => Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.3" % "optional")
+    case _      => Seq.empty
+  }
 
   private def noCL(m: ModuleID) = (
     m exclude("commons-logging", "commons-logging")
@@ -307,13 +317,8 @@ object UtilsBuild extends Build {
       libraryDependencies ++= utilsDeps,
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
 
-      libraryDependencies <++= (scalaBinaryVersion) {
-        case "2.11" => Seq(
-          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3" % "optional",
-          "org.scala-lang.modules" %% "scala-xml" % "1.0.3" % "optional"
-        )
-        case _ => Seq.empty
-      },
+      libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
+      libraryDependencies <++= (scalaBinaryVersion) (scalaXml),
 
       resolvers ++= allResolvers,
 
