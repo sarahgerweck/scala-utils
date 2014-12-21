@@ -7,54 +7,80 @@ import sbtrelease.ReleasePlugin._
 import scala.util.Properties.envOrNone
 import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 
-object BuildSettings {
-  import Helpers._
+import Helpers._
 
-  final val buildOrganization = "org.gerweck.scala"
-  final val buildScalaVersion = "2.11.4"
-  final val buildJavaVersion  = "1.7"
-  final val optimize          = true
+sealed trait Basics {
+  final val buildOrganization  = "org.gerweck.scala"
 
-  val buildScalaVersions = Seq("2.10.4", "2.11.4")
+  final val buildScalaVersion  = "2.11.4"
+  final val extraScalaVersions = Seq("2.10.4")
+  final val buildJavaVersion   = "1.6"
+  lazy  val defaultOptimize    = true
 
+  lazy  val parallelBuild      = false
+  lazy  val cachedResolution   = false
+
+  /* Metadata definitions */
+  lazy val buildMetadata = Vector(
+    licenses    := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+    homepage    := Some(url("https://github.com/sarahgerweck/scala-utils")),
+    description := "Miscellaneous utility functionality for Scala",
+    startYear   := Some(2012),
+    scmInfo     := Some(ScmInfo(url("https://github.com/sarahgerweck/scala-utils"), "scm:git:git@github.com:sarahgerweck/scala-utils.git"))
+  )
+}
+
+object BuildSettings extends Basics {
+  /* Overridable flags */
+  lazy val optimize     = boolFlag("OPTIMIZE") orElse boolFlag("OPTIMISE") getOrElse defaultOptimize
+  lazy val deprecation  = boolFlag("NO_DEPRECATION") map (!_) getOrElse true
+  lazy val inlineWarn   = boolFlag("INLINE_WARNINGS") getOrElse false
+  lazy val debug        = boolFlag("DEBUGGER") getOrElse false
+  lazy val debugPort    = envOrNone("DEBUGGER_PORT") map { _.toInt } getOrElse 5050
+  lazy val debugSuspend = boolFlag("DEBUGGER_SUSPEND") getOrElse true
+
+  /* Scala build setup */
+  lazy val buildScalaVersions = buildScalaVersion +: extraScalaVersions
   val buildScalacOptions = Seq (
-    "-deprecation",
     "-unchecked",
     "-feature",
     "-target:jvm-" + buildJavaVersion
   ) ++ (
-    if (optimize)
-      Seq("-optimize", "-Xdisable-assertions")
-    else
-      Seq.empty
+    if (deprecation) Seq("-deprecation") else Seq.empty
+  ) ++ (
+    if (optimize) Seq("-optimize") else Seq.empty
+  ) ++ (
+    if (inlineWarn) Seq("-Yinline-warnings") else Seq.empty
   )
 
+  /* Java build setup */
   val buildJavacOptions = Seq(
     "-target", buildJavaVersion,
-    "-source", buildJavaVersion,
-    "-Xlint:deprecation"
+    "-source", buildJavaVersion
+  ) ++ (
+    if (deprecation) Seq("-Xlint:deprecation") else Seq.empty
   )
 
+  /* Site setup */
   lazy val siteSettings = site.settings ++ site.includeScaladoc()
 
-  val buildSettings = siteSettings ++
+  val buildSettings = buildMetadata ++
+                      siteSettings ++
                       Seq (
-    organization := buildOrganization,
-    licenses     := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
-    homepage     := Some(url("https://github.com/sarahgerweck/scala-utils")),
-    description  := "Miscellaneous utility functionality for Scala.",
-    startYear    := Some(2012),
-    scmInfo      := Some(ScmInfo(url("https://github.com/sarahgerweck/scala-utils"), "scm:git:git@github.com:sarahgerweck/scala-utils.git")),
+    organization       :=  buildOrganization,
 
-    scalaVersion       := buildScalaVersion,
-    crossScalaVersions := buildScalaVersions,
-    autoAPIMappings    := true,
+    scalaVersion       :=  buildScalaVersion,
+    crossScalaVersions :=  buildScalaVersions,
 
-    scalacOptions ++= buildScalacOptions,
-    javacOptions  ++= buildJavacOptions
+    scalacOptions      ++= buildScalacOptions,
+    javacOptions       ++= buildJavacOptions,
+    autoAPIMappings    :=  true,
 
-    // This is a new feature in 0.13.7 that substantially speeds up builds.
-    //updateOptions   :=  updateOptions.value.withCachedResolution(true)
+    updateOptions      :=  updateOptions.value.withCachedResolution(cachedResolution),
+    parallelExecution  :=  parallelBuild,
+
+    evictionWarningOptions in update :=
+      EvictionWarningOptions.default.withWarnTransitiveEvictions(false).withWarnDirectEvictions(false).withWarnScalaVersionEviction(false)
   )
 }
 
@@ -238,8 +264,8 @@ object UtilsBuild extends Build {
     scalaCheck % "test",
     scalaTest % "test",
     commonsIo,
-    jodaTime,
-    jodaConvert,
+    jodaTime % "optional",
+    jodaConvert % "optional",
     threeTen % "optional",
     twitterUtil % "optional",
     commonsVfs,
