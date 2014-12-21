@@ -31,6 +31,8 @@ package object date {
 
   @inline def formatDuration(seconds: Double): String = formatDuration(seconds.toFloat)
 
+  @inline def formatDuration(duration: tt.Duration): String = formatDuration(duration.toNanos * 1e-9f)
+
 
   /* ====================================================================== */
   /*                   ThreeTen Backport enhanced objects                   */
