@@ -105,6 +105,8 @@ package object date {
     def toFloat: Float = inner.getNano * 1e-9f + inner.getSeconds
     def toHuman: String = formatDuration(toFloat)
 
+    def toScalaDuration: FiniteDuration = FiniteDuration(inner.toNanos, scala.concurrent.duration.NANOSECONDS)
+
     def / (div: tt.Duration): Double = toDouble / div.toDouble
   }
 }
