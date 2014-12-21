@@ -309,8 +309,8 @@ object UtilsBuild extends Build {
 
       libraryDependencies <++= (scalaBinaryVersion) {
         case "2.11" => Seq(
-          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3",
-          "org.scala-lang.modules" %% "scala-xml" % "1.0.3"
+          "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3" % "optional",
+          "org.scala-lang.modules" %% "scala-xml" % "1.0.3" % "optional"
         )
         case _ => Seq.empty
       },
