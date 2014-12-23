@@ -51,12 +51,12 @@ object timedFuture {
   def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => Future[A])(implicit ec: ExecutionContext): Future[A] = {
     val startTime = nanoTime
     val future = f
-    f onComplete { result =>
+    future onComplete { result =>
       val finishTime = nanoTime
       @inline def time = date.formatDuration(1e-9f * (finishTime - startTime))
       @inline def status = if (result.isFailure) "failed" else "completed"
       logger(level)(s"${taskName.capitalize} $status after $time")
     }
-    f
+    future
   }
 }
