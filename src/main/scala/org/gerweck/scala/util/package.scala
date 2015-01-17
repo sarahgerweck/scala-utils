@@ -1,5 +1,7 @@
 package org.gerweck.scala
 
+import scala.annotation.tailrec
+
 /** Miscellaneous utility code for manipulating standard objects.
   *
   * This package is designed to be maximally convenient if you `import org.gerweck.scala.util._`.
@@ -7,6 +9,36 @@ package org.gerweck.scala
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
 package object util {
+  private[this] final val HashBase = 0x53474073
+  private[this] final val HashOffsetStep = 7
+
+  @inline final def rotateHash(v1: Any): Int = {
+    HashBase ^ Integer.rotateRight(v1.hashCode, HashOffsetStep)
+  }
+
+  @inline final def rotateHash(v1: Any, v2: Any): Int = {
+    HashBase ^ Integer.rotateRight(v1.hashCode, HashOffsetStep) ^ Integer.rotateRight(v2.hashCode, 2 * HashOffsetStep)
+  }
+
+  /** Compute a very fast hash functional of all the inputs' hashes.
+    *
+    * There is no guarantee that this value will be stable between releases.
+    * It's suitable for an ephemeral hashCode if all the versions of the code
+    * are on the same versions of GerweckUtil.
+    */
+  def rotateHash(v1: Any, v2: Any, inputs: Any*): Int = {
+    // This uses a bit of group theory. As long as HashOffset is coprime with 32, we won't
+    // repeat our offset until we've added in 32 values, which will take a while.
+    @scala.annotation.tailrec @inline def helper(inputs: Seq[Any], offset: Int, current: Int): Int = {
+      if (inputs.isEmpty) {
+        current
+      } else {
+        val soak = Integer.rotateRight(inputs.head.hashCode, offset)
+        helper(inputs.tail, offset + HashOffsetStep, current ^ soak)
+      }
+    }
+    helper(inputs, HashOffsetStep * 3, rotateHash(v1, v2))
+  }
 
   /** Utility functionality for working with characters.
    *
