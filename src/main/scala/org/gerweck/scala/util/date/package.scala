@@ -69,6 +69,14 @@ package object date {
     }
   }
 
+  implicit def ttDurationAsFiniteDuration(ttDur: tt.Duration): FiniteDuration = {
+    // We don't have to worry about durations too big to fit in a long of
+    // nanos, because `FiniteDuration` simply can't represent them no matter
+    // how you construct it. (It's also roughly 292 years, so not too likely
+    // to come up in practice.)
+    scala.concurrent.duration.Duration.fromNanos(ttDur.toNanos)
+  }
+
   implicit def finiteDurationAsTTDuration(dur: FiniteDuration): tt.Duration = {
     tt.Duration.of(dur.length, dur.unit)
   }
