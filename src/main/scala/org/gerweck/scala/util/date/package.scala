@@ -127,4 +127,8 @@ package object date {
 
     def / (div: tt.Duration): Double = toDouble / div.toDouble
   }
+
+  implicit final class RichDateTimeFormatter(val inner: tt.format.DateTimeFormatter) extends AnyVal {
+    def apply(ta: tt.temporal.TemporalAccessor): String = inner.format(ta)
+  }
 }
