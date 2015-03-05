@@ -205,18 +205,18 @@ object Eclipse {
 }
 
 object Dependencies {
-  final val slf4jVersion       = "1.7.9"
-  final val log4sVersion       = "[1.1.3,)"
+  final val slf4jVersion       = "1.7.10"
+  final val log4sVersion       = "[1.1.4,)"
   final val logbackVersion     = "1.1.2"
-  final val jodaTimeVersion    = "2.6"
+  final val jodaTimeVersion    = "2.7"
   final val jodaConvertVersion = "1.7"
   final val threeTenVersion    = "1.2"
   final val commonsVfsVersion  = "2.0"
   final val commonsIoVersion   = "2.4"
-  final val spireVersion       = "0.8.2"
+  final val spireVersion       = "0.9.1"
   final val twitterUtilVersion = "6.23.0"
-  final val scalaCheckVersion  = "1.12.1"
-  final val scalaTestVersion   = "2.2.3"
+  final val scalaCheckVersion  = "1.12.2"
+  final val scalaTestVersion   = "2.2.4"
 
   val log4s       = "org.log4s"          %% "log4s"           % log4sVersion
   val slf4j       = "org.slf4j"          %  "slf4j-api"       % slf4jVersion
