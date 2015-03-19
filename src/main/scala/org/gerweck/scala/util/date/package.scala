@@ -118,6 +118,9 @@ package object date {
     def + (duration: tt.temporal.TemporalAmount): tt.Instant = inner plus duration
     def + (d: FiniteDuration) = inner plus (d.toMillis, tt.temporal.ChronoUnit.MILLIS)
 
+    def isOlderThan(d: FiniteDuration): Boolean = this < (tt.Instant.now() - d)
+    def isNewerThan(d: FiniteDuration): Boolean = this > (tt.Instant.now() - d)
+
     def toSqlTimestamp = tt.DateTimeUtils.toSqlTimestamp(inner)
   }
 
