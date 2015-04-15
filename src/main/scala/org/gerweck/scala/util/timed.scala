@@ -43,20 +43,44 @@ object timed {
   * on scheduling another job to run ''after'' the original future is complete.
   *
   * Whenever possible, use `timed` instead.
+  *
+  * The `inline` flag tells it to actually give you back a new Future that only completes when the
+  * timer logging has been completed. This is a useful way to ensure that your log statements all
+  * have the correct sequencing, with a small amount of overhead required to process the callback.
   */
 object timedFuture {
   private[this] val logger = getLogger
   import timed._
 
-  def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => Future[A])(implicit ec: ExecutionContext): Future[A] = {
+  def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug, captureMDC: Boolean = true, inline: Boolean = true)(f: => Future[A])(implicit ec: ExecutionContext): Future[A] = {
+    val currentMDC = (if (captureMDC) MDC.toMap else Map.empty).toSeq
     val startTime = nanoTime
     val future = f
-    future onComplete { result =>
+
+    @inline def doLog(success: Boolean) = {
       val finishTime = nanoTime
       @inline def time = date.formatDuration(1e-9f * (finishTime - startTime))
-      @inline def status = if (result.isFailure) "failed" else "completed"
-      logger(level)(s"${taskName.capitalize} $status after $time")
+      @inline def status = if (!success) "failed" else "completed"
+      @inline def doLog() = logger(level)(s"${taskName.capitalize} $status after $time")
+      if (captureMDC) {
+        MDC.withCtx(currentMDC: _*) {
+          doLog()
+        }
+      } else {
+        doLog()
+      }
     }
-    future
+
+    if (inline) {
+      future.transform(
+        { result => doLog(true); result },
+        { error  => doLog(false); error }
+      )
+    } else {
+      future onComplete { result =>
+        doLog(result.isSuccess)
+      }
+      future
+    }
   }
 }
