@@ -60,7 +60,7 @@ object timedFuture {
     @inline def doLog(success: Boolean) = {
       val finishTime = nanoTime
       @inline def time = date.formatDuration(1e-9f * (finishTime - startTime))
-      @inline def status = if (!success) "failed" else "completed"
+      @inline def status = if (success) "completed" else "failed"
       @inline def doLog() = logger(level)(s"${taskName.capitalize} $status after $time")
       if (captureMDC) {
         MDC.withCtx(currentMDC: _*) {
