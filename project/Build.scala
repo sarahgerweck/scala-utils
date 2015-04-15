@@ -214,29 +214,31 @@ object Dependencies {
   final val commonsVfsVersion  = "2.0"
   final val commonsIoVersion   = "2.4"
   final val spireVersion       = "0.9.1"
+  final val groovyVersion      = "2.4.3"
   final val twitterUtilVersion = "6.23.0"
   final val scalaCheckVersion  = "1.12.2"
   final val scalaTestVersion   = "2.2.4"
 
-  val log4s       = "org.log4s"          %% "log4s"           % log4sVersion
-  val slf4j       = "org.slf4j"          %  "slf4j-api"       % slf4jVersion
-  val jclBridge   = "org.slf4j"          %  "jcl-over-slf4j"  % slf4jVersion
-  val logback     = "ch.qos.logback"     %  "logback-classic" % logbackVersion
-  val commonsIo   = "commons-io"         %  "commons-io"      % commonsIoVersion
-  val jodaTime    = "joda-time"          %  "joda-time"       % jodaTimeVersion
-  val jodaConvert = "org.joda"           %  "joda-convert"    % jodaConvertVersion
-  val threeTen    = "org.threeten"       %  "threetenbp"      % threeTenVersion
-  val spire       = "org.spire-math"     %% "spire"           % spireVersion
-  val twitterUtil = "com.twitter"        %% "util-core"       % twitterUtilVersion
+  val log4s       = "org.log4s"           %% "log4s"           % log4sVersion
+  val slf4j       = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
+  val jclBridge   = "org.slf4j"           %  "jcl-over-slf4j"  % slf4jVersion
+  val logback     = "ch.qos.logback"      %  "logback-classic" % logbackVersion
+  val commonsIo   = "commons-io"          %  "commons-io"      % commonsIoVersion
+  val jodaTime    = "joda-time"           %  "joda-time"       % jodaTimeVersion
+  val jodaConvert = "org.joda"            %  "joda-convert"    % jodaConvertVersion
+  val threeTen    = "org.threeten"        %  "threetenbp"      % threeTenVersion
+  val spire       = "org.spire-math"      %% "spire"           % spireVersion
+  val groovy      = "org.codehaus.groovy" %  "groovy-all"      % groovyVersion
+  val twitterUtil = "com.twitter"         %% "util-core"       % twitterUtilVersion
   val commonsVfs  = {
-    val base      = "org.apache.commons" %  "commons-vfs2"    % commonsVfsVersion
+    val base      = "org.apache.commons"  %  "commons-vfs2"    % commonsVfsVersion
     base.exclude("commons-logging", "commons-logging")
         .exclude("org.apache.maven.scm", "maven-scm-provider-svnexe")
         .exclude("org.apache.maven.scm", "maven-scm-api")
   }
 
-  val scalaCheck  = "org.scalacheck"     %% "scalacheck"      % scalaCheckVersion
-  val scalaTest   = "org.scalatest"      %% "scalatest"       % scalaTestVersion
+  val scalaCheck  = "org.scalacheck"      %% "scalacheck"      % scalaCheckVersion
+  val scalaTest   = "org.scalatest"       %% "scalatest"       % scalaTestVersion
 
   /* Use like this: libraryDependencies <++= (scalaBinaryVersion) (scalaParser) */
   def scalaParser(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
@@ -273,6 +275,7 @@ object UtilsBuild extends Build {
     logback % "test",
     scalaCheck % "test",
     scalaTest % "test",
+    groovy % "test",
     commonsIo,
     jodaTime % "optional",
     jodaConvert % "optional",
