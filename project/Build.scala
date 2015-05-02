@@ -205,9 +205,9 @@ object Eclipse {
 }
 
 object Dependencies {
-  final val slf4jVersion       = "1.7.10"
-  final val log4sVersion       = "[1.1.4,)"
-  final val logbackVersion     = "1.1.2"
+  final val slf4jVersion       = "1.7.12"
+  final val log4sVersion       = "1.1.5"
+  final val logbackVersion     = "1.1.3"
   final val jodaTimeVersion    = "2.7"
   final val jodaConvertVersion = "1.7"
   final val threeTenVersion    = "1.2"
@@ -215,9 +215,11 @@ object Dependencies {
   final val commonsIoVersion   = "2.4"
   final val spireVersion       = "0.9.1"
   final val groovyVersion      = "2.4.3"
-  final val twitterUtilVersion = "6.23.0"
+  final val twitterUtilVersion = "6.24.0"
   final val scalaCheckVersion  = "1.12.2"
   final val scalaTestVersion   = "2.2.4"
+  final val scalaParserVersion = "1.0.4"
+  final val scalaXmlVersion    = "1.0.4"
 
   val log4s       = "org.log4s"           %% "log4s"           % log4sVersion
   val slf4j       = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
@@ -242,12 +244,12 @@ object Dependencies {
 
   /* Use like this: libraryDependencies <++= (scalaBinaryVersion) (scalaParser) */
   def scalaParser(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
-    case "2.11" => Seq("org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.3" % "optional")
+    case "2.11" => Seq("org.scala-lang.modules" %% "scala-parser-combinators" % scalaParserVersion % "optional")
     case _      => Seq.empty
   }
 
   def scalaXml(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
-    case "2.11" => Seq("org.scala-lang.modules" %% "scala-xml" % "1.0.3" % "optional")
+    case "2.11" => Seq("org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion % "optional")
     case _      => Seq.empty
   }
 
