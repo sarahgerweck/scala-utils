@@ -268,8 +268,6 @@ object UtilsBuild extends Build {
   import PublishSettings._
   import Helpers._
 
-  lazy val allResolvers = Seq ()
-
   lazy val utilsDeps = Seq (
     slf4j,
     jclBridge,
@@ -295,6 +293,7 @@ object UtilsBuild extends Build {
       name := "Gerweck Util Macros",
       libraryDependencies += log4s,
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
+      resolvers += Resolver.sonatypeRepo("releases"),
 
       scalaSource in Compile := {
         scalaBinaryVersion.value match {
@@ -325,7 +324,7 @@ object UtilsBuild extends Build {
       libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
       libraryDependencies <++= (scalaBinaryVersion) (scalaXml),
 
-      resolvers ++= allResolvers,
+      resolvers += Resolver.sonatypeRepo("releases"),
 
       // include the macro classes and resources in the main jar
       mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
