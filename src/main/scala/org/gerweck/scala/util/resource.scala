@@ -16,13 +16,11 @@ object resource {
 
   final def usingAsync[A <: AutoCloseable, B](ac: A)(body: A => Future[B])(implicit ec: ExecutionContext): Future[B] = {
     val resultFuture = body(ac)
-    resultFuture onComplete { _ => ac.close() }
-    resultFuture
+    resultFuture map { r => ac.close(); r }
   }
 
   final def usingAsyncDynamic[A <: { def close(): Unit }, B](rsrc: A)(body: A => Future[B])(implicit ec: ExecutionContext): Future[B] = {
     val resultFuture = body(rsrc)
-    resultFuture onComplete { _ => rsrc.close() }
-    resultFuture
+    resultFuture map { r => rsrc.close(); r }
   }
 }
