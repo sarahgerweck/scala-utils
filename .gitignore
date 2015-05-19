@@ -2,6 +2,9 @@ target
 .classpath
 .project
 .cache
+.cache-main
+.cache-tests
 .settings
 *.swp
 /project/project
+/bin/
