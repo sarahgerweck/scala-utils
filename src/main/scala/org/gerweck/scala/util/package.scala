@@ -40,6 +40,10 @@ package object util {
     helper(inputs, HashOffsetStep * 3, rotateHash(v1, v2))
   }
 
+  @inline final def hashProduct(p: Product) = {
+    scala.util.hashing.MurmurHash3.seqHash(p.productPrefix +: p.productIterator.toSeq)
+  }
+
   /** Utility functionality for working with characters.
    *
    * @author Sarah Gerweck <sarah.a180@gmail.com>
