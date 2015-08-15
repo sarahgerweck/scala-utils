@@ -2,7 +2,7 @@ import sbt._
 import Keys._
 
 import com.typesafe.sbt.SbtSite.site
-import sbtrelease.ReleasePlugin._
+import sbtrelease.ReleasePlugin.autoImport._
 
 import scala.util.Properties.envOrNone
 import com.typesafe.sbteclipse.plugin.EclipsePlugin._
@@ -12,7 +12,7 @@ import Helpers._
 sealed trait Basics {
   final val buildOrganization  = "org.gerweck.scala"
 
-  final val buildScalaVersion  = "2.11.6"
+  final val buildScalaVersion  = "2.11.7"
   final val extraScalaVersions = Seq("2.10.5")
   final val buildJavaVersion   = "1.6"
   lazy  val defaultOptimize    = true
@@ -162,34 +162,12 @@ object PublishSettings {
 }
 
 object Release {
-  import sbtrelease._
-  import ReleaseStateTransformations._
-  import ReleasePlugin._
-  import ReleaseKeys._
-  import Utilities._
-  import com.typesafe.sbt.SbtPgp.PgpKeys._
+  import com.typesafe.sbt.SbtPgp.autoImport._
 
-  val settings = releaseSettings ++ Seq (
-    ReleaseKeys.crossBuild := true,
-    ReleaseKeys.releaseProcess := Seq[ReleaseStep](
-      checkSnapshotDependencies,
-      inquireVersions,
-      runTest,
-      setReleaseVersion,
-      commitReleaseVersion,
-      tagRelease,
-      publishArtifacts.copy(action = publishSignedAction),
-      setNextVersion,
-      commitNextVersion,
-      pushChanges
-    )
+  val settings = Seq (
+    releaseCrossBuild             := true,
+    releasePublishArtifactsAction := PgpKeys.publishSigned.value
   )
-
-  lazy val publishSignedAction = { st: State =>
-    val extracted = st.extract
-    val ref = extracted.get(thisProjectRef)
-    extracted.runAggregated(publishSigned in Global in ref, st)
-  }
 }
 
 object Eclipse {
@@ -208,18 +186,18 @@ object Dependencies {
   final val slf4jVersion       = "1.7.12"
   final val log4sVersion       = "1.1.5"
   final val logbackVersion     = "1.1.3"
-  final val jodaTimeVersion    = "2.7"
+  final val jodaTimeVersion    = "2.8.2"
   final val jodaConvertVersion = "1.7"
-  final val threeTenVersion    = "1.2"
+  final val threeTenVersion    = "1.3"
   final val commonsVfsVersion  = "2.0"
   final val commonsIoVersion   = "2.4"
-  final val spireVersion       = "0.9.1"
-  final val groovyVersion      = "2.4.3"
-  final val twitterUtilVersion = "6.24.0"
+  final val spireVersion       = "0.10.1"
+  final val groovyVersion      = "2.4.4"
+  final val twitterUtilVersion = "6.26.0"
   final val scalaCheckVersion  = "1.12.2"
   final val scalaTestVersion   = "2.2.4"
   final val scalaParserVersion = "1.0.4"
-  final val scalaXmlVersion    = "1.0.4"
+  final val scalaXmlVersion    = "1.0.5"
 
   val log4s       = "org.log4s"           %% "log4s"           % log4sVersion
   val slf4j       = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
@@ -305,7 +283,7 @@ object UtilsBuild extends Build {
       publish := {},
       publishLocal := {},
       exportJars := false,
-      ReleaseKeys.releaseProcess := Seq.empty
+      releaseProcess := Seq.empty
     )
 
   lazy val root = (project in file ("."))
