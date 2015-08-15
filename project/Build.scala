@@ -195,7 +195,7 @@ object Dependencies {
   final val groovyVersion      = "2.4.4"
   final val twitterUtilVersion = "6.26.0"
   final val scalaCheckVersion  = "1.12.2"
-  final val scalaTestVersion   = "2.2.4"
+  final val scalaTestVersion   = "2.2.5"
   final val scalaParserVersion = "1.0.4"
   final val scalaXmlVersion    = "1.0.5"
 
