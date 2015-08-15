@@ -3,7 +3,7 @@ package org.gerweck.scala.util
 import org.scalatest._
 import org.scalatest.prop.PropertyChecks
 
-/**
+/** Tests for [[org.gerweck.sala.util.BeanWrapper]].
   *
   * @author Sarah Gerweck <sarah@atscale.com>
   */
