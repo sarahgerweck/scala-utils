@@ -42,7 +42,12 @@ private object SupportMacros {
   }
 
   @inline private def getCallerName(c: Context): String = {
-    val caller = c.enclosingMethod
-    caller.symbol.name.decodedName.toString
+    val own = c.internal.enclosingOwner
+    own match {
+      case s if s.isMethod =>
+        s.asMethod.name.decodedName.toString
+      case _ =>
+        c.abort(c.enclosingPosition, "org.gerweck.scala.util.Support.support may only be used directly inside a named method")
+    }
   }
 }

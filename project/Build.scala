@@ -174,8 +174,8 @@ object Eclipse {
   import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 
   val settings = Seq (
-    EclipseKeys.createSrc            := EclipseCreateSrc.Default + EclipseCreateSrc.Resource,
-    EclipseKeys.projectFlavor        := EclipseProjectFlavor.Scala,
+    EclipseKeys.createSrc            := EclipseCreateSrc.Default,
+    EclipseKeys.projectFlavor        := EclipseProjectFlavor.ScalaIDE,
     EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE17),
     EclipseKeys.withSource           := true,
     EclipseKeys.skipParents          := false
@@ -303,6 +303,13 @@ object UtilsBuild extends Build {
       libraryDependencies <++= (scalaBinaryVersion) (scalaXml),
 
       resolvers += Resolver.sonatypeRepo("releases"),
+
+      unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, baseDirectory) { (ver, dir) =>
+        ver match {
+          case "2.10" => dir / "src" / "main" / "scala-2.10"
+          case _      => dir / "src" / "main" / "scala-2.11"
+        }
+      },
 
       // include the macro classes and resources in the main jar
       mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
