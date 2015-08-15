@@ -279,7 +279,7 @@ object UtilsBuild extends Build {
     commonsIo,
     jodaTime % "optional",
     jodaConvert % "optional",
-    threeTen % "optional",
+    threeTen,
     twitterUtil % "optional",
     commonsVfs,
     spire % "provided,optional"
