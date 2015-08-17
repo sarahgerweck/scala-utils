@@ -14,7 +14,7 @@ sealed trait Basics {
 
   final val buildScalaVersion  = "2.11.7"
   final val extraScalaVersions = Seq("2.10.5")
-  final val buildJavaVersion   = "1.6"
+  final val minimumJavaVersion = "1.6"
   lazy  val defaultOptimize    = true
 
   lazy  val parallelBuild      = false
@@ -28,6 +28,18 @@ sealed trait Basics {
     startYear   := Some(2012),
     scmInfo     := Some(ScmInfo(url("https://github.com/sarahgerweck/scala-utils"), "scm:git:git@github.com:sarahgerweck/scala-utils.git"))
   )
+
+  lazy val developerInfo = {
+    <developers>
+      <developer>
+        <id>sarah</id>
+        <name>Sarah Gerweck</name>
+        <email>sarah.a180@gmail.com</email>
+        <url>https://github.com/sarahgerweck</url>
+        <timezone>America/Los_Angeles</timezone>
+      </developer>
+    </developers>
+  }
 }
 
 object BuildSettings extends Basics {
@@ -38,28 +50,56 @@ object BuildSettings extends Basics {
   lazy val debug        = boolFlag("DEBUGGER") getOrElse false
   lazy val debugPort    = envOrNone("DEBUGGER_PORT") map { _.toInt } getOrElse 5050
   lazy val debugSuspend = boolFlag("DEBUGGER_SUSPEND") getOrElse true
+  lazy val unusedWarn   = boolFlag("UNUSED_WARNINGS") getOrElse false
+  lazy val importWarn   = boolFlag("IMPORT_WARNINGS") getOrElse false
 
-  /* Scala build setup */
-  lazy val buildScalaVersions = buildScalaVersion +: extraScalaVersions
-  val buildScalacOptions = Seq (
+  val buildScalaVersions = buildScalaVersion +: extraScalaVersions
+
+  private[this] val sharedScalacOptions = Seq (
     "-unchecked",
-    "-feature",
-    "-target:jvm-" + buildJavaVersion
+    "-feature"
   ) ++ (
     if (deprecation) Seq("-deprecation") else Seq.empty
   ) ++ (
-    if (optimize) Seq("-optimize") else Seq.empty
-  ) ++ (
     if (inlineWarn) Seq("-Yinline-warnings") else Seq.empty
-  )
-
-  /* Java build setup */
-  val buildJavacOptions = Seq(
-    "-target", buildJavaVersion,
-    "-source", buildJavaVersion
   ) ++ (
-    if (deprecation) Seq("-Xlint:deprecation") else Seq.empty
+    if (unusedWarn) Seq("-Ywarn-unused") else Seq.empty
+  ) ++ (
+    if (importWarn) Seq("-Ywarn-unused-import") else Seq.empty
   )
+  def addScalacOptions() = Def.derive {
+    scalacOptions ++= sharedScalacOptions ++ {
+      SVer(scalaBinaryVersion.value) match {
+        case j8 if j8.requireJava8 =>
+          Seq.empty
+        case nonJ8 =>
+          Seq (
+            "-target:jvm-" + minimumJavaVersion
+          ) ++ (
+            if (optimize) Seq("-optimize") else Seq.empty
+          )
+      }
+    }
+  }
+
+  private[this] val sharedJavacOptions = Seq.empty
+  def addJavacOptions() = Def.derive {
+    javacOptions ++= sharedJavacOptions ++ {
+      SVer(scalaBinaryVersion.value) match {
+        case j8 if j8.requireJava8 =>
+          Seq (
+            "-target", "1.8",
+            "-source", "1.8"
+          )
+        case nonJ8 =>
+          Seq (
+            "-target", minimumJavaVersion,
+            "-source", minimumJavaVersion
+          )
+      }
+    }
+  }
+
 
   /* Site setup */
   lazy val siteSettings = site.settings ++ site.includeScaladoc()
@@ -72,8 +112,8 @@ object BuildSettings extends Basics {
     scalaVersion       :=  buildScalaVersion,
     crossScalaVersions :=  buildScalaVersions,
 
-    scalacOptions      ++= buildScalacOptions,
-    javacOptions       ++= buildJavacOptions,
+    addScalacOptions(),
+    addJavacOptions(),
     autoAPIMappings    :=  true,
 
     updateOptions      :=  updateOptions.value.withCachedResolution(cachedResolution),
@@ -103,6 +143,36 @@ object Helpers {
     }
     val transformer = new transform.RuleTransformer(rewriteRule)
     transformer.transform(node)(0)
+  }
+
+  sealed trait SVer {
+    def requireJava8: Boolean
+  }
+  object SVer {
+    def apply(scalaVersion: String): SVer = {
+      scalaVersion match {
+        case "2.10"      => SVer2_10
+        case "2.11"      => SVer2_11
+        case "2.12.0-M1" => SVer2_12M1
+        case "2.12.0-M2" => SVer2_12M2
+        case "2.12"      => SVer2_12
+      }
+    }
+  }
+  case object SVer2_10 extends SVer {
+    def requireJava8 = false
+  }
+  case object SVer2_11 extends SVer {
+    def requireJava8 = false
+  }
+  case object SVer2_12M1 extends SVer {
+    def requireJava8 = true
+  }
+  case object SVer2_12M2 extends SVer {
+    def requireJava8 = true
+  }
+  case object SVer2_12 extends SVer {
+    def requireJava8 = true
   }
 }
 
@@ -140,17 +210,7 @@ object PublishSettings {
         Some(sonaStage)
     },
 
-    pomExtra             := (
-      <developers>
-        <developer>
-          <id>sarah</id>
-          <name>Sarah Gerweck</name>
-          <email>sarah.a180@gmail.com</email>
-          <url>https://github.com/sarahgerweck</url>
-          <timezone>America/Los_Angeles</timezone>
-        </developer>
-      </developers>
-    )
+    pomExtra             := developerInfo
   )
 
   val falsePublishSettings = publishSettings ++ Seq (
@@ -184,7 +244,7 @@ object Eclipse {
 
 object Dependencies {
   final val slf4jVersion       = "1.7.12"
-  final val log4sVersion       = "1.1.5"
+  final val log4sVersion       = "1.2.0"
   final val logbackVersion     = "1.1.3"
   final val jodaTimeVersion    = "2.8.2"
   final val jodaConvertVersion = "1.7"
