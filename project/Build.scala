@@ -52,6 +52,7 @@ object BuildSettings extends Basics {
   lazy val debugSuspend = boolFlag("DEBUGGER_SUSPEND") getOrElse true
   lazy val unusedWarn   = boolFlag("UNUSED_WARNINGS") getOrElse false
   lazy val importWarn   = boolFlag("IMPORT_WARNINGS") getOrElse false
+  lazy val java8Flag    = boolFlag("BUILD_JAVA_8") getOrElse false
 
   val buildScalaVersions = buildScalaVersion +: extraScalaVersions
 
@@ -67,39 +68,31 @@ object BuildSettings extends Basics {
   ) ++ (
     if (importWarn) Seq("-Ywarn-unused-import") else Seq.empty
   )
-  def addScalacOptions() = Def.derive {
-    scalacOptions ++= sharedScalacOptions ++ {
-      SVer(scalaBinaryVersion.value) match {
-        case j8 if j8.requireJava8 =>
-          Seq.empty
-        case nonJ8 =>
-          Seq (
-            "-target:jvm-" + minimumJavaVersion
-          ) ++ (
-            if (optimize) Seq("-optimize") else Seq.empty
-          )
-      }
+
+  def scalacOpts(sver: SVer, java8: Boolean) = sharedScalacOptions ++ {
+    def opt = if (optimize) Seq("-optimize") else Seq.empty
+    sver match {
+      case j8 if j8.requireJava8 => Seq.empty
+      case SVer2_10              => Seq("-target:jvm-1.6") ++ opt
+      case _                     =>
+        opt ++ Seq("-target:jvm-" + (if (java8) "1.8" else minimumJavaVersion))
     }
   }
 
   private[this] val sharedJavacOptions = Seq.empty
-  def addJavacOptions() = Def.derive {
-    javacOptions ++= sharedJavacOptions ++ {
-      SVer(scalaBinaryVersion.value) match {
-        case j8 if j8.requireJava8 =>
-          Seq (
-            "-target", "1.8",
-            "-source", "1.8"
-          )
-        case nonJ8 =>
-          Seq (
-            "-target", minimumJavaVersion,
-            "-source", minimumJavaVersion
-          )
-      }
+  def javacOpts(java8: Boolean) = sharedJavacOptions ++ {
+    if (java8) {
+      Seq (
+        "-target", "1.8",
+        "-source", "1.8"
+      )
+    } else {
+      Seq (
+        "-target", minimumJavaVersion,
+        "-source", minimumJavaVersion
+      )
     }
   }
-
 
   /* Site setup */
   lazy val siteSettings = site.settings ++ site.includeScaladoc()
@@ -112,8 +105,6 @@ object BuildSettings extends Basics {
     scalaVersion       :=  buildScalaVersion,
     crossScalaVersions :=  buildScalaVersions,
 
-    addScalacOptions(),
-    addJavacOptions(),
     autoAPIMappings    :=  true,
 
     updateOptions      :=  updateOptions.value.withCachedResolution(cachedResolution),
@@ -236,7 +227,7 @@ object Eclipse {
   val settings = Seq (
     EclipseKeys.createSrc            := EclipseCreateSrc.Default,
     EclipseKeys.projectFlavor        := EclipseProjectFlavor.ScalaIDE,
-    EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE17),
+    EclipseKeys.executionEnvironment := Some(EclipseExecutionEnvironment.JavaSE18),
     EclipseKeys.withSource           := true,
     EclipseKeys.skipParents          := false
   )
@@ -317,7 +308,7 @@ object UtilsBuild extends Build {
     commonsIo,
     jodaTime % "optional",
     jodaConvert % "optional",
-    threeTen,
+    /* ThreeTen is optional in some versions and not others, so see below */
     twitterUtil % "optional",
     commonsVfs,
     spire % "provided,optional"
@@ -347,16 +338,27 @@ object UtilsBuild extends Build {
     )
 
   lazy val root = (project in file ("."))
-    .dependsOn(macros)
-    .aggregate(macros)
+    .dependsOn(macros % "optional")
+    .aggregate(macros, java8)
     .settings(buildSettings: _*)
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
     .settings(publishSettings: _*)
     .settings(Release.settings: _*)
     .settings(
-      name := "Gerweck Utils",
+      name := {
+        SVer(scalaBinaryVersion.value) match {
+          case j8 if j8.requireJava8 => "Gerweck Utils"
+          case _ if java8Flag        => "Gerweck Utils Java8"
+          case _                     => "Gerweck Utils"
+        }
+      },
+
+      scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), false),
+      javacOptions ++= javacOpts(SVer(scalaBinaryVersion.value).requireJava8),
+
       libraryDependencies ++= utilsDeps,
+      libraryDependencies += threeTen,
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
 
       libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
@@ -370,6 +372,58 @@ object UtilsBuild extends Build {
           case _      => dir / "src" / "main" / "scala-2.11"
         }
       },
+
+      unmanagedSourceDirectories in Compile <++= (baseDirectory, scalaBinaryVersion) { (dir, sver) =>
+        SVer(sver) match {
+          case j8 if j8.requireJava8 => Seq(dir / "src" / "main" / "scala-java8")
+          case _ if java8Flag        => Seq(dir / "src" / "main" / "scala-java8")
+          case _                     => Seq(dir / "src" / "main" / "scala-java6")
+        }
+      },
+
+      // include the macro classes and resources in the main jar
+      mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
+
+      // include the macro sources in the main source jar
+      mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
+
+      // Do not include macros as a dependency.
+      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-util-macro") }
+    )
+
+  lazy val java8 = (project in file ("java8"))
+    .dependsOn(macros % "optional")
+    .aggregate(macros)
+    .settings(buildSettings: _*)
+    .settings(Eclipse.settings: _*)
+    .settings(EclipseKeys.skipParents in ThisBuild := false)
+    .settings(publishSettings: _*)
+    .settings(Release.settings: _*)
+    .settings(
+      name := "Gerweck Utils (Java 8)",
+      normalizedName := "gerweck-utils-java8",
+
+      scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true),
+      javacOptions ++= javacOpts(true),
+
+      libraryDependencies ++= utilsDeps,
+      libraryDependencies += threeTen % "optional",
+      libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
+
+      libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
+      libraryDependencies <++= (scalaBinaryVersion) (scalaXml),
+
+      resolvers += Resolver.sonatypeRepo("releases"),
+
+      unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, baseDirectory) { (ver, dir) =>
+        ver match {
+          case "2.10" => dir / ".." / "src" / "main" / "scala-2.10"
+          case _      => dir / ".." / "src" / "main" / "scala-2.11"
+        }
+      },
+      scalaSource in Compile := baseDirectory.value / ".." / "src" / "main" / "scala",
+      scalaSource in Test := baseDirectory.value / ".." / "src" / "test" / "scala",
+      unmanagedSourceDirectories in Compile += baseDirectory.value / ".." / "src" / "main" / "scala-java8",
 
       // include the macro classes and resources in the main jar
       mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,

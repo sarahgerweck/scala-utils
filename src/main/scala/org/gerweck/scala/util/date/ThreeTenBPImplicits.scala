@@ -1,4 +1,4 @@
-package org.gerweck.scala.util
+package org.gerweck.scala.util.date
 
 import language.implicitConversions
 
@@ -6,55 +6,13 @@ import org.threeten.{ bp => tt }
 
 import scala.concurrent.duration.FiniteDuration
 
-package object date {
-  /** Take an amount of time and format it as a user-friendly string.
-    *
-    * The output string is more human readable than machine friendly: it uses
-    * SI prefixes and always has roughly three digits of precision. This makes
-    * it easier to see at a glance whether you're talking about milliseconds,
-    * seconds, nanoseconds, etc.
-    *
-    * @param seconds The amount of elapsed time, in seconds. This may not be
-    * negative.
-    */
-  def formatDuration(seconds: Float): String = {
-    require(seconds >= 0f, "Cannot format a negative duration")
+import org.gerweck.scala.util._
 
-    @inline def isMilliPrecision(): Boolean = {
-      // This will give a false positive 0.01% of the time, which is good
-      // enough for our purposes. These values are meant to be human readable.
-      // If they're getting used systematically, they should go in a database
-      // or some kind of structured export.
-      (1e+7f * seconds).round % 10000 == 0
-    }
-    @inline def formatMillis(): String = {
-      // Sometimes we'll have nanosecond precision, and other time millisecond
-      // precision. We don't want to say things like 4.00 ms when we don't
-      // know to that level of detail. (It's misleading & looks weird.)
-      if (isMilliPrecision && seconds < 1f) {
-        (1e+3f * seconds).round + " ms"
-      } else {
-        f"${1e+3f * seconds}%.3g ms"
-      }
-    }
-
-    if      (seconds == 0f)         "0 s"
-    else if (seconds <  0.9995e-6f) "< 1 μs"
-    else if (seconds <  0.9995e-3f) f"${1e+6f * seconds}%.3g μs"
-    else if (seconds <  0.9995e+0f) formatMillis()
-    else if (seconds <  0.9995e+3f) f"${        seconds}%.3g s"
-    else if (seconds <  0.9995e+6f) f"${1e-3f * seconds}%.3g ks"
-    else                            f"${        seconds}%.4g s"
-  }
-
-  @inline def formatDuration(seconds: Double): String = formatDuration(seconds.toFloat)
-
-  @inline def formatDuration(duration: tt.Duration): String = formatDuration(duration.toNanos * 1e-9f)
-
-
-  /* ====================================================================== */
-  /*                   ThreeTen Backport enhanced objects                   */
-  /* ====================================================================== */
+/** Implicit conversions for JSR-310 Backport objects.
+  *
+  * @author Sarah Gerweck <sarah@atscale.com>
+  */
+trait ThreeTenBPImplicits {
   implicit def timeUnitAsTTChronoUnit(unit: java.util.concurrent.TimeUnit): tt.temporal.ChronoUnit = {
     import java.util.concurrent.{ TimeUnit => TU }
     import tt.temporal.{ ChronoUnit => CU }
@@ -81,7 +39,21 @@ package object date {
     tt.Duration.of(dur.length, dur.unit)
   }
 
-  implicit final class RichTTDate(val inner: tt.LocalDate) extends AnyVal with UniversalOrdering[tt.LocalDate] {
+  import ThreeTenBPWrappers._
+  @inline implicit final def enrichTTDate(i: tt.LocalDate): RichTTDate = new RichTTDate(i)
+  @inline implicit final def enrichTTDateTime(i: tt.LocalDateTime): RichTTDateTime = new RichTTDateTime(i)
+  @inline implicit final def enrichTTInstant(i: tt.Instant): RichTTInstant = new RichTTInstant(i)
+  @inline implicit final def enrichTTTemporalAmount(i: tt.temporal.TemporalAmount): RichTTTemporalAmount = new RichTTTemporalAmount(i)
+  @inline implicit final def enrichTTDuration(i: tt.Duration): RichTTDuration = new RichTTDuration(i)
+  @inline implicit final def enrichDateTimeFormatter(i: tt.format.DateTimeFormatter): RichDateTimeFormatter = new RichDateTimeFormatter(i)
+}
+
+object ThreeTenBPWrappers extends ThreeTenBPImplicits {
+  /* ====================================================================== */
+  /*                   ThreeTen Backport enhanced objects                   */
+  /* ====================================================================== */
+
+  final class RichTTDate(val inner: tt.LocalDate) extends AnyVal with UniversalOrdering[tt.LocalDate] {
     def + (add: tt.Duration) = {
       // I think it's a bug in ThreeTen, but plus with a duration doesn't work for dates as of Dec 2014.
       import scala.collection.JavaConversions._
@@ -98,7 +70,7 @@ package object date {
     def - (sub: tt.LocalDate): tt.Period = sub until inner
   }
 
-  implicit final class RichTTDateTime(val inner: tt.LocalDateTime) extends AnyVal with UniversalOrdering[tt.LocalDateTime] {
+  final class RichTTDateTime(val inner: tt.LocalDateTime) extends AnyVal with UniversalOrdering[tt.LocalDateTime] {
     def getQuarter = inner.get(tt.temporal.IsoFields.QUARTER_OF_YEAR)
 
     def + (p: tt.temporal.TemporalAmount) = inner plus p
@@ -110,7 +82,7 @@ package object date {
     def toSqlTimestamp = tt.DateTimeUtils.toSqlTimestamp(inner)
   }
 
-  implicit final class RichTTInstant(val inner: tt.Instant) extends AnyVal with UniversalOrdering[tt.Instant] {
+  final class RichTTInstant(val inner: tt.Instant) extends AnyVal with UniversalOrdering[tt.Instant] {
     def - (other: tt.Instant): tt.Duration = tt.Duration.between(other, inner)
     def - (duration: tt.temporal.TemporalAmount): tt.Instant = inner minus duration
     def - (d: FiniteDuration) = inner minus (d.toMillis, tt.temporal.ChronoUnit.MILLIS)
@@ -124,12 +96,12 @@ package object date {
     def toSqlTimestamp = tt.DateTimeUtils.toSqlTimestamp(inner)
   }
 
-  implicit final class RichTTTemporalAmount(val inner: tt.temporal.TemporalAmount) extends AnyVal {
+  final class RichTTTemporalAmount(val inner: tt.temporal.TemporalAmount) extends AnyVal {
     @inline def + (instant: tt.Instant): tt.Instant = instant + inner
     @inline def + (ldt: tt.LocalDateTime): tt.LocalDateTime = ldt + inner
   }
 
-  implicit final class RichTTDuration(val inner: tt.Duration) extends AnyVal with UniversalOrdering[tt.Duration] {
+  final class RichTTDuration(val inner: tt.Duration) extends AnyVal with UniversalOrdering[tt.Duration] {
     def toDouble: Double = inner.getNano * 1e-9 + inner.getSeconds
     def toFloat: Float = inner.getNano * 1e-9f + inner.getSeconds
     def toHuman: String = formatDuration(toFloat)
@@ -139,7 +111,7 @@ package object date {
     def / (div: tt.Duration): Double = toDouble / div.toDouble
   }
 
-  implicit final class RichDateTimeFormatter(val inner: tt.format.DateTimeFormatter) extends AnyVal {
+  final class RichDateTimeFormatter(val inner: tt.format.DateTimeFormatter) extends AnyVal {
     def apply(ta: tt.temporal.TemporalAccessor): String = inner.format(ta)
   }
 }
