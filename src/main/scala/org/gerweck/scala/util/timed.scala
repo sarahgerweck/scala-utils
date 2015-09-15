@@ -21,7 +21,7 @@ object timed {
       throw e
     } finally {
       val finishTime = nanoTime
-      @inline def time = date.formatDuration(1e-9f * (finishTime - startTime))
+      @inline def time = date.formatDuration(1e-9d * (finishTime - startTime))
       @inline def status = if (failed) "failed" else "completed"
       logger(level)(s"${taskName.capitalize} $status after $time")
     }
@@ -29,11 +29,11 @@ object timed {
 
   @inline def formatNanos(start: Long, finish: Long): String = formatNanos(finish - start)
 
-  @inline def formatNanos(total: Long): String = date.formatDuration(1e-9f * total)
+  @inline def formatNanos(total: Long): String = date.formatDuration(1e-9d * total)
 
   @inline def formatSince(startTime: Long): String = {
     val finishTime = nanoTime
-    date.formatDuration(1e-9f * (finishTime - startTime))
+    date.formatDuration(1e-9d * (finishTime - startTime))
   }
 }
 
@@ -59,7 +59,7 @@ object timedFuture {
 
     @inline def doLog(success: Boolean) = {
       val finishTime = nanoTime
-      @inline def time = date.formatDuration(1e-9f * (finishTime - startTime))
+      @inline def time = date.formatDuration(1e-9d * (finishTime - startTime))
       @inline def status = if (success) "completed" else "failed"
       @inline def doLog() = logger(level)(s"${taskName.capitalize} $status after $time")
       if (captureMDC) {

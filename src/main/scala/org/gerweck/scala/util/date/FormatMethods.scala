@@ -21,11 +21,11 @@ trait FormatMethods {
     require(seconds >= 0d, "Cannot format a negative duration")
 
     @inline def isMilliPrecision(): Boolean = {
-      // This will give a false positive 0.01% of the time, which is good
+      // This will give a false positive 0.00001% of the time, which is good
       // enough for our purposes. These values are meant to be human readable.
       // If they're getting used systematically, they should go in a database
       // or some kind of structured export.
-      (1e+7d * seconds).round % 10000 == 0
+      (1e+10d * seconds).round % 10000000 == 0
     }
     @inline def formatMillis(): String = {
       // Sometimes we'll have nanosecond precision, and other time millisecond
