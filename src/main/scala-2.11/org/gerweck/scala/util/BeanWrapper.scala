@@ -1,5 +1,6 @@
 package org.gerweck.scala.util
 
+import scala.collection.mutable
 import scala.reflect.runtime.{universe => ru}
 
 import org.log4s._
@@ -14,8 +15,9 @@ import org.log4s._
 class BeanWrapper(val inner: Any) {
   import BeanWrapper._
 
-  lazy val mirror = ru.runtimeMirror(inner.getClass.getClassLoader)
-  lazy val tpe = mirror.classSymbol(inner.getClass).toType
+  private[this] lazy val mirror = ru.runtimeMirror(inner.getClass.getClassLoader)
+  private[this] lazy val tpe = mirror.classSymbol(inner.getClass).toType
+  private[this] lazy val methods: mutable.Map[String, ru.MethodMirror] = mutable.WeakHashMap.empty
 
   def update(property: String, value: Any) = {
     val name = "set" + property.capitalize
@@ -31,7 +33,9 @@ class BeanWrapper(val inner: Any) {
     getMethod(name)()
   }
 
-  private[this] def getMethod(name: String) = {
+  private[this] def getMethod(name: String) = methods.getOrElseUpdate(name, constructMirror(name))
+
+  private[this] def constructMirror(name: String) = {
     val termName = ru.TermName(name)
     val decl =
       try {
