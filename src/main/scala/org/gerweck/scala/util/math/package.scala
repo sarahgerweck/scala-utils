@@ -62,14 +62,14 @@ package object math {
     res
   }
 
-  implicit final class RichBigDecimal(val inner: BigDecimal) extends AnyVal {
+  implicit final class RichBigDecimal(val inner: BigDecimal) {
     @inline def beq(that: BigDecimal): Boolean = inner.compareTo(that) == 0
     @inline def bne(that: BigDecimal): Boolean = inner.compareTo(that) != 0
     @inline def beq(that: BigInteger): Boolean = beq(new BigDecimal(that))
     @inline def bne(that: BigInteger): Boolean = bne(new BigDecimal(that))
   }
 
-  implicit class RichBigInteger(val inner: BigInteger) extends AnyVal {
+  implicit class RichBigInteger(val inner: BigInteger) {
     @inline def beq(that: BigDecimal): Boolean = new BigDecimal(inner).compareTo(that) == 0
     @inline def bne(that: BigDecimal): Boolean = new BigDecimal(inner).compareTo(that) != 0
     @inline def beq(that: BigInteger): Boolean = inner == that
