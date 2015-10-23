@@ -63,16 +63,16 @@ package object math {
   }
 
   implicit final class RichBigDecimal(val inner: BigDecimal) extends AnyVal {
-    @inline def eq(that: BigDecimal): Boolean = inner.compareTo(that) == 0
-    @inline def ne(that: BigDecimal): Boolean = inner.compareTo(that) != 0
-    @inline def eq(that: BigInteger): Boolean = eq(new BigDecimal(that))
-    @inline def ne(that: BigInteger): Boolean = ne(new BigDecimal(that))
+    @inline def beq(that: BigDecimal): Boolean = inner.compareTo(that) == 0
+    @inline def bne(that: BigDecimal): Boolean = inner.compareTo(that) != 0
+    @inline def beq(that: BigInteger): Boolean = beq(new BigDecimal(that))
+    @inline def bne(that: BigInteger): Boolean = bne(new BigDecimal(that))
   }
 
   implicit class RichBigInteger(val inner: BigInteger) extends AnyVal {
-    @inline def eq(that: BigDecimal): Boolean = new BigDecimal(inner).compareTo(that) == 0
-    @inline def ne(that: BigDecimal): Boolean = new BigDecimal(inner).compareTo(that) != 0
-    @inline def eq(that: BigInteger): Boolean = inner == that
-    @inline def ne(that: BigInteger): Boolean = inner != that
+    @inline def beq(that: BigDecimal): Boolean = new BigDecimal(inner).compareTo(that) == 0
+    @inline def bne(that: BigDecimal): Boolean = new BigDecimal(inner).compareTo(that) != 0
+    @inline def beq(that: BigInteger): Boolean = inner == that
+    @inline def bne(that: BigInteger): Boolean = inner != that
   }
 }
