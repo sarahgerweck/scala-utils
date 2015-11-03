@@ -1,8 +1,8 @@
 # Sarah’s Scala Utilities #
 
-This project simply contains a bunch of miscellaneous Scala utility code.  It
-contains components that are relatively independent and that are likely to be
-reused without modification across a wide variety of projects.
+This project contains miscellaneous Scala utility code, mostly for my own 
+projects.  It contains components that are relatively independent and that are
+likely to be reused without modification across a wide variety of projects.
 
 Some code may be included that is only useful in specialized situations if has
 minimal dependencies, is likely to be well contained, and has the generality
