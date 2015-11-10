@@ -146,6 +146,7 @@ object Helpers {
         case "2.11"      => SVer2_11
         case "2.12.0-M1" => SVer2_12M1
         case "2.12.0-M2" => SVer2_12M2
+        case "2.12.0-M3" => SVer2_12M3
         case "2.12"      => SVer2_12
       }
     }
@@ -160,6 +161,9 @@ object Helpers {
     def requireJava8 = true
   }
   case object SVer2_12M2 extends SVer {
+    def requireJava8 = true
+  }
+  case object SVer2_12M3 extends SVer {
     def requireJava8 = true
   }
   case object SVer2_12 extends SVer {
@@ -235,7 +239,7 @@ object Eclipse {
 
 object Dependencies {
   final val slf4jVersion       = "1.7.12"
-  final val log4sVersion       = "1.2.0"
+  final val log4sVersion       = "1.2.1"
   final val logbackVersion     = "1.1.3"
   final val jodaTimeVersion    = "2.8.2"
   final val jodaConvertVersion = "1.7"
@@ -245,8 +249,7 @@ object Dependencies {
   final val spireVersion       = "0.10.1"
   final val groovyVersion      = "2.4.4"
   final val twitterUtilVersion = "6.26.0"
-  final val scalaCheckVersion  = "1.12.4"
-  final val scalaTestVersion   = "2.2.5"
+  final val scalaCheckVersion  = "1.12.5"
   final val scalaParserVersion = "1.0.4"
   final val scalaXmlVersion    = "1.0.5"
 
@@ -269,7 +272,6 @@ object Dependencies {
   }
 
   val scalaCheck  = "org.scalacheck"      %% "scalacheck"      % scalaCheckVersion
-  val scalaTest   = "org.scalatest"       %% "scalatest"       % scalaTestVersion
 
   /* Use like this: libraryDependencies <++= (scalaBinaryVersion) (scalaParser) */
   def scalaParser(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
@@ -281,6 +283,14 @@ object Dependencies {
     case "2.11" => Seq("org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion % "optional")
     case _      => Seq.empty
   }
+
+  def scalaTest(scalaBinaryVersion: String): ModuleID = scalaBinaryVersion match {
+    case "2.12.0-M1" => "org.scalatest" %% "scalatest" % "2.2.5-M1"
+    case "2.12.0-M2" => "org.scalatest" %% "scalatest" % "2.2.5-M2"
+    case "2.12.0-M3" => "org.scalatest" %% "scalatest" % "2.2.5-M3"
+    case _           => "org.scalatest" %% "scalatest" % "2.2.5"
+  }
+
 
   private def noCL(m: ModuleID) = (
     m exclude("commons-logging", "commons-logging")
@@ -303,7 +313,6 @@ object UtilsBuild extends Build {
     log4s,
     logback % "test",
     scalaCheck % "test",
-    scalaTest % "test",
     groovy % "test",
     commonsIo,
     jodaTime % "optional",
@@ -359,6 +368,7 @@ object UtilsBuild extends Build {
 
       libraryDependencies ++= utilsDeps,
       libraryDependencies += threeTen,
+      libraryDependencies += scalaTest(scalaBinaryVersion.value) % "test",
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
 
       libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
@@ -408,6 +418,7 @@ object UtilsBuild extends Build {
 
       libraryDependencies ++= utilsDeps,
       libraryDependencies += threeTen % "optional",
+      libraryDependencies += scalaTest(scalaBinaryVersion.value) % "test",
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
 
       libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
