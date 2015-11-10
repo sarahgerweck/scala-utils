@@ -18,8 +18,8 @@ do something that seems like it might be a bad idea, you're on your own. :-)
 
 For Java 6 or Java 7, use this line as your dependency:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "1.5.4"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "1.5.5"
 
 For Java 8, use this line as your dependency:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-java8" % "1.5.4"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-java8" % "1.5.5"
