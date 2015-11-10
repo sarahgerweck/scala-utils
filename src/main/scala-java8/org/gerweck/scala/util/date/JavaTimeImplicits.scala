@@ -74,6 +74,7 @@ object JavaTimeWrappers {
     def + (p: jt.temporal.TemporalAmount) = inner plus p
     def + (d: FiniteDuration) = inner plus (d.toMillis, jt.temporal.ChronoUnit.MILLIS)
 
+    def - (other: jt.LocalDateTime): jt.Duration = jt.Duration.between(other, inner)
     def - (p: jt.temporal.TemporalAmount) = inner minus p
     def - (d: FiniteDuration) = inner minus (d.toMillis, jt.temporal.ChronoUnit.MILLIS)
 

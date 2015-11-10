@@ -76,6 +76,7 @@ object ThreeTenBPWrappers extends ThreeTenBPImplicits {
     def + (p: tt.temporal.TemporalAmount) = inner plus p
     def + (d: FiniteDuration) = inner plus (d.toMillis, tt.temporal.ChronoUnit.MILLIS)
 
+    def - (other: tt.LocalDateTime): tt.Duration = tt.Duration.between(other, inner)
     def - (p: tt.temporal.TemporalAmount) = inner minus p
     def - (d: FiniteDuration) = inner minus (d.toMillis, tt.temporal.ChronoUnit.MILLIS)
 
