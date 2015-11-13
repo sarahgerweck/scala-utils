@@ -33,6 +33,7 @@ object Yaml {
     protected[this] def withOptionalHeader(header: Option[String])(bits: YamlRecord*) = {
       val sb = new StringBuilder
       header foreach { h =>
+        sb ++= "# "
         sb ++= h
         sb += '\n'
         sb ++= "---\n"
