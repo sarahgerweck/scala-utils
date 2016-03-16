@@ -6,5 +6,4 @@ import java.{ time => tt }
 
 import scala.concurrent.duration.FiniteDuration
 
-
-package object date extends FormatMethods with JavaTimeImplicits
+package object date extends FormatMethods with JavaTimeImplicits with ScalaDurationImplicits
