@@ -3,8 +3,8 @@ branches:
     - /^v\d/
 language: scala
 scala:
-  - 2.10.5
-  - 2.11.7
+  - 2.10.6
+  - 2.11.8
 script:
   - 'sbt -Dsbt.log.noformat=true ++$TRAVIS_SCALA_VERSION test'
   - 'if [ "${TRAVIS_PULL_REQUEST}" = "false" ] && [ "${TRAVIS_BRANCH}" = "master" ]; then sbt ++$TRAVIS_SCALA_VERSION make-site publish; fi'
