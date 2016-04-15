@@ -11,7 +11,7 @@ object timed {
 
   def apply[A](f: => A): A = apply()(f)
 
-  def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => A): A = {
+  def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug)(f: => A): A = timed {
     var failed = false
     val startTime = nanoTime
     try {
@@ -34,6 +34,30 @@ object timed {
   @inline def formatSince(startTime: Long): String = {
     val finishTime = nanoTime
     date.formatDuration(1e-9d * (finishTime - startTime))
+  }
+}
+
+object timedDynamic {
+  private[this] val logger = getLogger
+
+  def apply[A](logger: Logger = logger, taskName: String, successName: A => String, level: LogLevel = Debug)(f: => A): A = {
+    var failed = false
+    var resultName: Option[String] = None
+    val startTime = nanoTime
+    try {
+      val a = f
+      resultName = scala.util.Try(successName(a)).toOption
+      a
+    } catch { case e: Throwable =>
+      failed = true
+      throw e
+    } finally {
+      val finishTime = nanoTime
+      val time = date.formatDuration(1e-9d * (finishTime - startTime))
+      val name = resultName.getOrElse(taskName).capitalize
+      val status = if (failed) "failed" else "completed"
+      logger(level)(s"$name $status after $time")
+    }
   }
 }
 
