@@ -147,6 +147,7 @@ object Helpers {
         case "2.12.0-M1" => SVer2_12M1
         case "2.12.0-M2" => SVer2_12M2
         case "2.12.0-M3" => SVer2_12M3
+        case "2.12.0-M4" => SVer2_12M4
         case "2.12"      => SVer2_12
       }
     }
@@ -164,6 +165,9 @@ object Helpers {
     def requireJava8 = true
   }
   case object SVer2_12M3 extends SVer {
+    def requireJava8 = true
+  }
+  case object SVer2_12M4 extends SVer {
     def requireJava8 = true
   }
   case object SVer2_12 extends SVer {
@@ -238,16 +242,16 @@ object Eclipse {
 }
 
 object Dependencies {
-  final val slf4jVersion       = "1.7.12"
-  final val log4sVersion       = "1.2.1"
-  final val logbackVersion     = "1.1.3"
-  final val jodaTimeVersion    = "2.8.2"
-  final val jodaConvertVersion = "1.7"
-  final val threeTenVersion    = "1.3"
+  final val slf4jVersion       = "1.7.21"
+  final val log4sVersion       = "1.3.0"
+  final val logbackVersion     = "1.1.7"
+  final val jodaTimeVersion    = "2.9.3"
+  final val jodaConvertVersion = "1.8.1"
+  final val threeTenVersion    = "1.3.1"
   final val commonsVfsVersion  = "2.0"
   final val commonsIoVersion   = "2.4"
-  final val spireVersion       = "0.10.1"
-  final val groovyVersion      = "2.4.4"
+  final val spireVersion       = "0.11.0"
+  final val groovyVersion      = "2.4.6"
   final val twitterUtilVersion = "6.26.0"
   final val scalaCheckVersion  = "1.12.5"
   final val scalaParserVersion = "1.0.4"
@@ -275,20 +279,21 @@ object Dependencies {
 
   /* Use like this: libraryDependencies <++= (scalaBinaryVersion) (scalaParser) */
   def scalaParser(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
-    case "2.11" => Seq("org.scala-lang.modules" %% "scala-parser-combinators" % scalaParserVersion % "optional")
-    case _      => Seq.empty
+    case "2.10" => Seq.empty
+    case _      => Seq("org.scala-lang.modules" %% "scala-parser-combinators" % scalaParserVersion % "optional")
   }
 
   def scalaXml(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
-    case "2.11" => Seq("org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion % "optional")
-    case _      => Seq.empty
+    case "2.10" => Seq.empty
+    case _      => Seq("org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion % "optional")
   }
 
   def scalaTest(scalaBinaryVersion: String): ModuleID = scalaBinaryVersion match {
     case "2.12.0-M1" => "org.scalatest" %% "scalatest" % "2.2.5-M1"
     case "2.12.0-M2" => "org.scalatest" %% "scalatest" % "2.2.5-M2"
     case "2.12.0-M3" => "org.scalatest" %% "scalatest" % "2.2.5-M3"
-    case _           => "org.scalatest" %% "scalatest" % "2.2.5"
+    case "2.12.0-M4" => "org.scalatest" %% "scalatest" % "2.2.6"
+    case _           => "org.scalatest" %% "scalatest" % "2.2.6"
   }
 
 
@@ -307,20 +312,22 @@ object UtilsBuild extends Build {
   import PublishSettings._
   import Helpers._
 
-  lazy val utilsDeps = Seq (
+  lazy val basicLogDeps = Seq(
     slf4j,
-    jclBridge,
     log4s,
-    logback % "test",
+    logback % "test"
+  )
+
+  lazy val utilsDeps = basicLogDeps ++ Seq (
+    jclBridge,
     scalaCheck % "test",
     groovy % "test",
     commonsIo,
     jodaTime % "optional",
     jodaConvert % "optional",
     /* ThreeTen is optional in some versions and not others, so see below */
-    twitterUtil % "optional",
-    commonsVfs,
-    spire % "provided,optional"
+    spire % "provided,optional",
+    commonsVfs
   )
 
   lazy val macros = (project in file ("macro"))
@@ -348,7 +355,7 @@ object UtilsBuild extends Build {
 
   lazy val root = (project in file ("."))
     .dependsOn(macros % "optional")
-    .aggregate(macros, java8)
+    .aggregate(macros, java8, twitter)
     .settings(buildSettings: _*)
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
@@ -445,4 +452,18 @@ object UtilsBuild extends Build {
       // Do not include macros as a dependency.
       pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-util-macro") }
     )
+
+  lazy val twitter = (project in file ("twitter"))
+    .settings(buildSettings: _*)
+    .settings(Eclipse.settings: _*)
+    .settings(EclipseKeys.skipParents in ThisBuild := false)
+    .settings(publishSettings: _*)
+    .settings(Release.settings: _*)
+    .settings(
+      name := "Gerweck Utils Twitter",
+      libraryDependencies ++= basicLogDeps,
+      libraryDependencies += twitterUtil % "optional",
+      crossScalaVersions := Seq("2.10.6", "2.11.8")
+    )
+
 }
