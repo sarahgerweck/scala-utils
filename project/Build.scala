@@ -1,7 +1,7 @@
 import sbt._
 import Keys._
 
-import com.typesafe.sbt.SbtSite.site
+import com.typesafe.sbt.site._
 import sbtrelease.ReleasePlugin.autoImport._
 
 import scala.util.Properties.envOrNone
@@ -94,11 +94,14 @@ object BuildSettings extends Basics {
     }
   }
 
+  implicit class ProjectHelper(p: Project) {
+    def commonSettings() = siteSettings(p).settings(buildSettings: _*)
+  }
+
   /* Site setup */
-  lazy val siteSettings = site.settings ++ site.includeScaladoc()
+  def siteSettings(p: Project) = p.enablePlugins(SiteScaladocPlugin)
 
   val buildSettings = buildMetadata ++
-                      siteSettings ++
                       Seq (
     organization       :=  buildOrganization,
 
@@ -331,7 +334,7 @@ object UtilsBuild extends Build {
   )
 
   lazy val macros = (project in file ("macro"))
-    .settings(buildSettings: _*)
+    .commonSettings()
     .settings(Eclipse.settings: _*)
     .settings(falsePublishSettings: _*)
     .settings (
@@ -356,7 +359,7 @@ object UtilsBuild extends Build {
   lazy val root = (project in file ("."))
     .dependsOn(macros % "optional")
     .aggregate(macros, java8, twitter)
-    .settings(buildSettings: _*)
+    .commonSettings()
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
     .settings(publishSettings: _*)
@@ -411,7 +414,7 @@ object UtilsBuild extends Build {
   lazy val java8 = (project in file ("java8"))
     .dependsOn(macros % "optional")
     .aggregate(macros)
-    .settings(buildSettings: _*)
+    .commonSettings()
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
     .settings(publishSettings: _*)
@@ -454,7 +457,7 @@ object UtilsBuild extends Build {
     )
 
   lazy val twitter = (project in file ("twitter"))
-    .settings(buildSettings: _*)
+    .commonSettings()
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
     .settings(publishSettings: _*)
