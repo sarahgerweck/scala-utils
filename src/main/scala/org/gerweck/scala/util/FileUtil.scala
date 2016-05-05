@@ -13,10 +13,10 @@ import org.log4s._
 object FileUtil {
   private val logger = getLogger
   private val manager = VFS.getManager
-  
+
   /** The default character set for most methods */
   val utf8: Charset = Charset.forName("UTF-8")
-  
+
   /** Read a file from an arbitrary URI. */
   def read(uri: String, charset: Charset = utf8): String = {
     val fo = manager.resolveFile(uri)
@@ -28,7 +28,7 @@ object FileUtil {
       fo.close
     }
   }
-  
+
   /** Write a file to an arbitrary URI. */
   def write(uri: String, charset: Charset = utf8)(content: String): Unit = {
     val fo = manager.resolveFile(uri)
