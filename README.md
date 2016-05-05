@@ -18,8 +18,16 @@ do something that seems like it might be a bad idea, you're on your own. :-)
 
 For Java 6 or Java 7, use this line as your dependency:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "1.6.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "1.7.0"
 
 For Java 8, use this line as your dependency:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-java8" % "1.6.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-java8" % "1.7.0"
+
+
+### Twitter Utilities ###
+
+Since 1.7, the Twitter utilities are included through a separate jar. If you
+need these utilities, include this as well.
+
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-twitter" % "1.7.0"
