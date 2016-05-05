@@ -21,7 +21,7 @@ object FileUtil {
   def read(uri: String, charset: Charset = utf8): String = {
     val fo = manager.resolveFile(uri)
     try {
-      val data = commons.io.IOUtils.toString(fo.getContent.getInputStream)
+      val data = commons.io.IOUtils.toString(fo.getContent.getInputStream, charset)
       logger.debug(s"Read ${data.length} bytes from $fo")
       data
     } finally {
