@@ -335,7 +335,7 @@ object UtilsBuild extends Build {
     .settings(Eclipse.settings: _*)
     .settings(falsePublishSettings: _*)
     .settings (
-      name := "Gerweck Util Macros",
+      name := "Gerweck Utils Macros",
       libraryDependencies += log4s,
       libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
       resolvers += Resolver.sonatypeRepo("releases"),
@@ -405,7 +405,7 @@ object UtilsBuild extends Build {
       mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
 
       // Do not include macros as a dependency.
-      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-util-macro") }
+      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
     )
 
   lazy val java8 = (project in file ("java8"))
@@ -450,7 +450,7 @@ object UtilsBuild extends Build {
       mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
 
       // Do not include macros as a dependency.
-      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-util-macro") }
+      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
     )
 
   lazy val twitter = (project in file ("twitter"))
