@@ -252,7 +252,7 @@ object Dependencies {
   final val jodaConvertVersion = "1.8.1"
   final val threeTenVersion    = "1.3.1"
   final val commonsVfsVersion  = "2.0"
-  final val commonsIoVersion   = "2.4"
+  final val commonsIoVersion   = "2.5"
   final val spireVersion       = "0.11.0"
   final val groovyVersion      = "2.4.6"
   final val twitterUtilVersion = "6.26.0"
