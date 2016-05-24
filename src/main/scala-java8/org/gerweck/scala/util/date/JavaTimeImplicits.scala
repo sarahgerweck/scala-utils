@@ -107,6 +107,9 @@ object JavaTimeWrappers {
 
     def toScalaDuration: FiniteDuration = FiniteDuration(inner.toNanos, scala.concurrent.duration.NANOSECONDS)
 
+    def + (d: jt.Duration): jt.Duration = inner.plus(d)
+    def + (amount: Long, unit: jt.temporal.TemporalUnit): jt.Duration = inner.plus(amount, unit)
+
     def / (div: jt.Duration): Double = toDouble / div.toDouble
   }
 
