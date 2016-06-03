@@ -69,19 +69,19 @@ object BuildSettings extends Basics {
     if (importWarn) Seq("-Ywarn-unused-import") else Seq.empty
   )
 
-  def scalacOpts(sver: SVer, java8: Boolean) = sharedScalacOptions ++ {
+  def scalacOpts(sver: SVer, java8Only: Boolean) = sharedScalacOptions ++ {
     def opt = if (optimize) Seq("-optimize") else Seq.empty
     sver match {
       case j8 if j8.requireJava8 => Seq.empty
       case SVer2_10              => Seq("-target:jvm-1.6") ++ opt
       case _                     =>
-        opt ++ Seq("-target:jvm-" + (if (java8) "1.8" else minimumJavaVersion))
+        opt ++ Seq("-target:jvm-" + (if (java8Only) "1.8" else minimumJavaVersion))
     }
   }
 
   private[this] val sharedJavacOptions = Seq.empty
-  def javacOpts(java8: Boolean) = sharedJavacOptions ++ {
-    if (java8) {
+  def javacOpts(java8Only: Boolean) = sharedJavacOptions ++ {
+    if (java8Only) {
       Seq (
         "-target", "1.8",
         "-source", "1.8"
@@ -299,7 +299,22 @@ object Dependencies {
     case _           => "org.scalatest" %% "scalatest" % "2.2.6"
   }
 
+  /* ********************************************************************** */
+  /*                                  Akka                                  */
+  /* ********************************************************************** */
+  final val akkaVersion        = "2.4.6"
 
+  val akkaActor      = "com.typesafe.akka"   %% "akka-actor"             % akkaVersion
+  val akkaAgent      = "com.typesafe.akka"   %% "akka-agent"             % akkaVersion
+  val akkaRemote     = "com.typesafe.akka"   %% "akka-remote"            % akkaVersion
+  val akkaSlf4j      = "com.typesafe.akka"   %% "akka-slf4j"             % akkaVersion
+  val akkaStream     = "com.typesafe.akka"   %% "akka-stream"            % akkaVersion
+  val akkaHttpCore   = "com.typesafe.akka"   %% "akka-http-core"         % akkaVersion
+  val akkaHttp       = "com.typesafe.akka"   %% "akka-http-experimental" % akkaVersion
+
+  /* ********************************************************************** */
+  /*                                Helpers                                 */
+  /* ********************************************************************** */
   private def noCL(m: ModuleID) = (
     m exclude("commons-logging", "commons-logging")
       exclude("commons-logging", "commons-logging-api")
@@ -318,13 +333,13 @@ object UtilsBuild extends Build {
   lazy val basicLogDeps = Seq(
     slf4j,
     log4s,
-    logback % "test"
+    logback % "test",
+    groovy % "test"
   )
 
   lazy val utilsDeps = basicLogDeps ++ Seq (
     jclBridge,
     scalaCheck % "test",
-    groovy % "test",
     commonsIo,
     jodaTime % "optional",
     jodaConvert % "optional",
@@ -356,9 +371,9 @@ object UtilsBuild extends Build {
       releaseProcess := Seq.empty
     )
 
-  lazy val root = (project in file ("."))
+  lazy val root: Project = (project in file ("."))
     .dependsOn(macros % "optional")
-    .aggregate(macros, java8, twitter)
+    .aggregate(macros, java8, twitter, akka)
     .commonSettings()
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
@@ -469,4 +484,24 @@ object UtilsBuild extends Build {
       crossScalaVersions := Seq("2.10.6", "2.11.8")
     )
 
+  lazy val akka: Project = (project in file ("akka"))
+    .dependsOn(java8)
+    .commonSettings()
+    .settings(Eclipse.settings: _*)
+    .settings(EclipseKeys.skipParents in ThisBuild := false)
+    .settings(publishSettings: _*)
+    .settings(Release.settings: _*)
+    .settings(
+      name := "Gerweck Utils Akka",
+
+      scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true),
+      javacOptions ++= javacOpts(true),
+
+      /* Logging */
+      libraryDependencies ++= basicLogDeps,
+      /* Akka */
+      libraryDependencies ++= Seq(
+        akkaStream
+      )
+    )
 }
