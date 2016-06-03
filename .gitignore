@@ -8,3 +8,4 @@ target
 *.swp
 /project/project
 /bin/
+/java8
