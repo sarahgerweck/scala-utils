@@ -3,7 +3,6 @@ branches:
     - /^v\d/
 language: scala
 scala:
-  - 2.10.6
   - 2.11.8
 script:
   - 'sbt -Dsbt.log.noformat=true ++$TRAVIS_SCALA_VERSION test'
