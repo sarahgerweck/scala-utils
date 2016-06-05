@@ -11,9 +11,11 @@ import Helpers._
 
 sealed trait Basics {
   final val buildOrganization  = "org.gerweck.scala"
+  final val buildOrganizationName = "Sarah Gerweck"
+  final val buildOrganizationUrl  = Some("https://github.com/sarahgerweck")
 
   final val buildScalaVersion  = "2.11.8"
-  final val extraScalaVersions = Seq("2.10.6")
+  final val extraScalaVersions = Seq.empty
   final val minimumJavaVersion = "1.6"
   lazy  val defaultOptimize    = true
 
@@ -101,17 +103,18 @@ object BuildSettings extends Basics {
   /* Site setup */
   def siteSettings(p: Project) = p.enablePlugins(SiteScaladocPlugin)
 
-  val buildSettings = buildMetadata ++
-                      Seq (
-    organization       :=  buildOrganization,
+  lazy val buildSettings = buildMetadata ++ Seq (
+    organization         := buildOrganization,
+    organizationName     := buildOrganizationName,
+    organizationHomepage := buildOrganizationUrl map { url _ },
 
-    scalaVersion       :=  buildScalaVersion,
-    crossScalaVersions :=  buildScalaVersions,
+    scalaVersion         := buildScalaVersion,
+    crossScalaVersions   := buildScalaVersions,
 
-    autoAPIMappings    :=  true,
+    autoAPIMappings      := true,
 
-    updateOptions      :=  updateOptions.value.withCachedResolution(cachedResolution),
-    parallelExecution  :=  parallelBuild,
+    updateOptions        := updateOptions.value.withCachedResolution(cachedResolution),
+    parallelExecution    := parallelBuild,
 
     evictionWarningOptions in update :=
       EvictionWarningOptions.default.withWarnTransitiveEvictions(false).withWarnDirectEvictions(false).withWarnScalaVersionEviction(false)
@@ -248,14 +251,14 @@ object Dependencies {
   final val slf4jVersion       = "1.7.21"
   final val log4sVersion       = "1.3.0"
   final val logbackVersion     = "1.1.7"
-  final val jodaTimeVersion    = "2.9.3"
+  final val jodaTimeVersion    = "2.9.4"
   final val jodaConvertVersion = "1.8.1"
   final val threeTenVersion    = "1.3.1"
-  final val commonsVfsVersion  = "2.0"
+  final val commonsVfsVersion  = "2.1"
   final val commonsIoVersion   = "2.5"
   final val spireVersion       = "0.11.0"
   final val groovyVersion      = "2.4.6"
-  final val twitterUtilVersion = "6.26.0"
+  final val twitterUtilVersion = "6.34.0"
   final val scalaCheckVersion  = "1.12.5"
   final val scalaParserVersion = "1.0.4"
   final val scalaXmlVersion    = "1.0.5"
@@ -302,7 +305,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.4.6"
+  final val akkaVersion        = "2.4.7"
 
   val akkaActor      = "com.typesafe.akka"   %% "akka-actor"             % akkaVersion
   val akkaAgent      = "com.typesafe.akka"   %% "akka-agent"             % akkaVersion
@@ -367,76 +370,41 @@ object UtilsBuild extends Build {
 
       publish := {},
       publishLocal := {},
+      publishArtifact := false,
+
       exportJars := false,
       releaseProcess := Seq.empty
     )
 
   lazy val root: Project = (project in file ("."))
-    .dependsOn(macros % "optional")
-    .aggregate(macros, java8, twitter, akka)
+    .aggregate(macros, core, java6, twitter, akka)
     .commonSettings()
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
     .settings(publishSettings: _*)
     .settings(Release.settings: _*)
-    .settings(
-      name := {
-        SVer(scalaBinaryVersion.value) match {
-          case j8 if j8.requireJava8 => "Gerweck Utils"
-          case _ if java8Flag        => "Gerweck Utils Java8"
-          case _                     => "Gerweck Utils"
-        }
-      },
+    .settings (
+      name := "Gerweck Utils Root",
 
-      scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), false),
-      javacOptions ++= javacOpts(SVer(scalaBinaryVersion.value).requireJava8),
+      publish := {},
+      publishLocal := {},
+      publishArtifact := false,
 
-      libraryDependencies ++= utilsDeps,
-      libraryDependencies += threeTen,
-      libraryDependencies += scalaTest(scalaBinaryVersion.value) % "test",
-      libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
+      exportJars := false,
 
-      libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
-      libraryDependencies <++= (scalaBinaryVersion) (scalaXml),
-
-      resolvers += Resolver.sonatypeRepo("releases"),
-
-      unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, baseDirectory) { (ver, dir) =>
-        ver match {
-          case "2.10" => dir / "src" / "main" / "scala-2.10"
-          case _      => dir / "src" / "main" / "scala-2.11"
-        }
-      },
-
-      unmanagedSourceDirectories in Compile <++= (baseDirectory, scalaBinaryVersion) { (dir, sver) =>
-        SVer(sver) match {
-          case j8 if j8.requireJava8 => Seq(dir / "src" / "main" / "scala-java8")
-          case _ if java8Flag        => Seq(dir / "src" / "main" / "scala-java8")
-          case _                     => Seq(dir / "src" / "main" / "scala-java6")
-        }
-      },
-
-      // include the macro classes and resources in the main jar
-      mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
-
-      // include the macro sources in the main source jar
-      mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
-
-      // Do not include macros as a dependency.
-      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
+      skip in Compile := true,
+      skip in Test := true
     )
 
-  lazy val java8 = (project in file ("java8"))
+  lazy val core: Project = (project in file ("core"))
     .dependsOn(macros % "optional")
-    .aggregate(macros)
     .commonSettings()
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
     .settings(publishSettings: _*)
     .settings(Release.settings: _*)
     .settings(
-      name := "Gerweck Utils (Java 8)",
-      normalizedName := "gerweck-utils-java8",
+      name := "Gerweck Utils",
 
       scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true),
       javacOptions ++= javacOpts(true),
@@ -453,13 +421,56 @@ object UtilsBuild extends Build {
 
       unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, baseDirectory) { (ver, dir) =>
         ver match {
-          case "2.10" => dir / ".." / "src" / "main" / "scala-2.10"
-          case _      => dir / ".." / "src" / "main" / "scala-2.11"
+          case "2.10" => dir / "src" / "main" / "scala-2.10"
+          case _      => dir / "src" / "main" / "scala-2.11"
         }
       },
-      scalaSource in Compile := baseDirectory.value / ".." / "src" / "main" / "scala",
-      scalaSource in Test := baseDirectory.value / ".." / "src" / "test" / "scala",
-      unmanagedSourceDirectories in Compile += baseDirectory.value / ".." / "src" / "main" / "scala-java8",
+
+      unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala-java8",
+
+      // include the macro classes and resources in the main jar
+      mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
+
+      // include the macro sources in the main source jar
+      mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
+
+      // Do not include macros as a dependency.
+      pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
+    )
+
+  lazy val java6 = (project in file ("java6"))
+    .dependsOn(macros % "optional")
+    .commonSettings()
+    .settings(Eclipse.settings: _*)
+    .settings(EclipseKeys.skipParents in ThisBuild := false)
+    .settings(publishSettings: _*)
+    .settings(Release.settings: _*)
+    .settings(
+      name := "Gerweck Utils (Java 6)",
+      normalizedName := "gerweck-utils-java6",
+
+      scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), false),
+      javacOptions ++= javacOpts(false),
+
+      libraryDependencies ++= utilsDeps,
+      libraryDependencies += threeTen,
+      libraryDependencies += scalaTest(scalaBinaryVersion.value) % "test",
+      libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
+
+      libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
+      libraryDependencies <++= (scalaBinaryVersion) (scalaXml),
+
+      resolvers += Resolver.sonatypeRepo("releases"),
+
+      unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, baseDirectory) { (ver, dir) =>
+        ver match {
+          case "2.10" => dir / ".." / "core" / "src" / "main" / "scala-2.10"
+          case _      => dir / ".." / "core" / "src" / "main" / "scala-2.11"
+        }
+      },
+      scalaSource in Compile := baseDirectory.value / ".." / "core" / "src" / "main" / "scala",
+      scalaSource in Test := baseDirectory.value / ".." / "core" / "src" / "test" / "scala",
+      unmanagedSourceDirectories in Compile += baseDirectory.value / ".." / "core" / "src" / "main" / "scala-java6",
 
       // include the macro classes and resources in the main jar
       mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
@@ -480,12 +491,11 @@ object UtilsBuild extends Build {
     .settings(
       name := "Gerweck Utils Twitter",
       libraryDependencies ++= basicLogDeps,
-      libraryDependencies += twitterUtil % "optional",
-      crossScalaVersions := Seq("2.10.6", "2.11.8")
+      libraryDependencies += twitterUtil % "optional"
     )
 
   lazy val akka: Project = (project in file ("akka"))
-    .dependsOn(java8)
+    .dependsOn(core)
     .commonSettings()
     .settings(Eclipse.settings: _*)
     .settings(EclipseKeys.skipParents in ThisBuild := false)
@@ -500,7 +510,8 @@ object UtilsBuild extends Build {
       /* Logging */
       libraryDependencies ++= basicLogDeps,
       /* Akka */
-      libraryDependencies ++= Seq(
+      libraryDependencies ++= Seq (
+        akkaActor,
         akkaStream
       )
     )

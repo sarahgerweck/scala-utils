@@ -13,16 +13,18 @@ If you find any bugs, please send me a message or a pull request.  Like many
 utility libraries, this code is *not* meant to be abuse proof.  If you try to
 do something that seems like it might be a bad idea, you're on your own. :-)
 
+Because of dependencies, this requires Scala 2.11 or higher.
 
 ## Installation ##
 
-For Java 6 or Java 7, use this line as your dependency:
-
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "1.7.1"
-
 For Java 8, use this line as your dependency:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-java8" % "1.7.1"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "2.0.0"
+
+For Java 6 or Java 7, use this line as your dependency:
+
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-java6" % "2.0.0"
+
 
 
 ### Twitter Utilities ###
@@ -30,4 +32,10 @@ For Java 8, use this line as your dependency:
 Since 1.7, the Twitter utilities are included through a separate jar. If you
 need these utilities, include this as well.
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-twitter" % "1.7.1"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-twitter" % "2.0.0"
+
+### Akka Utilities ###
+
+For utilities related to Akka and Akka Streaming, use this include:
+
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-akka" % "2.0.0"
