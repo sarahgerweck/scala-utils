@@ -1,6 +1,7 @@
 package org.gerweck.scala.util.prefs
 
 import java.io.File
+import java.net.{ URI, URL }
 import java.util.prefs.Preferences
 
 import org.gerweck.scala.util.mapping.Homomorphism
@@ -36,8 +37,21 @@ trait CommonPrefHandlers {
     def write(path: String, a: Double)(implicit p: Preferences): Unit = p.putDouble(path, a)
   }
 
+  private[this] implicit val string2FileMorphism: Homomorphism[String, File] = Homomorphism[String, File](new File(_), _.getCanonicalPath)
+  private[this] implicit val string2UriMorphism: Homomorphism[String, URI] = Homomorphism[String, URI](new URI(_), _.toString)
+  private[this] implicit val uri2UrlMorphism: Homomorphism[URI, URL] = Homomorphism[URI, URL](_.toURL, _.toURI)
+
   implicit val filePrefHandler: PrefHandler[File] = {
-    implicit val fileMorphism = Homomorphism[String, File]({ s: String => new File(s) }, { f: File => f.getCanonicalPath })
     mappedPrefHandler[String, File]
+  }
+
+
+  implicit val uriPrefHandler: PrefHandler[URI] = {
+    mappedPrefHandler[String, URI]
+  }
+
+  implicit val urlPrefHandler: PrefHandler[URL] = {
+    implicit val string2UrlMorphism = string2UriMorphism andThen uri2UrlMorphism
+    mappedPrefHandler[String, URL]
   }
 }

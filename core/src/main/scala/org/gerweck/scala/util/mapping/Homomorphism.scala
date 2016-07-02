@@ -1,7 +1,5 @@
 package org.gerweck.scala.util.mapping
 
-import language.implicitConversions
-
 /** A bidirectional correspondence between two types where values can
   * be represented in both ways, but doing a reverse transformation
   * only guarantees an equivalent output. There is an equivalence
@@ -14,11 +12,12 @@ trait Homomorphism[A, B] {
   final def unapply(b: B): Option[A] = Some(coapply(b))
 
   def invert: Homomorphism[B, A] = Homomorphism.invert(this)
+
+  def andThen[C](next: Homomorphism[B, C]): Homomorphism[A, C] = Homomorphism.combine(this, next)
+  def compose[A0](h2: Homomorphism[A0, A]): Homomorphism[A0, B] = h2 andThen this
 }
+
 object Homomorphism {
-  object Implicits {
-    implicit def inversion[A, B](homo: Homomorphism[A, B]): Homomorphism[B, A] = invert(homo)
-  }
   def apply[A, B](forward: A => B, backward: B => A) = new Homomorphism[A, B] {
     def apply(a: A) = forward(a)
     def coapply(b: B) = backward(b)
@@ -26,5 +25,9 @@ object Homomorphism {
   def invert[A, B](homo: Homomorphism[A, B]): Homomorphism[B, A] = new Homomorphism[B, A] {
     def apply(b: B) = homo.coapply(b)
     def coapply(a: A) = homo.apply(a)
+  }
+  def combine[A, B, C](first: Homomorphism[A, B], second: Homomorphism[B, C]): Homomorphism[A, C] = new Homomorphism[A, C] {
+    def apply(a: A): C = second(first(a))
+    def coapply(c: C): A = first.coapply(second.coapply(c))
   }
 }
