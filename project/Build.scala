@@ -101,7 +101,18 @@ object BuildSettings extends Basics {
   }
 
   /* Site setup */
-  def siteSettings(p: Project) = p.enablePlugins(SiteScaladocPlugin)
+  def siteSettings(p: Project) = {
+    p.enablePlugins(SiteScaladocPlugin)
+     .settings(
+       scalacOptions in (Compile,doc) ++= Seq(
+         "-groups",
+         "-implicits",
+         "-diagrams",
+         "-sourcepath", (baseDirectory in ThisBuild).value.getAbsolutePath,
+         "-doc-source-url", "https://github.com/sarahgerweck/scala-utils/blob/master€{FILE_PATH}.scala"
+       )
+     )
+  }
 
   lazy val buildSettings = buildMetadata ++ Seq (
     organization         := buildOrganization,
