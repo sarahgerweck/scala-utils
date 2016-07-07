@@ -45,7 +45,6 @@ trait CommonPrefHandlers {
     mappedPrefHandler[String, File]
   }
 
-
   implicit val uriPrefHandler: PrefHandler[URI] = {
     mappedPrefHandler[String, URI]
   }
