@@ -6,14 +6,14 @@ import java.sql.Timestamp
 import java.time.Instant
 import java.time.temporal.ChronoField.NANO_OF_SECOND
 
-import _root_.org.gerweck.scala.util.ProcessStream
+import org.gerweck.scala.util.ProcessStream
 
-/**
+/** Basic Slick type mappings.
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
 trait BasicSlickTypes {
-  val profile: _root_.slick.driver.JdbcProfile
+  protected val profile: _root_.slick.driver.JdbcProfile
   import profile.api._
 
   implicit lazy val instantType = MappedColumnType.base[Instant, Timestamp](Timestamp.from, _.toInstant)
