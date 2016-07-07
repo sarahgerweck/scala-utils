@@ -293,6 +293,17 @@ object Dependencies {
   }
 
   /* ********************************************************************** */
+  /*                                Database                                */
+  /* ********************************************************************** */
+  final val slickVersion            = "3.1.1"
+  final val liquibaseVersion        = "3.5.1"
+  final val liquibaseLoggingVersion = "2.0.0"
+
+  val slick            = "com.typesafe.slick" %% "slick"           % slickVersion
+  val liquibase        = "org.liquibase"      %  "liquibase-core"  % liquibaseVersion
+  val liquibaseLogging = "com.mattbertolini"  %  "liquibase-slf4j" % liquibaseLoggingVersion
+
+  /* ********************************************************************** */
   /*                          Testing Dependencies                          */
   /* ********************************************************************** */
   val scalaCheck  = "org.scalacheck"      %% "scalacheck"      % scalaCheckVersion
@@ -391,7 +402,7 @@ object UtilsBuild extends Build {
     )
 
   lazy val root: Project = (project in file ("."))
-    .aggregate(macros, core, java6, twitter, akka)
+    .aggregate(macros, core, java6, twitter, akka, dbutil)
     .moduleSettings()
     .settings (
       name := "Gerweck Utils Root",
@@ -507,6 +518,21 @@ object UtilsBuild extends Build {
       libraryDependencies ++= Seq (
         akkaActor,
         akkaStream
+      )
+    )
+
+  lazy val dbutil: Project = (project in file ("dbutil"))
+    .dependsOn(core)
+    .moduleSettings()
+    .settings(
+      name := "Gerweck Utils DB",
+
+      scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true),
+      javacOptions ++= javacOpts(true),
+
+      /* Slick dependencies */
+      libraryDependencies ++= Seq (
+        slick
       )
     )
 
