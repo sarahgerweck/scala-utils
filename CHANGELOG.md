@@ -14,4 +14,8 @@
 
   - Add `prefs` and `mapping` packages
     - `Prefs` makes `java.util.prefs` more Scala friendly
-    - `Mapping` is experimental, contains type morphisms.
+    - `Mapping` is experimental, contains type morphisms
+
+### 2.2
+
+  - Add `gerweck-util-db` submodule with DB utilities
