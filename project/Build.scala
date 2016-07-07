@@ -292,6 +292,9 @@ object Dependencies {
         .exclude("org.apache.maven.scm", "maven-scm-api")
   }
 
+  /* ********************************************************************** */
+  /*                          Testing Dependencies                          */
+  /* ********************************************************************** */
   val scalaCheck  = "org.scalacheck"      %% "scalacheck"      % scalaCheckVersion
 
   /* Use like this: libraryDependencies <++= (scalaBinaryVersion) (scalaParser) */
@@ -389,11 +392,7 @@ object UtilsBuild extends Build {
 
   lazy val root: Project = (project in file ("."))
     .aggregate(macros, core, java6, twitter, akka)
-    .commonSettings()
-    .settings(Eclipse.settings: _*)
-    .settings(EclipseKeys.skipParents in ThisBuild := false)
-    .settings(publishSettings: _*)
-    .settings(Release.settings: _*)
+    .moduleSettings()
     .settings (
       name := "Gerweck Utils Root",
 
@@ -409,11 +408,7 @@ object UtilsBuild extends Build {
 
   lazy val core: Project = (project in file ("core"))
     .dependsOn(macros % "optional")
-    .commonSettings()
-    .settings(Eclipse.settings: _*)
-    .settings(EclipseKeys.skipParents in ThisBuild := false)
-    .settings(publishSettings: _*)
-    .settings(Release.settings: _*)
+    .moduleSettings()
     .settings(
       name := "Gerweck Utils",
 
@@ -451,11 +446,7 @@ object UtilsBuild extends Build {
 
   lazy val java6 = (project in file ("java6"))
     .dependsOn(macros % "optional")
-    .commonSettings()
-    .settings(Eclipse.settings: _*)
-    .settings(EclipseKeys.skipParents in ThisBuild := false)
-    .settings(publishSettings: _*)
-    .settings(Release.settings: _*)
+    .moduleSettings()
     .settings(
       name := "Gerweck Utils (Java 6)",
       normalizedName := "gerweck-utils-java6",
@@ -494,11 +485,7 @@ object UtilsBuild extends Build {
     )
 
   lazy val twitter = (project in file ("twitter"))
-    .commonSettings()
-    .settings(Eclipse.settings: _*)
-    .settings(EclipseKeys.skipParents in ThisBuild := false)
-    .settings(publishSettings: _*)
-    .settings(Release.settings: _*)
+    .moduleSettings()
     .settings(
       name := "Gerweck Utils Twitter",
       libraryDependencies ++= basicLogDeps,
@@ -507,11 +494,7 @@ object UtilsBuild extends Build {
 
   lazy val akka: Project = (project in file ("akka"))
     .dependsOn(core)
-    .commonSettings()
-    .settings(Eclipse.settings: _*)
-    .settings(EclipseKeys.skipParents in ThisBuild := false)
-    .settings(publishSettings: _*)
-    .settings(Release.settings: _*)
+    .moduleSettings()
     .settings(
       name := "Gerweck Utils Akka",
 
@@ -526,4 +509,14 @@ object UtilsBuild extends Build {
         akkaStream
       )
     )
+
+  private implicit class ProjectHelper2(p: Project) {
+    def moduleSettings() = {
+      p .commonSettings
+        .settings(Eclipse.settings: _*)
+        .settings(EclipseKeys.skipParents in ThisBuild := false)
+        .settings(publishSettings: _*)
+        .settings(Release.settings: _*)
+    }
+  }
 }
