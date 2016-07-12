@@ -71,8 +71,8 @@ object BuildSettings extends Basics {
     if (importWarn) Seq("-Ywarn-unused-import") else Seq.empty
   )
 
-  def scalacOpts(sver: SVer, java8Only: Boolean) = sharedScalacOptions ++ {
-    def opt = if (optimize) Seq("-optimize") else Seq.empty
+  def scalacOpts(sver: SVer, java8Only: Boolean, optim: Boolean = optimize) = sharedScalacOptions ++ {
+    def opt = if (optim) Seq("-optimize") else Seq.empty
     sver match {
       case j8 if j8.requireJava8 => Seq.empty
       case SVer2_10              => Seq("-target:jvm-1.6") ++ opt
@@ -335,7 +335,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.4.7"
+  final val akkaVersion        = "2.4.8"
 
   val akkaActor      = "com.typesafe.akka"   %% "akka-actor"             % akkaVersion
   val akkaAgent      = "com.typesafe.akka"   %% "akka-agent"             % akkaVersion
@@ -514,7 +514,7 @@ object UtilsBuild extends Build {
     .settings(
       name := "Gerweck Utils Akka",
 
-      scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true),
+      scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true, false),
       javacOptions ++= javacOpts(true),
 
       /* Logging */
