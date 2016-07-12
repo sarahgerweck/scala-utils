@@ -19,11 +19,11 @@ Because of dependencies, this requires Scala 2.11 or higher.
 
 For Java 8, use this line as your dependency:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "2.2.1"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "2.2.2"
 
 For Java 6 or Java 7, use this line as your dependency:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-java6" % "2.2.1"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-java6" % "2.2.2"
 
 
 
@@ -32,14 +32,14 @@ For Java 6 or Java 7, use this line as your dependency:
 Since 1.7, the Twitter utilities are included through a separate jar. If you
 need these utilities, include this as well.
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-twitter" % "2.2.1"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-twitter" % "2.2.2"
 
 ### Akka Utilities ###
 
 For utilities related to Akka and Akka Streaming, use this include. The Akka
 utilities require Java 8 and Akka 2.4.
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-akka" % "2.2.1"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-akka" % "2.2.2"
 
 ### DB Utilities ###
 
@@ -47,4 +47,4 @@ Some DB lightweight utilities, based on pure JDBC, are included in the core
 module. However, advanced utilties or those requiring libraries are in a
 separate module. These modules require Java 8 and can be included as such:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-db" % "2.2.1"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-db" % "2.2.2"

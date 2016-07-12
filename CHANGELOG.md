@@ -19,3 +19,10 @@
 ### 2.2
 
   - Add `gerweck-util-db` submodule with DB utilities
+
+#### 2.2.2
+
+  - Update to Akka 2.4.8
+  - Disable `-optimize` for Akka
+     - Optimization with Akka tends to pin you to the exact version of Akka,
+       which is not something we want for utilities.
