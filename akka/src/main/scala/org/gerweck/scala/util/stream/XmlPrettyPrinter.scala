@@ -1,10 +1,3 @@
-/*
- * Copyright AtScale, Inc. 2016. All Rights Reserved.
- *
- * No part of this project or any of its contents may be reproduced, copied,
- * modified or adapted, without the prior written consent of AtScale, Inc..
- */
-
 package org.gerweck.scala.util.stream
 
 import scala.concurrent._
@@ -24,7 +17,7 @@ import akka.stream.FlowShape
 import akka.stream.scaladsl._
 import akka.util.ByteString
 
-/**
+/** A streaming pretty printer for XML.
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
