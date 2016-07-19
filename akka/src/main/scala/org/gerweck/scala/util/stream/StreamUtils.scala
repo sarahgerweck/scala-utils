@@ -13,8 +13,6 @@ import akka.util.ByteString
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
 object StreamUtils {
-  lazy val splittingFlow: Flow[ByteString, String, NotUsed] = splittingFlowOn(Set('\n', '\r'))
-
   /** A flow that takes [[akka.util.ByteString]], and turns it into UTF-8 strings, split on
     * one of several split characters.
     *
@@ -45,9 +43,41 @@ object StreamUtils {
       }
   }
 
+  /** An optimized version of [[splittingFlowOn]] that splits on `'n'` or `'\r'`. */
+  lazy val splittingFlow: Flow[ByteString, String, NotUsed] = {
+    Flow[ByteString]
+      .map(Some(_)).concat(Source.single(None)).statefulMapConcat { () =>
+        val buffered = new mutable.StringBuilder
+        obs: Option[ByteString] => {
+          obs match {
+            case Some(bs) =>
+              var production = Vector.empty[String]
+              val str = bs.utf8String
+              val strSize = str.size
+              var i = 0
+              while (i < strSize) {
+                val c = str(i)
+                buffered += c
+                if (c == '\n' || c == '\r') {
+                  production :+= buffered.mkString
+                  buffered.clear()
+                }
+                i += 1
+              }
+              production
+            case None if buffered.nonEmpty =>
+              List(buffered.mkString)
+            case None =>
+              Nil
+          }
+        }
+      }
+  }
+
   /** A flow that turns a stream of [[akka.util.ByteString]] into a stream of
     * UTF-8 strings, each containing one line.
     */
+  @deprecated("Use splittingFlow instead", "2.2.3")
   lazy val linesFlow: Flow[ByteString, String, NotUsed] = {
     Flow[ByteString]
       .via(Framing.delimiter(
