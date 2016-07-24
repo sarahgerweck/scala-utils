@@ -91,17 +91,5 @@ object StreamUtils {
     * [[akka.stream.scaladsl.Sink]], while still allowing them to flow to the
     * output as well.
     */
-  def makeTap[A, B](sink: Sink[A, B]): Flow[A, A, B] = Flow fromGraph {
-    GraphDSL.create(sink) { implicit b =>
-      sink => {
-        val broadcast = b.add(Broadcast[A](2))
-
-        /* One output of our broadcast goes to the sink, the other will be our flow output */
-        broadcast ~> sink
-
-        FlowShape(broadcast.in, broadcast.out(1))
-      }
-    }
-  }
-
+  def makeTap[A, B](sink: Sink[A, B]): Flow[A, A, B] = Flow[A].alsoToMat(sink)(Keep.right)
 }
