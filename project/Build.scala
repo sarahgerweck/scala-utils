@@ -267,13 +267,13 @@ object Dependencies {
   final val threeTenVersion    = "1.3.2"
   final val commonsVfsVersion  = "2.1"
   final val commonsIoVersion   = "2.5"
-  final val spireVersion       = "0.11.0"
+  final val spireVersion       = "0.12.0"
   final val groovyVersion      = "2.4.7"
-  final val json4sVersion      = "3.4.0"
-  final val twitterUtilVersion = "6.34.0"
+  final val json4sVersion      = "3.4.1"
+  final val twitterUtilVersion = "6.37.0"
   final val scalaCheckVersion  = "1.12.5"
   final val scalaParserVersion = "1.0.4"
-  final val scalaXmlVersion    = "1.0.5"
+  final val scalaXmlVersion    = "1.0.6"
 
   val log4s         = "org.log4s"           %% "log4s"           % log4sVersion
   val slf4j         = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
@@ -335,7 +335,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.4.8"
+  final val akkaVersion        = "2.4.10"
 
   val akkaActor      = "com.typesafe.akka"   %% "akka-actor"             % akkaVersion
   val akkaAgent      = "com.typesafe.akka"   %% "akka-agent"             % akkaVersion
