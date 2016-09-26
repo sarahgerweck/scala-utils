@@ -13,7 +13,7 @@ object Dependencies {
   final val groovyVersion      = "2.4.7"
   final val json4sVersion      = "3.4.1"
   final val twitterUtilVersion = "6.37.0"
-  final val scalaCheckVersion  = "1.12.5"
+  final val scalaCheckVersion  = "1.13.2"
   final val scalaParserVersion = "1.0.4"
   final val scalaXmlVersion    = "1.0.6"
 
@@ -71,7 +71,7 @@ object Dependencies {
     case "2.12.0-M2" => "org.scalatest" %% "scalatest" % "2.2.5-M2"
     case "2.12.0-M3" => "org.scalatest" %% "scalatest" % "2.2.5-M3"
     case "2.12.0-M4" => "org.scalatest" %% "scalatest" % "2.2.6"
-    case _           => "org.scalatest" %% "scalatest" % "2.2.6"
+    case _           => "org.scalatest" %% "scalatest" % "3.0.0"
   }
 
   /* ********************************************************************** */
