@@ -26,3 +26,7 @@
   - Disable `-optimize` for Akka
      - Optimization with Akka tends to pin you to the exact version of Akka,
        which is not something we want for utilities.
+
+#### 2.2.4
+
+  - Update to Akka 2.4.11
