@@ -27,13 +27,14 @@ lazy val macros = (project in file ("macro"))
   .settings (
     name := "Gerweck Utils Macros",
     libraryDependencies += log4s,
-    libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     resolvers += Resolver.sonatypeRepo("releases"),
 
     scalaSource in Compile := {
+      val mainDir = baseDirectory.value / "src" / "main"
       scalaBinaryVersion.value match {
-        case "2.10" => baseDirectory.value / "src" / "main" / "scala-2.10"
-        case _      => baseDirectory.value / "src" / "main" / "scala-2.11"
+        case "2.10" => mainDir / "scala-2.10"
+        case _      => mainDir / "scala-2.11"
       }
     },
 
@@ -57,17 +58,18 @@ lazy val core: Project = (project in file ("core"))
     libraryDependencies ++= utilsDeps,
     libraryDependencies += threeTen % "optional",
     libraryDependencies += scalaTest(scalaBinaryVersion.value) % "test",
-    libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
-    libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
-    libraryDependencies <++= (scalaBinaryVersion) (scalaXml),
+    libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
+    libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
 
     resolvers += Resolver.sonatypeRepo("releases"),
 
-    unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, baseDirectory) { (ver, dir) =>
-      ver match {
-        case "2.10" => dir / "src" / "main" / "scala-2.10"
-        case _      => dir / "src" / "main" / "scala-2.11"
+    unmanagedSourceDirectories in Compile += {
+      val srcBase = baseDirectory.value / "src" / "main"
+      scalaBinaryVersion.value match {
+        case "2.10" => srcBase / "scala-2.10"
+        case _      => srcBase / "scala-2.11"
       }
     },
 
@@ -96,17 +98,18 @@ lazy val java6 = (project in file ("java6"))
     libraryDependencies ++= utilsDeps,
     libraryDependencies += threeTen,
     libraryDependencies += scalaTest(scalaBinaryVersion.value) % "test",
-    libraryDependencies <+= scalaVersion("org.scala-lang" % "scala-reflect" % _),
+    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
-    libraryDependencies <++= (scalaBinaryVersion) (scalaParser),
-    libraryDependencies <++= (scalaBinaryVersion) (scalaXml),
+    libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
+    libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
 
     resolvers += Resolver.sonatypeRepo("releases"),
 
-    unmanagedSourceDirectories in Compile <+= (scalaBinaryVersion, baseDirectory) { (ver, dir) =>
-      ver match {
-        case "2.10" => dir / ".." / "core" / "src" / "main" / "scala-2.10"
-        case _      => dir / ".." / "core" / "src" / "main" / "scala-2.11"
+    unmanagedSourceDirectories in Compile += {
+      val mainDir = baseDirectory.value / ".." / "core" / "src" / "main"
+      scalaBinaryVersion.value match {
+        case "2.10" => mainDir / "scala-2.10"
+        case _      => mainDir / "scala-2.11"
       }
     },
     scalaSource in Compile := baseDirectory.value / ".." / "core" / "src" / "main" / "scala",
