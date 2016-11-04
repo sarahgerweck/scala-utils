@@ -30,3 +30,7 @@
 #### 2.2.4
 
   - Update to Akka 2.4.11
+
+#### 2.2.5
+
+  - Make `VersionNumber` serializable
