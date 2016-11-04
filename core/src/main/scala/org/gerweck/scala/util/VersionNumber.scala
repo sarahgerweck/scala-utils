@@ -4,7 +4,7 @@ package org.gerweck.scala.util
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-final class VersionNumber(val versionParts: Seq[Int]) extends Ordered[VersionNumber] {
+final class VersionNumber(val versionParts: Seq[Int]) extends Ordered[VersionNumber] with Serializable {
   override def compare(that: VersionNumber) = {
     // TBD: This could be a scalaz lazy foldRight
     // We use zipAll with zero extension because 1.2.0 is the same as 1.2.
