@@ -34,3 +34,8 @@
 #### 2.2.5
 
   - Make `VersionNumber` serializable
+
+#### 2.2.6
+
+  - Update the Json4s optional dependency to 3.5.0.
+  - Update the Twitter Core optional dependency to 6.38.0.
