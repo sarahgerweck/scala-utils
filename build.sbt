@@ -57,7 +57,7 @@ lazy val core: Project = (project in file ("core"))
 
     libraryDependencies ++= utilsDeps,
     libraryDependencies += threeTen % "optional",
-    libraryDependencies += scalaTest(scalaBinaryVersion.value) % "test",
+    libraryDependencies += scalaTest % "test",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
     libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
@@ -97,7 +97,7 @@ lazy val java6 = (project in file ("java6"))
 
     libraryDependencies ++= utilsDeps,
     libraryDependencies += threeTen,
-    libraryDependencies += scalaTest(scalaBinaryVersion.value) % "test",
+    libraryDependencies += scalaTest % "test",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
     libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
@@ -115,6 +115,31 @@ lazy val java6 = (project in file ("java6"))
     scalaSource in Compile := baseDirectory.value / ".." / "core" / "src" / "main" / "scala",
     scalaSource in Test := baseDirectory.value / ".." / "core" / "src" / "test" / "scala",
     unmanagedSourceDirectories in Compile += baseDirectory.value / ".." / "core" / "src" / "main" / "scala-java6",
+
+    publish := {
+      scalaBinaryVersion.value match {
+        case "2.12" => ()
+        case _      => publish.value
+      }
+    },
+    publishLocal := {
+      scalaBinaryVersion.value match {
+        case "2.12" => ()
+        case _      => publishLocal.value
+      }
+    },
+    publishArtifact := {
+      scalaBinaryVersion.value match {
+        case "2.12" => false
+        case _      => publishArtifact.value
+      }
+    },
+    releaseProcess := {
+      scalaBinaryVersion.value match {
+        case "2.12" => Seq.empty
+        case _      => releaseProcess.value
+      }
+    },
 
     // include the macro classes and resources in the main jar
     mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
@@ -163,7 +188,7 @@ lazy val dbutil: Project = (project in file ("dbutil"))
 
     /* Slick dependencies */
     libraryDependencies ++= Seq (
-      slick
+      slick(scalaBinaryVersion.value)
     ),
     /* Optional mappings */
     libraryDependencies ++= Seq (

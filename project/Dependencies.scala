@@ -4,16 +4,15 @@ object Dependencies {
   final val slf4jVersion       = "1.7.21"
   final val log4sVersion       = "1.3.3"
   final val logbackVersion     = "1.1.7"
-  final val jodaTimeVersion    = "2.9.5"
+  final val jodaTimeVersion    = "2.9.6"
   final val jodaConvertVersion = "1.8.1"
   final val threeTenVersion    = "1.3.2"
   final val commonsVfsVersion  = "2.1"
   final val commonsIoVersion   = "2.5"
-  final val spireVersion       = "0.12.0"
+  final val spireVersion       = "0.13.0"
   final val groovyVersion      = "2.4.7"
   final val json4sVersion      = "3.5.0"
-  final val twitterUtilVersion = "6.38.0"
-  final val scalaCheckVersion  = "1.13.4"
+  final val twitterUtilVersion = "6.39.0"
   final val scalaParserVersion = "1.0.4"
   final val scalaXmlVersion    = "1.0.6"
 
@@ -42,18 +41,28 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                Database                                */
   /* ********************************************************************** */
-  final val slickVersion            = "3.1.1"
   final val liquibaseVersion        = "3.5.1"
   final val liquibaseLoggingVersion = "2.0.0"
 
-  val slick            = "com.typesafe.slick" %% "slick"           % slickVersion
   val liquibase        = "org.liquibase"      %  "liquibase-core"  % liquibaseVersion
   val liquibaseLogging = "com.mattbertolini"  %  "liquibase-slf4j" % liquibaseLoggingVersion
+
+  def slick(scalaBinaryVersion: String): ModuleID = {
+    val version = scalaBinaryVersion match {
+      case "2.12" => "3.2.0-M2"
+      case _      => "3.1.1"
+    }
+    "com.typesafe.slick" %% "slick" % version
+  }
 
   /* ********************************************************************** */
   /*                          Testing Dependencies                          */
   /* ********************************************************************** */
-  val scalaCheck  = "org.scalacheck"      %% "scalacheck"      % scalaCheckVersion
+  final val scalaTestVersion  = "3.0.1"
+  final val scalaCheckVersion = "1.13.4"
+
+  val scalaTest  = "org.scalatest"  %% "scalatest"  % scalaTestVersion
+  val scalaCheck = "org.scalacheck" %% "scalacheck" % scalaCheckVersion
 
   /* Use like this: libraryDependencies <++= (scalaBinaryVersion) (scalaParser) */
   def scalaParser(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
@@ -66,26 +75,19 @@ object Dependencies {
     case _      => Seq("org.scala-lang.modules" %% "scala-xml" % scalaXmlVersion % "optional")
   }
 
-  def scalaTest(scalaBinaryVersion: String): ModuleID = scalaBinaryVersion match {
-    case "2.12.0-M1" => "org.scalatest" %% "scalatest" % "2.2.5-M1"
-    case "2.12.0-M2" => "org.scalatest" %% "scalatest" % "2.2.5-M2"
-    case "2.12.0-M3" => "org.scalatest" %% "scalatest" % "2.2.5-M3"
-    case "2.12.0-M4" => "org.scalatest" %% "scalatest" % "2.2.6"
-    case _           => "org.scalatest" %% "scalatest" % "3.0.0"
-  }
-
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.4.11"
+  final val akkaVersion        = "2.4.14"
+  final val akkaHttpVersion    = "10.0.0"
 
-  val akkaActor      = "com.typesafe.akka"   %% "akka-actor"             % akkaVersion
-  val akkaAgent      = "com.typesafe.akka"   %% "akka-agent"             % akkaVersion
-  val akkaRemote     = "com.typesafe.akka"   %% "akka-remote"            % akkaVersion
-  val akkaSlf4j      = "com.typesafe.akka"   %% "akka-slf4j"             % akkaVersion
-  val akkaStream     = "com.typesafe.akka"   %% "akka-stream"            % akkaVersion
-  val akkaHttpCore   = "com.typesafe.akka"   %% "akka-http-core"         % akkaVersion
-  val akkaHttp       = "com.typesafe.akka"   %% "akka-http-experimental" % akkaVersion
+  val akkaActor    = "com.typesafe.akka" %% "akka-actor"     % akkaVersion
+  val akkaAgent    = "com.typesafe.akka" %% "akka-agent"     % akkaVersion
+  val akkaRemote   = "com.typesafe.akka" %% "akka-remote"    % akkaVersion
+  val akkaSlf4j    = "com.typesafe.akka" %% "akka-slf4j"     % akkaVersion
+  val akkaStream   = "com.typesafe.akka" %% "akka-stream"    % akkaVersion
+  val akkaHttpCore = "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
+  val akkaHttp     = "com.typesafe.akka" %% "akka-http"      % akkaHttpVersion
 
   /* ********************************************************************** */
   /*                                Helpers                                 */
