@@ -3,10 +3,10 @@ package org.gerweck.scala.util
 import language.implicitConversions
 import language.reflectiveCalls
 
-import java.util.concurrent.ConcurrentHashMap
-
 import scala.annotation.tailrec
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
+
+import java.util.concurrent.ConcurrentHashMap
 
 // Parsing imports
 import scala.util.parsing._
@@ -34,8 +34,8 @@ trait LexerUtil extends Scanners with ParserUtil {
     lex(new Scanner(input), Vector.empty)
   }
 
-  private[this] val charParsers = mapAsScalaConcurrentMap(new ConcurrentHashMap[(String,Boolean),Parser[Vector[Char]]])
-  private[this] val strParsers = mapAsScalaConcurrentMap(new ConcurrentHashMap[(String,Boolean),Parser[String]])
+  private[this] val charParsers = new ConcurrentHashMap[(String,Boolean),Parser[Vector[Char]]].asScala
+  private[this] val strParsers = new ConcurrentHashMap[(String,Boolean),Parser[String]].asScala
 
   def insensitive(c: Char) = elem(c.toString, { _ =~= c })
 

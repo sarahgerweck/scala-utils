@@ -1,6 +1,6 @@
 package org.gerweck.scala.util
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 import java.io.File
 import java.net.URL
@@ -33,7 +33,7 @@ object Resources {
     var jarFile: JarFile = null
     jarFile = new JarFile(jarPath)
     ( for {
-        entry <- jarFile.entries
+        entry <- jarFile.entries.asScala
         name = entry.getName
         if (name startsWith relPath) && !(name.drop(relPath.length).dropWhile(_ == '/') contains '/')
       } yield {
@@ -51,7 +51,7 @@ object Resources {
     val pkgname = pkg.getName
     val relPath = pkgname.replace('.', '/')
 
-    val resources = getClass.getClassLoader.getResources(relPath).toVector
+    val resources = getClass.getClassLoader.getResources(relPath).asScala.toVector
     logger.trace(s"Got resources: $resources")
 
     val maps = {

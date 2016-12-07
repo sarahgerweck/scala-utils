@@ -51,3 +51,4 @@
     - Akka HTTP is no longer experimental, and it's now on a different release
       schedule from Akka
   - Start dropping build support for Scala 2.12 milestones.
+  - Slight performance improvements in `TokenParserUtil`.

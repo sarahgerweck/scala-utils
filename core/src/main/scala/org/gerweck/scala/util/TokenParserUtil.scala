@@ -2,10 +2,9 @@ package org.gerweck.scala.util
 
 import java.util.concurrent.ConcurrentHashMap
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 import scala.reflect.{ ClassTag, classTag }
 import scala.util.parsing.combinator.syntactical.TokenParsers
-
 
 /** Mix-in utility code to assist with Parser development.
   *
@@ -13,7 +12,7 @@ import scala.util.parsing.combinator.syntactical.TokenParsers
   */
 trait TokenParserUtil extends TokenParsers with ParserUtil {
 
-  private[this] val typeParsers = new ConcurrentHashMap[ClassTag[_ <: Elem], Parser[Elem]]
+  private[this] val typeParsers = new ConcurrentHashMap[ClassTag[_ <: Elem], Parser[Elem]].asScala
 
   /** A parser that matches elements of a given type.  This is useful if you have
     * a hierarchy of traits that extend from `Elem` and want to easily be able to
