@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   final val slf4jVersion       = "1.7.21"
-  final val log4sVersion       = "1.3.3"
+  final val log4sVersion       = "1.3.4"
   final val logbackVersion     = "1.1.7"
   final val jodaTimeVersion    = "2.9.6"
   final val jodaConvertVersion = "1.8.1"
