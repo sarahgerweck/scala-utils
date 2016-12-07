@@ -30,6 +30,9 @@ lazy val macros = (project in file ("macro"))
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     resolvers += Resolver.sonatypeRepo("releases"),
 
+    addScalacOptions(),
+    addJavacOptions(),
+
     scalaSource in Compile := {
       val mainDir = baseDirectory.value / "src" / "main"
       scalaBinaryVersion.value match {
@@ -52,8 +55,8 @@ lazy val core: Project = (project in file ("core"))
   .settings(
     name := "Gerweck Utils",
 
-    scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true),
-    javacOptions ++= javacOpts(true),
+    addScalacOptions(),
+    addJavacOptions(),
 
     libraryDependencies ++= utilsDeps,
     libraryDependencies += threeTen % "optional",
@@ -92,8 +95,8 @@ lazy val java6 = (project in file ("java6"))
     name := "Gerweck Utils (Java 6)",
     normalizedName := "gerweck-utils-java6",
 
-    scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), false),
-    javacOptions ++= javacOpts(false),
+    addScalacOptions(),
+    addJavacOptions(),
 
     libraryDependencies ++= utilsDeps,
     libraryDependencies += threeTen,
@@ -165,8 +168,10 @@ lazy val akka: Project = (project in file ("akka"))
   .settings(
     name := "Gerweck Utils Akka",
 
-    scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true, false),
-    javacOptions ++= javacOpts(true),
+    /* TODO: In Scala 2.12, we should be able to do partial optimization even when we're dealing
+     * with Akka.  */
+    addScalacOptions(false),
+    addJavacOptions(),
 
     /* Logging */
     libraryDependencies ++= basicLogDeps,
@@ -183,8 +188,8 @@ lazy val dbutil: Project = (project in file ("dbutil"))
   .settings(
     name := "Gerweck Utils DB",
 
-    scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true),
-    javacOptions ++= javacOpts(true),
+    addScalacOptions(),
+    addJavacOptions(),
 
     /* Slick has some changes in 3.2, which we only use in Scala 2.12 */
     unmanagedSourceDirectories in Compile += {

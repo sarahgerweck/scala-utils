@@ -20,6 +20,8 @@ sealed trait Basics {
   lazy  val parallelBuild      = false
   lazy  val cachedResolution   = false
 
+  final val defaultNewBackend  = false
+
   /* Metadata definitions */
   lazy val buildMetadata = Vector(
     licenses    := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
@@ -53,44 +55,65 @@ object BuildSettings extends Basics {
   lazy val unusedWarn   = boolFlag("UNUSED_WARNINGS") getOrElse false
   lazy val importWarn   = boolFlag("IMPORT_WARNINGS") getOrElse false
   lazy val java8Flag    = boolFlag("BUILD_JAVA_8") getOrElse false
+  lazy val newBackend   = boolFlag("NEW_BCODE_BACKEND") getOrElse defaultNewBackend
 
   val buildScalaVersions = buildScalaVersion +: extraScalaVersions
 
-  private[this] val sharedScalacOptions = Seq (
-    "-unchecked",
-    "-feature"
-  ) ++ (
-    if (deprecation) Seq("-deprecation") else Seq.empty
-  ) ++ (
-    if (inlineWarn) Seq("-Yinline-warnings") else Seq.empty
-  ) ++ (
-    if (unusedWarn) Seq("-Ywarn-unused") else Seq.empty
-  ) ++ (
-    if (importWarn) Seq("-Ywarn-unused-import") else Seq.empty
-  )
+  def addScalacOptions(optim: Boolean = optimize) = Def.derive {
+    scalacOptions ++= {
+      val sv = SVer(scalaBinaryVersion.value)
+      var options = Seq.empty[String]
 
-  def scalacOpts(sver: SVer, java8Only: Boolean, optim: Boolean = optimize) = sharedScalacOptions ++ {
-    def opt = if (optim) Seq("-optimize") else Seq.empty
-    sver match {
-      case j8 if j8.requireJava8 => Seq.empty
-      case SVer2_10              => Seq("-target:jvm-1.6") ++ opt
-      case _                     =>
-        opt ++ Seq("-target:jvm-" + (if (java8Only) "1.8" else minimumJavaVersion))
+      options :+= "-unchecked"
+      options :+= "-feature"
+      if (deprecation) {
+        options :+= "-deprecation"
+      }
+      if (inlineWarn) {
+        options :+= "-Yinline-warnings"
+      }
+      if (unusedWarn) {
+        options :+= "-Ywarn-unused"
+      }
+      if (importWarn) {
+        options :+= "-Ywarn-unused-import"
+      }
+      if (!sv.requireJava8) {
+        options :+= "-target:jvm-" + minimumJavaVersion
+      }
+      if (optim) {
+        if (sv.newOptimize || sv.supportsNewBackend && newBackend) {
+          options :+= "-opt:l:project"
+        } else if (!sv.requireJava8) {
+          options :+= "-optimize"
+        }
+      }
+      if (sv.supportsNewBackend && newBackend && !sv.requireJava8) {
+        options :+= "-Ybackend:GenBCode"
+      }
+
+      options
     }
   }
 
-  private[this] val sharedJavacOptions = Seq.empty
-  def javacOpts(java8Only: Boolean) = sharedJavacOptions ++ {
-    if (java8Only) {
-      Seq (
-        "-target", "1.8",
-        "-source", "1.8"
-      )
-    } else {
-      Seq (
-        "-target", minimumJavaVersion,
-        "-source", minimumJavaVersion
-      )
+  def addJavacOptions() = Def.derive {
+    javacOptions ++= {
+      val sv = SVer(scalaBinaryVersion.value)
+      var options = Seq.empty[String]
+
+      if (sv.requireJava8) {
+        options ++= Seq[String](
+          "-target", "1.8",
+          "-source", "1.8"
+        )
+      } else {
+        options ++= Seq[String](
+          "-target", minimumJavaVersion,
+          "-source", minimumJavaVersion
+        )
+      }
+
+      options
     }
   }
 
