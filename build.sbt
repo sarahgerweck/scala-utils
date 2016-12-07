@@ -186,6 +186,15 @@ lazy val dbutil: Project = (project in file ("dbutil"))
     scalacOptions ++= scalacOpts(SVer(scalaBinaryVersion.value), true),
     javacOptions ++= javacOpts(true),
 
+    /* Slick has some changes in 3.2, which we only use in Scala 2.12 */
+    unmanagedSourceDirectories in Compile += {
+      val mainDir = baseDirectory.value / "src" / "main"
+      scalaBinaryVersion.value match {
+        case "2.11" => mainDir / "scala-2.11"
+        case "2.12" => mainDir / "scala-2.12"
+      }
+    },
+
     /* Slick dependencies */
     libraryDependencies ++= Seq (
       slick(scalaBinaryVersion.value)
