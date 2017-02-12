@@ -1,35 +1,38 @@
 import sbt._
 
 object Dependencies {
-  final val slf4jVersion       = "1.7.22"
-  final val log4sVersion       = "1.3.4"
-  final val logbackVersion     = "1.2.1"
-  final val jodaTimeVersion    = "2.9.7"
-  final val jodaConvertVersion = "1.8.1"
-  final val threeTenVersion    = "1.3.3"
-  final val commonsVfsVersion  = "2.1"
-  final val commonsIoVersion   = "2.5"
-  final val spireVersion       = "0.13.0"
-  final val groovyVersion      = "2.4.8"
-  final val json4sVersion      = "3.5.0"
-  final val twitterUtilVersion = "6.41.0"
-  final val scalaParserVersion = "1.0.5"
-  final val scalaXmlVersion    = "1.0.6"
+  final val slf4jVersion        = "1.7.22"
+  final val log4sVersion        = "1.3.4"
+  final val logbackVersion      = "1.2.1"
+  final val jodaTimeVersion     = "2.9.7"
+  final val jodaConvertVersion  = "1.8.1"
+  final val threeTenVersion     = "1.3.3"
+  final val commonsVfsVersion   = "2.1"
+  final val commonsIoVersion    = "2.5"
+  final val spireVersion        = "0.13.0"
+  final val groovyVersion       = "2.4.8"
+  final val json4sVersion       = "3.5.0"
+  final val twitterUtilVersion  = "6.41.0"
+  final val scalaParserVersion  = "1.0.5"
+  final val scalaXmlVersion     = "1.0.6"
+  final val bouncyCastleVersion = "1.56"
 
-  val log4s         = "org.log4s"           %% "log4s"           % log4sVersion
-  val slf4j         = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
-  val jclBridge     = "org.slf4j"           %  "jcl-over-slf4j"  % slf4jVersion
-  val logback       = "ch.qos.logback"      %  "logback-classic" % logbackVersion
-  val commonsIo     = "commons-io"          %  "commons-io"      % commonsIoVersion
-  val jodaTime      = "joda-time"           %  "joda-time"       % jodaTimeVersion
-  val jodaConvert   = "org.joda"            %  "joda-convert"    % jodaConvertVersion
-  val threeTen      = "org.threeten"        %  "threetenbp"      % threeTenVersion
-  val spire         = "org.spire-math"      %% "spire"           % spireVersion
-  val groovy        = "org.codehaus.groovy" %  "groovy-all"      % groovyVersion
-  val twitterUtil   = "com.twitter"         %% "util-core"       % twitterUtilVersion
-  val json4sNative  = "org.json4s"          %% "json4s-native"   % json4sVersion
-  val json4sJackson = "org.json4s"          %% "json4s-jackson"  % json4sVersion
-  val json4sExt     = "org.json4s"          %% "json4s-ext"      % json4sVersion exclude("joda-time", "joda-time") exclude("org.joda", "joda-convert")
+  val log4s            = "org.log4s"           %% "log4s"           % log4sVersion
+  val slf4j            = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
+  val jclBridge        = "org.slf4j"           %  "jcl-over-slf4j"  % slf4jVersion
+  val logback          = "ch.qos.logback"      %  "logback-classic" % logbackVersion
+  val commonsIo        = "commons-io"          %  "commons-io"      % commonsIoVersion
+  val jodaTime         = "joda-time"           %  "joda-time"       % jodaTimeVersion
+  val jodaConvert      = "org.joda"            %  "joda-convert"    % jodaConvertVersion
+  val threeTen         = "org.threeten"        %  "threetenbp"      % threeTenVersion
+  val spire            = "org.spire-math"      %% "spire"           % spireVersion
+  val groovy           = "org.codehaus.groovy" %  "groovy-all"      % groovyVersion
+  val twitterUtil      = "com.twitter"         %% "util-core"       % twitterUtilVersion
+  val json4sNative     = "org.json4s"          %% "json4s-native"   % json4sVersion
+  val json4sJackson    = "org.json4s"          %% "json4s-jackson"  % json4sVersion
+  val json4sExt        = "org.json4s"          %% "json4s-ext"      % json4sVersion exclude("joda-time", "joda-time") exclude("org.joda", "joda-convert")
+  val bouncyCastle     = "org.bouncycastle"    %  "bcprov-jdk15on"  % bouncyCastleVersion
+  val bouncyCastlePkix = "org.bouncycastle"    %  "bcpkix-jdk15on"  % bouncyCastleVersion
 
   val commonsVfs = {
     val base = "org.apache.commons"  %  "commons-vfs2"    % commonsVfsVersion
