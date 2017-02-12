@@ -61,6 +61,7 @@ lazy val core: Project = (project in file ("core"))
     libraryDependencies ++= utilsDeps,
     libraryDependencies += threeTen % "optional",
     libraryDependencies += scalaTest % "test",
+    libraryDependencies += bouncyCastle % "optional",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
     libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
@@ -101,6 +102,7 @@ lazy val java6 = (project in file ("java6"))
     libraryDependencies ++= utilsDeps,
     libraryDependencies += threeTen,
     libraryDependencies += scalaTest % "test",
+    libraryDependencies += bouncyCastle % "optional",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
     libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
@@ -185,7 +187,12 @@ lazy val akka: Project = (project in file ("akka"))
     libraryDependencies ++= Seq (
       akkaActor,
       akkaStream
-    )
+    ),
+    /* Testing */
+    libraryDependencies += scalaTest % "test",
+    libraryDependencies += scalaCheck % "test",
+    /* BouncyCastle is optional for the streaming hash. */
+    libraryDependencies += bouncyCastle % "test"
   )
 
 lazy val dbutil: Project = (project in file ("dbutil"))
