@@ -47,8 +47,8 @@ sealed trait Basics {
 object BuildSettings extends Basics {
   /* Overridable flags */
   lazy val optimize     = boolFlag("OPTIMIZE") orElse boolFlag("OPTIMISE") getOrElse defaultOptimize
+  lazy val optimizeWarn = boolFlag("OPTIMIZE_WARNINGS") getOrElse false
   lazy val deprecation  = boolFlag("NO_DEPRECATION") map (!_) getOrElse true
-  lazy val inlineWarn   = boolFlag("INLINE_WARNINGS") getOrElse false
   lazy val debug        = boolFlag("DEBUGGER") getOrElse false
   lazy val debugPort    = envOrNone("DEBUGGER_PORT") map { _.toInt } getOrElse 5050
   lazy val debugSuspend = boolFlag("DEBUGGER_SUSPEND") getOrElse true
@@ -69,8 +69,12 @@ object BuildSettings extends Basics {
       if (deprecation) {
         options :+= "-deprecation"
       }
-      if (inlineWarn) {
-        options :+= "-Yinline-warnings"
+      if (optimizeWarn) {
+        if (sv.newOptimize) {
+          options :+= "-opt-warnings:_"
+        } else {
+          options :+= "-Yinline-warnings"
+        }
       }
       if (unusedWarn) {
         options :+= "-Ywarn-unused"
