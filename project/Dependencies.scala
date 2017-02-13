@@ -1,19 +1,19 @@
 import sbt._
 
 object Dependencies {
-  final val slf4jVersion       = "1.7.21"
+  final val slf4jVersion       = "1.7.22"
   final val log4sVersion       = "1.3.4"
-  final val logbackVersion     = "1.1.7"
-  final val jodaTimeVersion    = "2.9.6"
+  final val logbackVersion     = "1.2.1"
+  final val jodaTimeVersion    = "2.9.7"
   final val jodaConvertVersion = "1.8.1"
-  final val threeTenVersion    = "1.3.2"
+  final val threeTenVersion    = "1.3.3"
   final val commonsVfsVersion  = "2.1"
   final val commonsIoVersion   = "2.5"
   final val spireVersion       = "0.13.0"
-  final val groovyVersion      = "2.4.7"
+  final val groovyVersion      = "2.4.8"
   final val json4sVersion      = "3.5.0"
-  final val twitterUtilVersion = "6.39.0"
-  final val scalaParserVersion = "1.0.4"
+  final val twitterUtilVersion = "6.41.0"
+  final val scalaParserVersion = "1.0.5"
   final val scalaXmlVersion    = "1.0.6"
 
   val log4s         = "org.log4s"           %% "log4s"           % log4sVersion
@@ -78,8 +78,8 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.4.14"
-  final val akkaHttpVersion    = "10.0.0"
+  final val akkaVersion        = "2.4.17"
+  final val akkaHttpVersion    = "10.0.3"
 
   val akkaActor    = "com.typesafe.akka" %% "akka-actor"     % akkaVersion
   val akkaAgent    = "com.typesafe.akka" %% "akka-agent"     % akkaVersion
