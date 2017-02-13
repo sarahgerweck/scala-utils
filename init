@@ -1,0 +1,45 @@
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.util._
+
+implicit val timeout = 10.minutes
+
+import org.log4s._
+val logger = getLogger("main")
+
+import org.gerweck.scala.util.timed
+def time[A](f: => A) = timed(logger, "task", Info){ f }
+
+import akka._
+import akka.actor._
+import akka.util._
+import com.typesafe.config._
+
+val actorConfig = ConfigFactory.parseString("akka.daemonic = true")
+implicit val system = ActorSystem("test", config = Some(actorConfig))
+
+import akka.stream._
+import akka.stream.scaladsl._
+implicit val mat = ActorMaterializer()
+
+import org.gerweck.scala.util.hashing._
+
+val testSize = 100000000
+lazy val ra = Array.range(0, testSize)
+lazy val rr = 0 to testSize
+
+implicit class RBA(val ba: Array[Byte]) extends AnyVal {
+  def toHex = ba.map("%02x" format _).mkString
+}
+
+def rep[A](n: Int)(f: => A): A = {
+  for (i <- 2 to n) { f }
+  f
+}
+def rr[A](n: Double)(f: => A): A = rep(math.pow(10, n).toInt)(f)
+
+def strHash(alg: HashAlgorithm = BouncyAlgorithm.sha_256, str: String = "hello") = {
+  Await.result(StreamHash.hashData(alg, Source.single(ByteString(str))), timeout)
+}
+def tstrHash(alg: HashAlgorithm = BouncyAlgorithm.sha_256, str: String = "hello") = time(strHash(str, alg))
+def hello = tstrHash()

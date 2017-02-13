@@ -16,6 +16,7 @@ sealed trait Basics {
   final val extraScalaVersions = Seq("2.12.1")
   final val minimumJavaVersion = "1.6"
   lazy  val defaultOptimize    = true
+  lazy  val globalOptimize     = false
 
   lazy  val parallelBuild      = false
   lazy  val cachedResolution   = false
@@ -100,7 +101,9 @@ object BuildSettings extends Basics {
 
       if (optim) {
         if (sv.newOptimize || sv.supportsNewBackend && newBackend) {
-          options :+= "-opt:l:project"
+          options :+= {
+            if (globalOptimize) "-opt:l:classpath" else "-opt:l:project"
+          }
         } else if (!sv.requireJava8) {
           options :+= "-optimize"
         }
