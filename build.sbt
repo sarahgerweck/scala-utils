@@ -168,9 +168,15 @@ lazy val akka: Project = (project in file ("akka"))
   .settings(
     name := "Gerweck Utils Akka",
 
-    /* TODO: In Scala 2.12, we should be able to do partial optimization even when we're dealing
-     * with Akka.  */
-    addScalacOptions(false),
+    basicScalacOptions,
+    scalacOptions ++= {
+      sbt.CrossVersion.partialVersion(scalaBinaryVersion.value) match {
+        case Some((2, x)) if x >= 12 =>
+          Seq("-opt:l:project")
+        case _ =>
+          Seq.empty
+      }
+    },
     addJavacOptions(),
 
     /* Logging */
