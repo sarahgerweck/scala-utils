@@ -59,7 +59,7 @@ object BuildSettings extends Basics {
 
   val buildScalaVersions = buildScalaVersion +: extraScalaVersions
 
-  def addScalacOptions(optim: Boolean = optimize) = Def.derive {
+  def basicScalacOptions = Def.derive {
     scalacOptions ++= {
       val sv = SVer(scalaBinaryVersion.value)
       var options = Seq.empty[String]
@@ -85,13 +85,6 @@ object BuildSettings extends Basics {
       if (!sv.requireJava8) {
         options :+= "-target:jvm-" + minimumJavaVersion
       }
-      if (optim) {
-        if (sv.newOptimize || sv.supportsNewBackend && newBackend) {
-          options :+= "-opt:l:project"
-        } else if (!sv.requireJava8) {
-          options :+= "-optimize"
-        }
-      }
       if (sv.supportsNewBackend && newBackend && !sv.requireJava8) {
         options :+= "-Ybackend:GenBCode"
       }
@@ -99,6 +92,28 @@ object BuildSettings extends Basics {
       options
     }
   }
+
+  def optimizationScalacOptions(optim: Boolean = optimize) = Def.derive {
+    scalacOptions ++= {
+      val sv = SVer(scalaBinaryVersion.value)
+      var options = Seq.empty[String]
+
+      if (optim) {
+        if (sv.newOptimize || sv.supportsNewBackend && newBackend) {
+          options :+= "-opt:l:project"
+        } else if (!sv.requireJava8) {
+          options :+= "-optimize"
+        }
+      }
+
+      options
+    }
+  }
+
+  def addScalacOptions(optim: Boolean = optimize) = new Def.SettingList(Seq(
+    basicScalacOptions,
+    optimizationScalacOptions(optim)
+  ))
 
   def addJavacOptions() = Def.derive {
     javacOptions ++= {
