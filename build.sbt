@@ -212,9 +212,14 @@ lazy val dbutil: Project = (project in file ("dbutil"))
     ),
     /* Optional mappings */
     libraryDependencies ++= Seq (
-      json4sNative % "optional",
-      akkaHttpCore % "optional"
-    )
+      json4sNative,
+      akkaHttpCore
+    ).map(_ % "optional"),
+    /* Optional liquibase support */
+    libraryDependencies ++= Seq (
+      liquibase,
+      liquibaseLogging
+    ).map(_ % "optional")
   )
 
 lazy val basicLogDeps = Seq(

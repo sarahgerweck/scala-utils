@@ -44,7 +44,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                Database                                */
   /* ********************************************************************** */
-  final val liquibaseVersion        = "3.5.1"
+  final val liquibaseVersion        = "3.5.3"
   final val liquibaseLoggingVersion = "2.0.0"
 
   val liquibase        = "org.liquibase"      %  "liquibase-core"  % liquibaseVersion
