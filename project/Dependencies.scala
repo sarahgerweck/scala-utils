@@ -52,7 +52,7 @@ object Dependencies {
 
   def slick(scalaBinaryVersion: String): ModuleID = {
     val version = scalaBinaryVersion match {
-      case "2.12" => "3.2.0-M2"
+      case "2.12" => "3.2.0-RC1"
       case _      => "3.1.1"
     }
     "com.typesafe.slick" %% "slick" % version
