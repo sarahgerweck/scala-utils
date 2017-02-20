@@ -1,0 +1,41 @@
+import scala.concurrent._
+import scala.concurrent.duration._
+import scala.util._
+
+import org.gerweck.scala.util._
+import org.gerweck.scala.util.stream._
+import org.log4s._
+
+val logger = getLogger("main")
+
+import akka._
+import akka.actor._
+import akka.util._
+import akka.stream._
+import akka.stream.scaladsl._
+
+import java.nio.file._
+
+import com.typesafe.config._
+
+implicit val timeout = 10.minutes
+val actorConfig = ConfigFactory.parseString("akka.daemonic = true")
+implicit val system = ActorSystem("test", config = Some(actorConfig))
+implicit val mat = ActorMaterializer()
+
+implicit val disp = system.dispatcher
+
+val fileA = new ZipStream.Entry("a/b", Source(Vector(ByteString("hello"), ByteString("\nthere"))))
+val fileB = new ZipStream.Entry("x.txt", Source(Vector(ByteString("goodbye"))))
+val filesStream = Source(Vector(fileA, fileB))
+val p = Paths.get("test1.zip")
+
+val fileSink = ZipStream.toFile(p)
+val combined = filesStream.toMat(fileSink)(Keep.right)
+
+val zipFlow = ZipStream.asFlow()
+val flowCombined = filesStream.via(zipFlow).toMat(Sink.fold("")(_ + _.map("%02x" format _).mkString))(Keep.right)
+
+//val fut = combined.run()
+//fut.value
+
