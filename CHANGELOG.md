@@ -52,3 +52,12 @@
       schedule from Akka
   - Start dropping build support for Scala 2.12 milestones.
   - Slight performance improvements in `TokenParserUtil`.
+
+#### 2.4.0
+
+  - Update to Akka 2.4.17
+  - Add `ZipStream` to Akka module, which provides a streaming, non-blocking
+    mechanism for producing zip archives.
+  - Add `hashing` package that provides idiomatic access to hash algorithms.
+    - This also adds support for the Bouncy Castle hash implementations. This
+      is now an optional dependency.
