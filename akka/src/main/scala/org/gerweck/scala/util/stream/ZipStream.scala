@@ -6,6 +6,7 @@ import scala.util._
 
 import java.io._
 import java.nio.file._
+import java.time.Instant
 import java.util.zip._
 
 import akka.{ Done, NotUsed }
@@ -17,6 +18,7 @@ import akka.util.ByteString
 import org.log4s._
 
 import org.gerweck.scala.util.io._
+import org.gerweck.scala.util.stream.impl._
 
 /** Provider of streams that take in zip entries and produces zipped data as output.
   *
@@ -47,6 +49,28 @@ object ZipStream {
   /** The default buffer size when writing zipped data to a file. */
   val defaultFileBuffer: Option[Int] = Some(8 * 1024)
 
+  /** A source of data that can be included in a stream that is constructing zipped data. These
+    * provide a stream and thus they are '''not''' serializable.
+    */
+  sealed trait Zippable {
+    protected[ZipStream] def toActionSource: Source[ZipAction, NotUsed]
+  }
+
+  /** The metadata associated with a single entry in a zip file. */
+  case class ZipEntryMetadata(
+    name: String,
+    creation: Option[Instant] = None,
+    lastAccess: Option[Instant] = None,
+    lastModified: Option[Instant] = None,
+    comment: Option[String] = None,
+    extra: Option[Array[Byte]] = None
+  )
+
+  object ZipEntryMetadata {
+    import language.implicitConversions
+    implicit def nameToMetadata(name: String): ZipEntryMetadata = ZipEntryMetadata(name)
+  }
+
   /** An entry to be written into the zip file.
     *
     * @note These are NOT serializable, as they contain a stream `Source`.
@@ -59,11 +83,47 @@ object ZipStream {
     * exhausted before the next entry can be started, so a stall here will hold up the entire
     * stream. Similarly, a failure in this stream will fail the entire archive.
     */
-  final class Entry(val name: String, val data: Source[ByteString, _]) {
-    private[ZipStream] val toActionSource: Source[ZipAction, NotUsed] = {
-      Source.single(ZipAction.NewEntry(name)) ++
+  final class Entry(val metadata: ZipEntryMetadata, data: Source[ByteString, _]) extends Zippable {
+    protected[ZipStream] lazy val toActionSource: Source[ZipAction, NotUsed] = {
+      Source.single(ZipAction.NewEntry(metadata)) ++
       data.map(ZipAction.Data) ++
       Source.single(ZipAction.CloseEntry)
+    }
+  }
+
+  final class ExistingZip private (transform: PartialFunction[ZipEntryMetadata, ZipEntryMetadata], source: Source[ZipAction, _]) extends Zippable {
+    protected[ZipStream] lazy val toActionSource: Source[ZipAction, NotUsed] = {
+      source .statefulMapConcat[ZipAction] { () =>
+        import ZipAction._
+        var shouldDrop = true
+        locally {
+          case NewEntry(name) =>
+            if (transform.isDefinedAt(name)) {
+              shouldDrop = false
+              NewEntry(transform(name)) :: Nil
+            } else {
+              shouldDrop = true
+              Nil
+            }
+          case other =>
+            if (shouldDrop) {
+              Nil
+            } else {
+              other :: Nil
+            }
+        }
+      }.mapMaterializedValue(Function.const(NotUsed))
+    }
+  }
+
+  object ExistingZip {
+    def transform(data: Source[ByteString, _], buffer: Option[Int] = defaultFileBuffer)(transform: PartialFunction[ZipEntryMetadata, ZipEntryMetadata])(implicit ec: ExecutionContext): ExistingZip = {
+      val s = data.via(zipInput(outputTimeout, buffer))
+
+      new ExistingZip(transform, s)
+    }
+    def unchanged(data: Source[ByteString, _], buffer: Option[Int] = defaultFileBuffer)(implicit ec: ExecutionContext): ExistingZip = {
+      transform(data, buffer){ case x => x }
     }
   }
 
@@ -76,7 +136,7 @@ object ZipStream {
     * @param ec the execution context to use for any callback operations. This context will
     * ''not'' be used for any long-running or blocking operations.
     */
-  def asFlow(buffer: Option[Int] = defaultFlowBuffer)(implicit ec: ExecutionContext): Flow[Entry, ByteString, Future[IOResult]] = {
+  def toStream(buffer: Option[Int] = defaultFlowBuffer)(implicit ec: ExecutionContext): Flow[Zippable, ByteString, Future[IOResult]] = {
     entryToActionFlow
       .viaMat(actionToBytesFlow(outputTimeout, buffer))(Keep.right)
   }
@@ -94,14 +154,14 @@ object ZipStream {
     * @param ec the execution context to use for any callback operations. This context will
     * ''not'' be used for any long-running or blocking operations.
     */
-  def toFile(path: Path, existingFile: ExistingFile = ExistingFile.Fail, buffer: Option[Int] = defaultFileBuffer)(implicit ec: ExecutionContext): Sink[Entry, Future[IOResult]] = {
+  def toFile(path: Path, existingFile: ExistingFile = ExistingFile.Fail, buffer: Option[Int] = defaultFileBuffer)(implicit ec: ExecutionContext): Sink[Zippable, Future[IOResult]] = {
     val openOpts = StandardOpenOption.WRITE +: existingFile.openOpts
     val os = { () =>
-      addBuffer(buffer) {
+      addOutputBuffer(buffer) {
         Files.newOutputStream(path, openOpts: _*)
       }
     }
-    val outSink: Sink[ZipAction, Future[IOResult]] = simpleZipOutputSink(os)(ec)
+    val outSink: Sink[ZipAction, Future[IOResult]] = ZipOutputSink.simple(os)(ec)
 
     entryToActionFlow
       .toMat(outSink)(Keep.right)
@@ -110,14 +170,42 @@ object ZipStream {
   /* INTERNALS */
 
   private[this] val entryToActionFlow = {
-    Flow[Entry].flatMapConcat(_.toActionSource)
+    Flow[Zippable].flatMapConcat(_.toActionSource)
   }
 
-  private[this] def addBuffer(buffer: Option[Int])(os: OutputStream): OutputStream = {
+  private[this] def addOutputBuffer(buffer: Option[Int])(os: OutputStream): OutputStream = {
     buffer match {
       case Some(i) => new BufferedOutputStream(os, i)
       case None    => os
     }
+  }
+
+  private[this] def addInputBuffer(buffer: Option[Int])(is: InputStream): InputStream = {
+    buffer match {
+      case Some(i) => new BufferedInputStream(is, i)
+      case None    => is
+    }
+  }
+
+  private[this] def zipInput(blockTimeout: FiniteDuration, buffer: Option[Int])(implicit ec: ExecutionContext): Flow[ByteString, ZipAction, Future[IOResult]] = {
+    Flow.fromGraph {
+      val bytesToIS = StreamConverters.asInputStream(blockTimeout)
+      val zipInputSource = new ZipInputSource(ec)()
+
+      GraphDSL.create(bytesToIS, zipInputSource)(Keep.both) { implicit b => (iss, zis) =>
+        import GraphDSL.Implicits._
+
+        val inputStreamConnector = b.add {
+          Sink.foreach[(InputStream, Promise[InputStream])] { case (is, pis) =>
+            pis.success(addInputBuffer(buffer)(is))
+          }
+        }
+        val materializedStreams = b.materializedValue map { case (is, (pis, _)) => (is, pis) }
+        materializedStreams ~> inputStreamConnector
+
+        FlowShape(iss.in, zis.out)
+      }
+    }.mapMaterializedValue(_._2._2)
   }
 
   private[this] def actionToBytesFlow(outputTimeout: FiniteDuration, buffer: Option[Int])(implicit ec: ExecutionContext): Flow[ZipAction, ByteString, Future[IOResult]] = {
@@ -129,7 +217,7 @@ object ZipStream {
 
         val outputStreamConnector = b.add {
           Sink.foreach[(OutputStream, Promise[OutputStream])] { case (os, pos) =>
-            pos.success(addBuffer(buffer)(os))
+            pos.success(addOutputBuffer(buffer)(os))
           }
         }
         val materializedStreams = b.materializedValue .map { case (os, (pos, _)) => (os, pos) }
@@ -141,192 +229,13 @@ object ZipStream {
     }.mapMaterializedValue(_._2._2)
   }
 
-  private[this] def simpleZipOutputSink(os: () => OutputStream)(implicit ec: ExecutionContext): Sink[ZipAction, Future[IOResult]] = {
-    Sink.fromGraph {
-      GraphDSL.create(new ZipOutputSink(ec)) { implicit b => zos =>
-        import GraphDSL.Implicits._
-
-        val completer = b.add {
-          Sink.foreach[Promise[OutputStream]] { pos =>
-            logger.trace(s"Fulfilling OutputStream promise: $pos")
-            val osTry = Future { os() }(ioExecutorContext)
-            pos.completeWith(osTry)
-          }
-        }
-        val mpd = b.materializedValue.map(_._1) ~> completer
-        SinkShape(zos.in)
-      }
-    }.mapMaterializedValue(_._2)
+  private[stream] sealed trait InputAction extends Serializable
+  private[stream] object InputAction {
+    final case object EndInput extends InputAction
   }
-
-  private[this] class ZipOutputSink(ec: ExecutionContext) extends GraphStageWithMaterializedValue[SinkShape[ZipAction], (Promise[OutputStream], Future[IOResult])] {
-    import ZipOutputSink._
-
-    val in: Inlet[ZipAction] = Inlet("ZipOutputSink.in")
-    override val shape: SinkShape[ZipAction] = SinkShape(in)
-
-    def callbackDispatcher = ec
-    /* TODO: Make this configurable. */
-    def ioDispatcher = ioExecutorContext
-
-    override def createLogicAndMaterializedValue(inheritedAttributes: Attributes): (GraphStageLogic, (Promise[OutputStream], Future[IOResult])) = {
-      val osPromise = Promise[OutputStream]
-      val ioResults = Promise[IOResult]
-      val logic = {
-        new GraphStageLogic(shape) {
-          private[this] var streams = Option.empty[Streams]
-          private[this] var currentEntry = Option.empty[ZipEntry]
-          private[this] var entryCount = 0
-          private[this] var outstandingFuture = Option.empty[Future[Done]]
-
-          private[this] def fos = streams.get.fos
-          private[this] def zos = streams.get.zos
-
-          override def preStart(): Unit = {
-            val streamsFuture = {
-              osPromise.future.flatMap { os =>
-                Streams(os)(ioDispatcher)
-              }(callbackDispatcher)
-            }
-
-            streamsFuture.onComplete {
-              getAsyncCallback[Try[Streams]] {
-                case Success(st) =>
-                  streams = Some(st)
-                  pull(in)
-                case Failure(t) =>
-                  ioResults.success(IOResult(entryCount, Failure(t)))
-                  failStage(t)
-              }.invoke
-            }(callbackDispatcher)
-          }
-
-          /* We factor this out so we can register just once, reducing the overhead. */
-          private[this] def postWriteAction(writeResult: Try[Done]): Unit = {
-            writeResult match {
-              case Success(_) =>
-                pull(in)
-              case Failure(t) =>
-                failStage(t)
-                ioResults.success(IOResult(entryCount, Failure(t)))
-            }
-            outstandingFuture = None
-          }
-
-          setHandler(in, new InHandler {
-            /* Normally you would create your callback in `preStart`, but this responds to a
-             * future that it purely internal, so it cannot be subject to any race conditions.
-             */
-            private[this] val postWriteCallback = getAsyncCallback[Try[Done]](postWriteAction)
-
-            override def onPush(): Unit = {
-              val input = grab(in)
-              val writingFuture =
-                Future {
-                  /* TODO: Ideally we wouldn't modify `currentEntry` or `entryCount` from out of
-                   * the main thread. However, I don't believe it can cause any problems here as
-                   * we only have a single future at a time and we never do concurrent access. */
-                  input match {
-                    case ZipAction.NewEntry(loc) =>
-                      currentEntry foreach { ce =>
-                        logger.warn(s"Zip entry $ce was not explicitly closed (closing automatically).")
-                        zos.closeEntry()
-                      }
-                      val ze = new ZipEntry(loc)
-                      zos.putNextEntry(ze)
-                      currentEntry = Some(ze)
-                      entryCount += 1
-                      Done
-
-                    case ZipAction.Data(bs) =>
-                      require(currentEntry.isDefined)
-                      zos.write(bs.toArray)
-                      Done
-
-                    case ZipAction.CloseEntry =>
-                      currentEntry = None
-                      zos.closeEntry()
-                      Done
-                  }
-                }(ioDispatcher)
-              outstandingFuture = Some(writingFuture)
-
-              writingFuture.onComplete(postWriteCallback.invoke)(callbackDispatcher)
-            }
-
-            override def onUpstreamFinish(): Unit = {
-              logger.trace("Got upstream finish")
-              val closingF = outstandingFuture.getOrElse(Future.successful(Done)) .flatMap { _ =>
-                logger.trace(s"Trying to close streams")
-                closeStreams()
-              }(callbackDispatcher)
-              closingF.onComplete {
-                case s@Success(Done) =>
-                  ioResults.success(IOResult(entryCount, s))
-                  logger.trace("Finished processing upstream finish")
-                  completeStage()
-                case Failure(t) =>
-                  ioResults.failure(t)
-                  failStage(t)
-              }(callbackDispatcher)
-            }
-
-            override def onUpstreamFailure(t: Throwable): Unit = {
-              closeStreams()
-              ioResults.failure(t)
-              super.onUpstreamFailure(t)
-            }
-
-            private[this] def closeStreams(): Future[Done] = {
-              streams match {
-                case Some(s) => s.close(ioDispatcher)
-                case None    => Future.successful(Done)
-              }
-            }
-          })
-        }
-      }
-
-      (logic, (osPromise, ioResults.future))
-    }
-  }
-
-  private[this] object ZipOutputSink {
-    private[this] final val forceUnderlyingClose = false
-    class Streams(val fos: OutputStream, val zos: ZipOutputStream) {
-      def close(ioDispatcher: ExecutionContext): Future[Done] = {
-        Future {
-          val zc = Try { zos.close() }
-          if (forceUnderlyingClose) {
-            val fc = Try { fos.close() }
-            zc.flatMap(Function.const(fc)).get
-          } else {
-            zc.get
-          }
-          Done
-        }(ioDispatcher)
-      }
-    }
-    object Streams {
-      def apply(fos: OutputStream)(ioDispatcher: ExecutionContext): Future[Streams] = {
-        Future {
-          var zos = Option.empty[ZipOutputStream]
-          Try {
-            zos = Some(new ZipOutputStream(fos))
-            new Streams(fos, zos.get)
-          } .recover { case t =>
-            zos.foreach { s => Try(s.close()) }
-            Try(fos.close)
-            throw t
-          } .get
-        }(ioDispatcher)
-      }
-    }
-  }
-
-  private[this] sealed trait ZipAction extends Serializable
-  private[this] object ZipAction {
-    final case class NewEntry(name: String) extends ZipAction
+  private[stream] sealed trait ZipAction extends InputAction with Serializable
+  private[stream] object ZipAction {
+    final case class NewEntry(name: ZipEntryMetadata) extends ZipAction
     final case class Data(data: ByteString) extends ZipAction
     final case object CloseEntry extends ZipAction
   }
