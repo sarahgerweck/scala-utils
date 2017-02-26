@@ -8,20 +8,20 @@ import com.typesafe.sbt.site._
 import Helpers._
 
 sealed trait Basics {
-  final val buildOrganization  = "org.gerweck.scala"
+  final val buildOrganization     = "org.gerweck.scala"
   final val buildOrganizationName = "Sarah Gerweck"
   final val buildOrganizationUrl  = Some("https://github.com/sarahgerweck")
 
-  final val buildScalaVersion  = "2.11.8"
-  final val extraScalaVersions = Seq("2.12.1")
-  final val minimumJavaVersion = "1.6"
-  lazy  val defaultOptimize    = true
-  lazy  val globalOptimize     = false
+  final val buildScalaVersion     = "2.11.8"
+  final val extraScalaVersions    = Seq("2.12.1")
+  final val minimumJavaVersion    = "1.6"
+  lazy  val defaultOptimize       = true
+  lazy  val defaultOptimizeGlobal = false
 
-  lazy  val parallelBuild      = false
-  lazy  val cachedResolution   = false
+  lazy  val parallelBuild         = false
+  lazy  val cachedResolution      = false
 
-  final val defaultNewBackend  = false
+  final val defaultNewBackend     = false
 
   /* Metadata definitions */
   lazy val buildMetadata = Vector(
@@ -47,18 +47,19 @@ sealed trait Basics {
 
 object BuildSettings extends Basics {
   /* Overridable flags */
-  lazy val optimize     = boolFlag("OPTIMIZE") orElse boolFlag("OPTIMISE") getOrElse defaultOptimize
-  lazy val optimizeWarn = boolFlag("OPTIMIZE_WARNINGS") getOrElse false
-  lazy val deprecation  = boolFlag("NO_DEPRECATION") map (!_) getOrElse true
-  lazy val debug        = boolFlag("DEBUGGER") getOrElse false
-  lazy val debugPort    = envOrNone("DEBUGGER_PORT") map { _.toInt } getOrElse 5050
-  lazy val debugSuspend = boolFlag("DEBUGGER_SUSPEND") getOrElse true
-  lazy val unusedWarn   = boolFlag("UNUSED_WARNINGS") getOrElse false
-  lazy val importWarn   = boolFlag("IMPORT_WARNINGS") getOrElse false
-  lazy val java8Flag    = boolFlag("BUILD_JAVA_8") getOrElse false
-  lazy val newBackend   = boolFlag("NEW_BCODE_BACKEND") getOrElse defaultNewBackend
+  lazy val optimize       = boolFlag("OPTIMIZE") orElse boolFlag("OPTIMISE") getOrElse defaultOptimize
+  lazy val optimizeGlobal = boolFlag("OPTIMIZE_GLOBAL") getOrElse defaultOptimizeGlobal
+  lazy val optimizeWarn   = boolFlag("OPTIMIZE_WARNINGS") getOrElse false
+  lazy val deprecation    = boolFlag("NO_DEPRECATION") map (!_) getOrElse true
+  lazy val debug          = boolFlag("DEBUGGER") getOrElse false
+  lazy val debugPort      = envOrNone("DEBUGGER_PORT") map { _.toInt } getOrElse 5050
+  lazy val debugSuspend   = boolFlag("DEBUGGER_SUSPEND") getOrElse true
+  lazy val unusedWarn     = boolFlag("UNUSED_WARNINGS") getOrElse false
+  lazy val importWarn     = boolFlag("IMPORT_WARNINGS") getOrElse false
+  lazy val java8Flag      = boolFlag("BUILD_JAVA_8") getOrElse false
+  lazy val newBackend     = boolFlag("NEW_BCODE_BACKEND") getOrElse defaultNewBackend
 
-  val buildScalaVersions = buildScalaVersion +: extraScalaVersions
+  val buildScalaVersions  = buildScalaVersion +: extraScalaVersions
 
   def basicScalacOptions = Def.derive {
     scalacOptions ++= {
@@ -102,7 +103,7 @@ object BuildSettings extends Basics {
       if (optim) {
         if (sv.newOptimize || sv.supportsNewBackend && newBackend) {
           options :+= {
-            if (globalOptimize) "-opt:l:classpath" else "-opt:l:project"
+            if (optimizeGlobal) "-opt:l:classpath" else "-opt:l:project"
           }
         } else if (!sv.requireJava8) {
           options :+= "-optimize"
