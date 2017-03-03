@@ -91,5 +91,6 @@ object StreamUtils {
     * [[akka.stream.scaladsl.Sink]], while still allowing them to flow to the
     * output as well.
     */
+  @deprecated("Use alsoTo or alsoToMat instead", "2.5.0")
   def makeTap[A, B](sink: Sink[A, B]): Flow[A, A, B] = Flow[A].alsoToMat(sink)(Keep.right)
 }
