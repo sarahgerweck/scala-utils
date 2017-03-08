@@ -63,7 +63,7 @@ object BuildSettings extends Basics {
 
   def basicScalacOptions = Def.derive {
     scalacOptions ++= {
-      val sv = SVer(scalaBinaryVersion.value)
+      val sv = sver.value
       var options = Seq.empty[String]
 
       options :+= "-unchecked"
@@ -71,23 +71,16 @@ object BuildSettings extends Basics {
       if (deprecation) {
         options :+= "-deprecation"
       }
-      if (optimizeWarn) {
-        if (sv.newOptimize) {
-          options :+= "-opt-warnings:_"
-        } else {
-          options :+= "-Yinline-warnings"
-        }
-      }
       if (unusedWarn) {
         options :+= "-Ywarn-unused"
       }
       if (importWarn) {
         options :+= "-Ywarn-unused-import"
       }
-      if (!sv.requireJava8) {
+      if (!sver.value.requireJava8) {
         options :+= "-target:jvm-" + minimumJavaVersion
       }
-      if (sv.supportsNewBackend && newBackend && !sv.requireJava8) {
+      if (sver.value.supportsNewBackend && newBackend && !sver.value.requireJava8) {
         options :+= "-Ybackend:GenBCode"
       }
 
@@ -97,16 +90,24 @@ object BuildSettings extends Basics {
 
   def optimizationScalacOptions(optim: Boolean = optimize) = Def.derive {
     scalacOptions ++= {
-      val sv = SVer(scalaBinaryVersion.value)
       var options = Seq.empty[String]
 
       if (optim) {
-        if (sv.newOptimize || sv.supportsNewBackend && newBackend) {
-          options :+= {
-            if (optimizeGlobal) "-opt:l:classpath" else "-opt:l:project"
+        val useNewBackend = sver.value.supportsNewBackend && newBackend
+        if (useNewBackend) {
+          if (optimizeGlobal) {
+            options :+= "-opt:l:classpath"
+          } else {
+            options :+= "-opt:l:project"
           }
-        } else if (!sv.requireJava8) {
+          if (optimizeWarn) {
+            options :+= "-opt-warnings:_"
+          }
+        } else {
           options :+= "-optimize"
+          if (optimizeWarn) {
+            options :+= "-Yinline-warnings"
+          }
         }
       }
 
