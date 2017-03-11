@@ -63,7 +63,6 @@ object BuildSettings extends Basics {
 
   def basicScalacOptions = Def.derive {
     scalacOptions ++= {
-      val sv = sver.value
       var options = Seq.empty[String]
 
       options :+= "-unchecked"
@@ -80,7 +79,7 @@ object BuildSettings extends Basics {
       if (!sver.value.requireJava8) {
         options :+= "-target:jvm-" + minimumJavaVersion
       }
-      if (sver.value.supportsNewBackend && newBackend && !sver.value.requireJava8) {
+      if (sver.value.backend == SupportsNewBackend && newBackend) {
         options :+= "-Ybackend:GenBCode"
       }
 
@@ -93,7 +92,7 @@ object BuildSettings extends Basics {
       var options = Seq.empty[String]
 
       if (optim) {
-        val useNewBackend = sver.value.supportsNewBackend && newBackend
+        val useNewBackend = sver.value.backend == NewBackend || sver.value.supportsNewBackend && newBackend
         if (useNewBackend) {
           if (optimizeGlobal) {
             options :+= "-opt:l:classpath"
