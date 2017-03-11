@@ -107,24 +107,6 @@ object ZipStream {
       .toMat(outSink)(Keep.right)
   }
 
-  /** Describes what to do if a target path already exists */
-  sealed trait ExistingFile {
-    private[ZipStream] def openOpts: Seq[StandardOpenOption]
-  }
-  /** Contains options for handling existing files. */
-  object ExistingFile {
-    /** If the file exists, empty and overwrite it. */
-    case object Overwrite extends ExistingFile {
-      override private[ZipStream] val openOpts =
-        List(StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)
-    }
-    /** If the file exists, fail the operation. */
-    case object Fail extends ExistingFile {
-      override private[ZipStream] val openOpts =
-        List(StandardOpenOption.CREATE_NEW)
-    }
-  }
-
   /* INTERNALS */
 
   private[this] val entryToActionFlow = {
