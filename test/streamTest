@@ -29,13 +29,22 @@ val fileA = new ZipStream.Entry("a/b", Source(Vector(ByteString("hello"), ByteSt
 val fileB = new ZipStream.Entry("x.txt", Source(Vector(ByteString("goodbye"))))
 val filesStream = Source(Vector(fileA, fileB))
 val p = Paths.get("test1.zip")
+val test1Source = FileIO.fromPath(p)
 
 val fileSink = ZipStream.toFile(p)
 val combined = filesStream.toMat(fileSink)(Keep.right)
 
-val zipFlow = ZipStream.asFlow()
+val zipFlow = ZipStream.toStream()
 val flowCombined = filesStream.via(zipFlow).toMat(Sink.fold("")(_ + _.map("%02x" format _).mkString))(Keep.right)
 
 //val fut = combined.run()
+//fut.value
+
+val existingSource = ZipStream.ExistingZip.transform(test1Source) { case zem: ZipStream.ZipEntryMetadata => zem.copy(name = s"inner/${zem.name}") }
+val biggerSourceStream = Source(Vector(fileA, fileB, existingSource))
+val biggerSink = ZipStream.toFile(Paths.get("test2.zip"))
+val bigger = biggerSourceStream.toMat(biggerSink)(Keep.right)
+
+//val fut = bigger.run()
 //fut.value
 
