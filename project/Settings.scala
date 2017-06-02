@@ -12,8 +12,8 @@ sealed trait Basics {
   final val buildOrganizationName = "Sarah Gerweck"
   final val buildOrganizationUrl  = Some("https://github.com/sarahgerweck")
 
-  final val buildScalaVersion     = "2.11.8"
-  final val extraScalaVersions    = Seq("2.12.1")
+  final val buildScalaVersion     = "2.12.2"
+  final val extraScalaVersions    = Seq("2.11.11")
   final val minimumJavaVersion    = "1.6"
   lazy  val defaultOptimize       = true
   lazy  val defaultOptimizeGlobal = false
