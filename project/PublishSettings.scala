@@ -2,7 +2,7 @@ import sbt._
 import Keys._
 
 object PublishSettings {
-  import BuildSettings._
+  import BasicSettings._
   import Resolvers._
   import Helpers._
 

@@ -11,25 +11,30 @@ sealed trait Basics {
   final val buildOrganization     = "org.gerweck.scala"
   final val buildOrganizationName = "Sarah Gerweck"
   final val buildOrganizationUrl  = Some("https://github.com/sarahgerweck")
+  final val githubOrganization    = "sarahgerweck"
+  final val githubProject         = "scala-utils"
+  final val projectDescription    = "General utilies for Scala applications"
+  final val projectStartYear      = 2012
 
   final val buildScalaVersion     = "2.12.2"
   final val extraScalaVersions    = Seq("2.11.11")
   final val minimumJavaVersion    = "1.6"
-  lazy  val defaultOptimize       = true
-  lazy  val defaultOptimizeGlobal = false
+  final val defaultOptimize       = true
+  final val defaultOptimizeGlobal = false
 
-  lazy  val parallelBuild         = false
-  lazy  val cachedResolution      = false
+  final val parallelBuild         = false
+  final val cachedResolution      = true
 
   final val defaultNewBackend     = false
 
   /* Metadata definitions */
+  lazy val githubPage = url(s"https://github.com/${githubOrganization}/${githubProject}")
   lazy val buildMetadata = Vector(
     licenses    := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
     homepage    := Some(url("https://github.com/sarahgerweck/scala-utils")),
-    description := "Miscellaneous utility functionality for Scala",
-    startYear   := Some(2012),
-    scmInfo     := Some(ScmInfo(url("https://github.com/sarahgerweck/scala-utils"), "scm:git:git@github.com:sarahgerweck/scala-utils.git"))
+    description := projectDescription,
+    startYear   := Some(projectStartYear),
+    scmInfo     := Some(ScmInfo(githubPage, s"scm:git:git@github.com:${githubOrganization}/${githubProject}.git"))
   )
 
   lazy val developerInfo = {
@@ -45,12 +50,42 @@ sealed trait Basics {
   }
 }
 
-object BuildSettings extends Basics {
+object BasicSettings extends AutoPlugin with Basics {
+  override def requires = SiteScaladocPlugin
+
+  override lazy val projectSettings = (
+    buildMetadata ++
+    Seq (
+      organization         :=  buildOrganization,
+      organizationName     :=  buildOrganizationName,
+      organizationHomepage :=  buildOrganizationUrl map { url _ },
+
+      scalaVersion         :=  buildScalaVersion,
+      crossScalaVersions   :=  buildScalaVersions,
+
+      autoAPIMappings      :=  true,
+
+      updateOptions        :=  updateOptions.value.withCachedResolution(cachedResolution),
+      parallelExecution    :=  parallelBuild,
+
+      /* Many OSS projects push here and then appear in Maven Central later */
+      resolvers            +=  Resolver.sonatypeRepo("releases"),
+
+      evictionWarningOptions in update :=
+        EvictionWarningOptions.default.withWarnTransitiveEvictions(false).withWarnDirectEvictions(false).withWarnScalaVersionEviction(false)
+    ) ++ {
+      // This project requires some unusual build & optimization settings
+      // addScalacOptions() ++ addJavacOptions()
+      Seq.empty
+    }
+  )
+
   /* Overridable flags */
   lazy val optimize       = boolFlag("OPTIMIZE") orElse boolFlag("OPTIMISE") getOrElse defaultOptimize
   lazy val optimizeGlobal = boolFlag("OPTIMIZE_GLOBAL") getOrElse defaultOptimizeGlobal
   lazy val optimizeWarn   = boolFlag("OPTIMIZE_WARNINGS") getOrElse false
   lazy val deprecation    = boolFlag("NO_DEPRECATION") map (!_) getOrElse true
+  lazy val inlineWarn     = boolFlag("INLINE_WARNINGS") getOrElse false
   lazy val debug          = boolFlag("DEBUGGER") getOrElse false
   lazy val debugPort      = envOrNone("DEBUGGER_PORT") map { _.toInt } getOrElse 5050
   lazy val debugSuspend   = boolFlag("DEBUGGER_SUSPEND") getOrElse true
@@ -59,7 +94,7 @@ object BuildSettings extends Basics {
   lazy val java8Flag      = boolFlag("BUILD_JAVA_8") getOrElse false
   lazy val newBackend     = boolFlag("NEW_BCODE_BACKEND") getOrElse defaultNewBackend
 
-  val buildScalaVersions  = buildScalaVersion +: extraScalaVersions
+  lazy val buildScalaVersions = buildScalaVersion +: extraScalaVersions
 
   def basicScalacOptions = Def.derive {
     scalacOptions ++= {
@@ -140,39 +175,13 @@ object BuildSettings extends Basics {
     }
   }
 
-  implicit class ProjectHelper(p: Project) {
-    def commonSettings() = siteSettings(p).settings(buildSettings: _*)
+  def basicSiteSettings = Def.derive {
+    scalacOptions in (Compile,doc) ++= Seq(
+      "-groups",
+      "-implicits",
+      "-diagrams",
+      "-sourcepath", (baseDirectory in ThisBuild).value.getAbsolutePath,
+      "-doc-source-url", s"https://github.com/${githubOrganization}/${githubProject}/blob/master€{FILE_PATH}.scala"
+    )
   }
-
-  /* Site setup */
-  def siteSettings(p: Project) = {
-    p.enablePlugins(SiteScaladocPlugin)
-     .settings(
-       scalacOptions in (Compile,doc) ++= Seq(
-         "-groups",
-         "-implicits",
-         "-diagrams",
-         "-sourcepath", (baseDirectory in ThisBuild).value.getAbsolutePath,
-         "-doc-source-url", "https://github.com/sarahgerweck/scala-utils/blob/master€{FILE_PATH}.scala"
-       )
-     )
-  }
-
-  lazy val buildSettings = buildMetadata ++ Seq (
-    organization         := buildOrganization,
-    organizationName     := buildOrganizationName,
-    organizationHomepage := buildOrganizationUrl map { url _ },
-
-    scalaVersion         := buildScalaVersion,
-    crossScalaVersions   := buildScalaVersions,
-
-    autoAPIMappings      := true,
-
-    updateOptions        := updateOptions.value.withCachedResolution(cachedResolution),
-    parallelExecution    := parallelBuild,
-
-    evictionWarningOptions in update :=
-      EvictionWarningOptions.default.withWarnTransitiveEvictions(false).withWarnDirectEvictions(false).withWarnScalaVersionEviction(false)
-  )
 }
-

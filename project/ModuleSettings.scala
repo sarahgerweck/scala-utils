@@ -3,7 +3,7 @@ import sbt._
 import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 
 object ModuleSettings extends AutoPlugin {
-  override def requires = CommonSettings
+  override def requires = BasicSettings
 
   override lazy val projectSettings = (
     Eclipse.settings ++

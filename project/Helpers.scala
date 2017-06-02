@@ -8,6 +8,8 @@ object Helpers {
   def boolFlag(name: String, default: Boolean): Boolean = boolFlag(name) getOrElse default
   def opts(names: String*): Option[String] = names.view.map(getProp _).foldLeft(None: Option[String]) { _ orElse _ }
 
+  lazy val isJenkins = sys.env.contains("BUILD_NUMBER")
+
   import scala.xml._
   def excludePomDeps(exclude: (String, String) => Boolean): Node => Node = { node: Node =>
     val rewriteRule = new transform.RewriteRule {
@@ -42,9 +44,9 @@ object Helpers {
   object SVer {
     def apply(scalaVersion: String): SVer = {
       CrossVersion.partialVersion(scalaVersion) match {
-        case Some((2, 10)) => SVer2_10
-        case Some((2, 11)) => SVer2_11
-        case Some((2, 12)) => SVer2_12
+        case Some((2, 10))           => SVer2_10
+        case Some((2, 11))           => SVer2_11
+        case Some((2, n)) if n >= 12 => SVer2_12
         case _ =>
           throw new IllegalArgumentException(s"Scala version $scalaVersion is not supported")
       }

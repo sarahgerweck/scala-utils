@@ -1,4 +1,4 @@
-import BuildSettings._
+import BasicSettings._
 import Resolvers._
 import Dependencies._
 import PublishSettings._
@@ -21,7 +21,7 @@ lazy val root: Project = (project in file ("."))
   )
 
 lazy val macros = (project in file ("macro"))
-  .enablePlugins(CommonSettings)
+  .enablePlugins(BasicSettings)
   .settings(Eclipse.settings: _*)
   .settings(falsePublishSettings: _*)
   .settings (
