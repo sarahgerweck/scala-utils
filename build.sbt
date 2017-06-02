@@ -215,7 +215,7 @@ lazy val dbutil: Project = (project in file ("dbutil"))
 
     /* Slick dependencies */
     libraryDependencies ++= Seq (
-      slick(scalaBinaryVersion.value)
+      slick
     ),
     /* Optional mappings */
     libraryDependencies ++= Seq (

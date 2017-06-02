@@ -61,3 +61,9 @@
   - Add `hashing` package that provides idiomatic access to hash algorithms.
     - This also adds support for the Bouncy Castle hash implementations. This
       is now an optional dependency.
+
+#### 2.5.0
+
+  - Update to Akka 2.5.2
+  - Update to Akka HTTP 10.0.7
+  - Update to Slick 3.2
