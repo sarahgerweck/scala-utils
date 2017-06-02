@@ -161,7 +161,9 @@ lazy val twitter = (project in file ("twitter"))
   .settings(
     name := "Gerweck Utils Twitter",
     libraryDependencies ++= basicLogDeps,
-    libraryDependencies += twitterUtil % "optional"
+    libraryDependencies += twitterUtil % "optional",
+    addScalacOptions(),
+    addJavacOptions()
   )
 
 lazy val akka: Project = (project in file ("akka"))
