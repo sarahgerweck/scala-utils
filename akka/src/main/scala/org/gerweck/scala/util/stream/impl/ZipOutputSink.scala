@@ -64,19 +64,20 @@ private[stream] class ZipOutputSink(level: Option[Int], ec: ExecutionContext) ex
           }(callbackDispatcher)
         }
 
-        /* We factor this out so we can register just once, reducing the overhead. */
-        private[this] def postWriteAction(writeResult: Try[Done]): Unit = {
-          writeResult match {
-            case Success(_) =>
-              pull(in)
-            case Failure(t) =>
-              failStage(t)
-              ioResults.success(IOResult(entryCount, Failure(t)))
-          }
-          outstandingFuture = None
-        }
-
         setHandler(in, new InHandler {
+          def postWriteAction(writeResult: Try[Done]): Unit = {
+            writeResult match {
+              case Success(_) =>
+                pull(in)
+              case Failure(t) =>
+                logger.debug(t)("Failing zip output due to error")
+                failStage(t)
+                closeStreams()
+                ioResults.success(IOResult(entryCount, Failure(t)))
+            }
+            outstandingFuture = None
+          }
+
           /* Normally you would create your callback in `preStart`, but this responds to a
            * future that it purely internal, so it cannot be subject to any race conditions.
            */
@@ -194,7 +195,6 @@ private[stream] object ZipOutputSink {
     metadata.creation.map(i2ft)     foreach ze.setCreationTime
     metadata.lastAccess.map(i2ft)   foreach ze.setLastAccessTime
     metadata.lastModified.map(i2ft) foreach ze.setLastAccessTime
-    metadata.method.map(_.numeric)  foreach ze.setMethod
     metadata.comment                foreach ze.setComment
     metadata.extra                  foreach ze.setExtra
     ze

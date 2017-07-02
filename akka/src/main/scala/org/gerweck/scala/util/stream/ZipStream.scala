@@ -82,7 +82,6 @@ object ZipStream {
     creation: Option[Instant] = None,
     lastAccess: Option[Instant] = None,
     lastModified: Option[Instant] = None,
-    method: Option[EntryStorage] = None,
     comment: Option[String] = None,
     extra: Option[Array[Byte]] = None
   )
