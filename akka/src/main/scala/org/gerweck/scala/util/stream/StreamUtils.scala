@@ -43,7 +43,7 @@ object StreamUtils {
       }
   }
 
-  /** An optimized version of [[splittingFlowOn]] that splits on `'n'` or `'\r'`. */
+  /** An optimized version of [[splittingFlowOn]] that splits on `'\n'` or `'\r'`. */
   lazy val splittingFlow: Flow[ByteString, String, NotUsed] = {
     Flow[ByteString]
       .map(Some(_)).concat(Source.single(None)).statefulMapConcat { () =>
