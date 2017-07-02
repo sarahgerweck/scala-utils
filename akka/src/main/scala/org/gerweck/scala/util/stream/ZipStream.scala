@@ -1,5 +1,6 @@
 package org.gerweck.scala.util.stream
 
+import scala.collection.immutable
 import scala.concurrent._
 import scala.concurrent.duration._
 import scala.util._
@@ -96,7 +97,7 @@ object ZipStream {
       source .statefulMapConcat[ZipAction] { () =>
         import ZipAction._
         var shouldDrop = true
-        locally {
+        locally[ZipAction => immutable.Seq[ZipAction]] {
           case NewEntry(name) =>
             if (transform.isDefinedAt(name)) {
               shouldDrop = false
@@ -119,7 +120,6 @@ object ZipStream {
   object ExistingZip {
     def transform(data: Source[ByteString, _], buffer: Option[Int] = defaultFileBuffer)(transform: PartialFunction[ZipEntryMetadata, ZipEntryMetadata])(implicit ec: ExecutionContext): ExistingZip = {
       val s = data.via(zipInput(outputTimeout, buffer))
-
       new ExistingZip(transform, s)
     }
     def unchanged(data: Source[ByteString, _], buffer: Option[Int] = defaultFileBuffer)(implicit ec: ExecutionContext): ExistingZip = {

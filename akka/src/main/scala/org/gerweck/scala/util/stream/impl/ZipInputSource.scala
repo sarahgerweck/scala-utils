@@ -70,41 +70,8 @@ private[stream] class ZipInputSource(ec: ExecutionContext)(readSize: Int = defau
         private[this] def readData(): Unit = {
           assert(!currentlyReading, "Tried to read when already reading")
           currentlyReading = true
-          streams .map { implicit s =>
-            if (currentEntry.isEmpty) {
-              val nextOption = Option(zis.getNextEntry())
-              nextOption match {
-                case Some(ne) =>
-                  currentEntry = Some(ne)
-                  entryCount += 1
-                  val metadata = {
-                    ZipEntryMetadata(
-                      ne.getName,
-                      Option(ne.getCreationTime).map(_.toInstant),
-                      Option(ne.getLastAccessTime).map(_.toInstant),
-                      Option(ne.getLastModifiedTime).map(_.toInstant),
-                      Option(ne.getComment),
-                      Option(ne.getExtra)
-                    )
-                  }
-                  ZipAction.NewEntry(metadata)
-                case None =>
-                  InputAction.EndInput
-              }
-            } else {
-              /* We're intentionally reusing this buffer: we make a fresh copy of the bytes needed */
-              zis.read(buffer) match {
-                case -1 =>
-                  currentEntry = None
-                  ZipAction.CloseEntry
-                case n if n > 0 =>
-                  ZipAction.Data(ByteString.fromArray(buffer, 0, n))
-                case other =>
-                  /* This shouldn't ever be zero or less than -1 */
-                  throw new IOException(s"Shouldn't ever read $other bytes from a zip entry")
-              }
-            }
-          }(ioDispatcher) .onComplete {
+
+          val readCallback =
             getAsyncCallback[Try[InputAction]] { oza =>
               currentlyReading = false
               oza match {
@@ -122,10 +89,52 @@ private[stream] class ZipInputSource(ec: ExecutionContext)(readSize: Int = defau
                     }
                     new IOException(msg, t)
                   }
+                  logger.debug(t)("Error when reading zip stream")
                   ioResults.success(IOResult(entryCount, Failure(newT)))
                   failStage(t)
               }
-            }.invoke
+            }
+
+          streams .map { implicit s =>
+            if (currentEntry.isEmpty) {
+              val nextOption = Option(zis.getNextEntry())
+              logger.trace(s"Next zip entry: $nextOption")
+              nextOption match {
+                case Some(ne) =>
+                  currentEntry = Some(ne)
+                  entryCount += 1
+                  val metadata = {
+                    ZipEntryMetadata(
+                      ne.getName,
+                      Option(ne.getCreationTime).map(_.toInstant),
+                      Option(ne.getLastAccessTime).map(_.toInstant),
+                      Option(ne.getLastModifiedTime).map(_.toInstant),
+                      Option(ne.getComment),
+                      Option(ne.getExtra)
+                    )
+                  }
+                  logger.trace(s"Constructing zip entry with metadata: $metadata")
+                  ZipAction.NewEntry(metadata)
+                case None =>
+                  logger.trace("No more entries, ending zip input")
+                  InputAction.EndInput
+              }
+            } else {
+              /* We're intentionally reusing this buffer: we make a fresh copy of the bytes needed */
+              zis.read(buffer) match {
+                case -1 =>
+                  currentEntry = None
+                  ZipAction.CloseEntry
+                case n if n > 0 =>
+                  ZipAction.Data(ByteString.fromArray(buffer, 0, n))
+                case other =>
+                  logger.debug(s"Got unexpected byte count of $other")
+                  /* This shouldn't ever be zero or less than -1 */
+                  throw new IOException(s"Shouldn't ever read $other bytes from a zip entry")
+              }
+            }
+          }(ioDispatcher) .onComplete { a =>
+            readCallback.invoke(a)
           }(callbackDispatcher)
         }
 
@@ -134,6 +143,7 @@ private[stream] class ZipInputSource(ec: ExecutionContext)(readSize: Int = defau
             readData()
           }
           override def onDownstreamFinish(): Unit = {
+            logger.debug("Got downstream finish")
             streams.map(_.close(ioDispatcher))(callbackDispatcher)
           }
         })
