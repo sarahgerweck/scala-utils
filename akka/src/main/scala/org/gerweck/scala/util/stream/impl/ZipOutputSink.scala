@@ -26,7 +26,7 @@ import ZipStream._
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-private[stream] class ZipOutputSink(ec: ExecutionContext) extends ZipStage[SinkShape[ZipAction], OutputStream](ec) {
+private[stream] class ZipOutputSink(level: Option[Int], ec: ExecutionContext) extends ZipStage[SinkShape[ZipAction], OutputStream](ec) {
   import ZipOutputSink._
 
   val in: Inlet[ZipAction] = Inlet("ZipOutputSink.in")
@@ -48,7 +48,7 @@ private[stream] class ZipOutputSink(ec: ExecutionContext) extends ZipStage[SinkS
         override def preStart(): Unit = {
           val streamsFuture = {
             osPromise.future.flatMap { os =>
-              Streams(os)(ioDispatcher)
+              Streams(os, level)(ioDispatcher)
             }(callbackDispatcher)
           }
 
@@ -159,14 +159,19 @@ private[stream] object ZipOutputSink {
 
   private type Streams = StreamPair[OutputStream, ZipOutputStream]
   private object Streams {
-    def apply(fos: OutputStream)(ioDispatcher: ExecutionContext): Future[Streams] = {
-      StreamPair(fos)(new ZipOutputStream(_))(ioDispatcher)
+    def apply(fos: OutputStream, level: Option[Int])(ioDispatcher: ExecutionContext): Future[Streams] = {
+      require(level.isEmpty || level.get >= 0 && level.get <= 9, s"Zip compression levels must be 0 ≤ level ≤ 9, but got value ${level.get}")
+      StreamPair(fos){ os =>
+        val zos = new ZipOutputStream(os)
+        level foreach zos.setLevel
+        zos
+      }(ioDispatcher)
     }
   }
 
-  private[stream] def simple(os: () => OutputStream)(implicit ec: ExecutionContext): Sink[ZipAction, Future[IOResult]] = {
+  private[stream] def simple(os: () => OutputStream, level: Option[Int])(implicit ec: ExecutionContext): Sink[ZipAction, Future[IOResult]] = {
     Sink.fromGraph {
-      GraphDSL.create(new ZipOutputSink(ec)) { implicit b => zos =>
+      GraphDSL.create(new ZipOutputSink(level, ec)) { implicit b => zos =>
         import GraphDSL.Implicits._
 
         val completer = b.add {
@@ -183,17 +188,15 @@ private[stream] object ZipOutputSink {
   }
 
   private def makeZipEntry(metadata: ZipEntryMetadata): ZipEntry = {
-    import language.implicitConversions
-
-    @inline implicit def lifter(f: FileTime => ZipEntry): java.time.Instant => ZipEntry =
-      f compose FileTime.from
+    @inline def i2ft(i: java.time.Instant): FileTime = FileTime.from(i)
 
     val ze = new ZipEntry(metadata.name)
-    metadata.creation     foreach ze.setCreationTime
-    metadata.lastAccess   foreach ze.setLastAccessTime
-    metadata.lastModified foreach ze.setLastAccessTime
-    metadata.comment      foreach ze.setComment
-    metadata.extra        foreach ze.setExtra
+    metadata.creation.map(i2ft)     foreach ze.setCreationTime
+    metadata.lastAccess.map(i2ft)   foreach ze.setLastAccessTime
+    metadata.lastModified.map(i2ft) foreach ze.setLastAccessTime
+    metadata.method.map(_.numeric)  foreach ze.setMethod
+    metadata.comment                foreach ze.setComment
+    metadata.extra                  foreach ze.setExtra
     ze
   }
 }

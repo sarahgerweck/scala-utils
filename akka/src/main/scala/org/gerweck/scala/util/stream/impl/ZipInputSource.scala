@@ -109,6 +109,7 @@ private[stream] class ZipInputSource(ec: ExecutionContext)(readSize: Int = defau
                       Option(ne.getCreationTime).map(_.toInstant),
                       Option(ne.getLastAccessTime).map(_.toInstant),
                       Option(ne.getLastModifiedTime).map(_.toInstant),
+                      EntryStorage.unapply(ne.getMethod),
                       Option(ne.getComment),
                       Option(ne.getExtra)
                     )

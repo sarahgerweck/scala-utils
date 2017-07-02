@@ -57,12 +57,32 @@ object ZipStream {
     protected[ZipStream] def toActionSource: Source[ZipAction, NotUsed]
   }
 
+  object EntryStorage {
+    def unapply(n: Int): Option[EntryStorage] = {
+      n match {
+        case ZipEntry.STORED   => Some(StoreEntry)
+        case ZipEntry.DEFLATED => Some(DeflateEntry)
+        case _                 => None
+      }
+    }
+  }
+  sealed trait EntryStorage {
+    private[stream] def numeric: Int
+  }
+  case object StoreEntry extends EntryStorage {
+    override private[stream] final val numeric = ZipEntry.STORED
+  }
+  case object DeflateEntry extends EntryStorage {
+    override private[stream] final val numeric = ZipEntry.DEFLATED
+  }
+
   /** The metadata associated with a single entry in a zip file. */
   case class ZipEntryMetadata(
     name: String,
     creation: Option[Instant] = None,
     lastAccess: Option[Instant] = None,
     lastModified: Option[Instant] = None,
+    method: Option[EntryStorage] = None,
     comment: Option[String] = None,
     extra: Option[Array[Byte]] = None
   )
@@ -136,9 +156,9 @@ object ZipStream {
     * @param ec the execution context to use for any callback operations. This context will
     * ''not'' be used for any long-running or blocking operations.
     */
-  def toStream(buffer: Option[Int] = defaultFlowBuffer)(implicit ec: ExecutionContext): Flow[Zippable, ByteString, Future[IOResult]] = {
+  def toStream(buffer: Option[Int] = defaultFlowBuffer, level: Option[Int] = None)(implicit ec: ExecutionContext): Flow[Zippable, ByteString, Future[IOResult]] = {
     entryToActionFlow
-      .viaMat(actionToBytesFlow(outputTimeout, buffer))(Keep.right)
+      .viaMat(actionToBytesFlow(outputTimeout, buffer, level))(Keep.right)
   }
 
   /** A zip compressor that takes in entries and writes them to a file.
@@ -154,14 +174,14 @@ object ZipStream {
     * @param ec the execution context to use for any callback operations. This context will
     * ''not'' be used for any long-running or blocking operations.
     */
-  def toFile(path: Path, existingFile: ExistingFile = ExistingFile.Fail, buffer: Option[Int] = defaultFileBuffer)(implicit ec: ExecutionContext): Sink[Zippable, Future[IOResult]] = {
+  def toFile(path: Path, existingFile: ExistingFile = ExistingFile.Fail, buffer: Option[Int] = defaultFileBuffer, level: Option[Int] = None)(implicit ec: ExecutionContext): Sink[Zippable, Future[IOResult]] = {
     val openOpts = StandardOpenOption.WRITE +: existingFile.openOpts
     val os = { () =>
       addOutputBuffer(buffer) {
         Files.newOutputStream(path, openOpts: _*)
       }
     }
-    val outSink: Sink[ZipAction, Future[IOResult]] = ZipOutputSink.simple(os)(ec)
+    val outSink: Sink[ZipAction, Future[IOResult]] = ZipOutputSink.simple(os, level)(ec)
 
     entryToActionFlow
       .toMat(outSink)(Keep.right)
@@ -208,10 +228,10 @@ object ZipStream {
     }.mapMaterializedValue(_._2._2)
   }
 
-  private[this] def actionToBytesFlow(outputTimeout: FiniteDuration, buffer: Option[Int])(implicit ec: ExecutionContext): Flow[ZipAction, ByteString, Future[IOResult]] = {
+  private[this] def actionToBytesFlow(outputTimeout: FiniteDuration, buffer: Option[Int], level: Option[Int])(implicit ec: ExecutionContext): Flow[ZipAction, ByteString, Future[IOResult]] = {
     Flow.fromGraph {
       val s = StreamConverters.asOutputStream(outputTimeout)
-      val z = new ZipOutputSink(ec)
+      val z = new ZipOutputSink(level, ec)
       GraphDSL.create(s, z)(Keep.both) { implicit b => (oss, zos) =>
         import GraphDSL.Implicits._
 
