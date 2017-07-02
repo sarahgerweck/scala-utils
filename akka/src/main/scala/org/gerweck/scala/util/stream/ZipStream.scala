@@ -77,7 +77,7 @@ object ZipStream {
   }
 
   /** The metadata associated with a single entry in a zip file. */
-  case class ZipEntryMetadata(
+  case class EntryMetadata(
     name: String,
     creation: Option[Instant] = None,
     lastAccess: Option[Instant] = None,
@@ -87,9 +87,9 @@ object ZipStream {
     extra: Option[Array[Byte]] = None
   )
 
-  object ZipEntryMetadata {
+  object EntryMetadata {
     import language.implicitConversions
-    implicit def nameToMetadata(name: String): ZipEntryMetadata = ZipEntryMetadata(name)
+    implicit def nameToMetadata(name: String): EntryMetadata = EntryMetadata(name)
   }
 
   /** An entry to be written into the zip file.
@@ -104,7 +104,7 @@ object ZipStream {
     * exhausted before the next entry can be started, so a stall here will hold up the entire
     * stream. Similarly, a failure in this stream will fail the entire archive.
     */
-  final class Entry(val metadata: ZipEntryMetadata, data: Source[ByteString, _]) extends Zippable {
+  final class Entry(val metadata: EntryMetadata, data: Source[ByteString, _]) extends Zippable {
     protected[ZipStream] lazy val toActionSource: Source[ZipAction, NotUsed] = {
       Source.single(ZipAction.NewEntry(metadata)) ++
       data.map(ZipAction.Data) ++
@@ -112,7 +112,7 @@ object ZipStream {
     }
   }
 
-  final class ExistingZip private (transform: PartialFunction[ZipEntryMetadata, ZipEntryMetadata], source: Source[ZipAction, _]) extends Zippable {
+  final class ExistingZip private (transform: PartialFunction[EntryMetadata, EntryMetadata], source: Source[ZipAction, _]) extends Zippable {
     protected[ZipStream] lazy val toActionSource: Source[ZipAction, NotUsed] = {
       source .statefulMapConcat[ZipAction] { () =>
         import ZipAction._
@@ -138,7 +138,7 @@ object ZipStream {
   }
 
   object ExistingZip {
-    def transform(data: Source[ByteString, _], buffer: Option[Int] = defaultFileBuffer)(transform: PartialFunction[ZipEntryMetadata, ZipEntryMetadata])(implicit ec: ExecutionContext): ExistingZip = {
+    def transform(data: Source[ByteString, _], buffer: Option[Int] = defaultFileBuffer)(transform: PartialFunction[EntryMetadata, EntryMetadata])(implicit ec: ExecutionContext): ExistingZip = {
       val s = data.via(zipInput(outputTimeout, buffer))
       new ExistingZip(transform, s)
     }
@@ -255,7 +255,7 @@ object ZipStream {
   }
   private[stream] sealed trait ZipAction extends InputAction with Serializable
   private[stream] object ZipAction {
-    final case class NewEntry(name: ZipEntryMetadata) extends ZipAction
+    final case class NewEntry(name: EntryMetadata) extends ZipAction
     final case class Data(data: ByteString) extends ZipAction
     final case object CloseEntry extends ZipAction
   }

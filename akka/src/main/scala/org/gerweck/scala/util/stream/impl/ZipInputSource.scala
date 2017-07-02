@@ -104,7 +104,7 @@ private[stream] class ZipInputSource(ec: ExecutionContext)(readSize: Int = defau
                   currentEntry = Some(ne)
                   entryCount += 1
                   val metadata = {
-                    ZipEntryMetadata(
+                    EntryMetadata(
                       ne.getName,
                       Option(ne.getCreationTime).map(_.toInstant),
                       Option(ne.getLastAccessTime).map(_.toInstant),

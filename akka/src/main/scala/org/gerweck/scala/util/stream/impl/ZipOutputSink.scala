@@ -187,7 +187,7 @@ private[stream] object ZipOutputSink {
     }.mapMaterializedValue(_._2)
   }
 
-  private def makeZipEntry(metadata: ZipEntryMetadata): ZipEntry = {
+  private def makeZipEntry(metadata: EntryMetadata): ZipEntry = {
     @inline def i2ft(i: java.time.Instant): FileTime = FileTime.from(i)
 
     val ze = new ZipEntry(metadata.name)
