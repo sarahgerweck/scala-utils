@@ -64,6 +64,9 @@
 
 #### 2.5.0
 
-  - Update to Akka 2.5.2
-  - Update to Akka HTTP 10.0.7
+  - Updates to the `ZipStream` module, *including some breaking changes*.
+  - Deprecate the `foldl1` and `rx` extension methods. These are both
+    available in recent version of the Scala standard library.
+  - Update to Akka 2.5.3
+  - Update to Akka HTTP 10.0.9
   - Update to Slick 3.2
