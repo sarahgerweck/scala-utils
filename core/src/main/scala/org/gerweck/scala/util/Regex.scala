@@ -6,7 +6,7 @@ import scala.util.matching.{Regex => ScalaRegex}
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-@deprecated("Use Scala's `.r` directly: it is now superior to this", "2.5")
+@deprecated("This is now equivalent to Scala's `.r.unanchored`", "2.5")
 object Regex {
   implicit final class RichRegexString(val inner: String) extends AnyVal {
     def rx = new FirstMatchExtractor(inner.r)
