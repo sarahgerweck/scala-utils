@@ -5,14 +5,14 @@ object Dependencies {
   final val log4sVersion        = "1.3.5"
   final val logbackVersion      = "1.2.3"
   final val jodaTimeVersion     = "2.9.9"
-  final val jodaConvertVersion  = "1.8.1"
-  final val threeTenVersion     = "1.3.4"
+  final val jodaConvertVersion  = "1.8.2"
+  final val threeTenVersion     = "1.3.5"
   final val commonsVfsVersion   = "2.1"
   final val commonsIoVersion    = "2.5"
   final val spireVersion        = "0.13.0"
-  final val groovyVersion       = "2.4.11"
+  final val groovyVersion       = "2.4.12"
   final val json4sVersion       = "3.5.2"
-  final val twitterUtilVersion  = "6.43.0"
+  final val twitterUtilVersion  = "6.45.0"
   final val scalaParserVersion  = "1.0.6"
   final val scalaXmlVersion     = "1.0.6"
   final val bouncyCastleVersion = "1.57"
@@ -75,8 +75,8 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.5.2"
-  final val akkaHttpVersion    = "10.0.7"
+  final val akkaVersion        = "2.5.3"
+  final val akkaHttpVersion    = "10.0.9"
 
   val akkaActor    = "com.typesafe.akka" %% "akka-actor"     % akkaVersion
   val akkaAgent    = "com.typesafe.akka" %% "akka-agent"     % akkaVersion
