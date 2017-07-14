@@ -152,6 +152,9 @@ object ZipStream {
     * before it is converted into `ByteString` objects. Using a buffer can substantially improve
     * performance, as otherwise you may have many stream elements with just a few bytes in them.
     *
+    * @param level the compression level to use when generating the zip. Use `None` to get the
+    * default compression, which is generally a good compromise.
+    *
     * @param ec the execution context to use for any callback operations. This context will
     * ''not'' be used for any long-running or blocking operations.
     */
@@ -169,6 +172,9 @@ object ZipStream {
     * @param buffer the size (in bytes) of an optional buffer that will hold the zipped data
     * before it is written to the file. The OS probably offers output buffering, but this can
     * potentially reduce the number of OS-level writes that need to be made.
+    *
+    * @param level the compression level to use when generating the zip. Use `None` to get the
+    * default compression, which is generally a good compromise.
     *
     * @param ec the execution context to use for any callback operations. This context will
     * ''not'' be used for any long-running or blocking operations.
