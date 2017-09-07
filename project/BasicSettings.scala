@@ -17,7 +17,7 @@ sealed trait Basics {
   final val projectStartYear      = 2012
   final val projectHomepage       = None
 
-  final val buildScalaVersion     = "2.12.2"
+  final val buildScalaVersion     = "2.12.3"
   final val extraScalaVersions    = Seq("2.11.11")
   final val minimumJavaVersion    = "1.6"
   final val defaultOptimize       = true
