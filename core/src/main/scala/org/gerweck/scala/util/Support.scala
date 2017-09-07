@@ -11,7 +11,7 @@ object Support {
 
   def warnSupport = macro support_warn
 
-  def support = macro support_simple
+  def support: Nothing = macro support_simple
 
   def support(logger: Logger, level: LogLevel) = macro support_complex
 }
