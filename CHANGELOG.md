@@ -70,3 +70,8 @@
   - Update to Akka 2.5.3
   - Update to Akka HTTP 10.0.9
   - Update to Slick 3.2
+
+#### 2.5.1
+
+  - Update Scala to 2.12.3
+  - Add `Throwing` JDBC objects
