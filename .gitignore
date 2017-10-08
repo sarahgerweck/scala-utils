@@ -1,12 +1,48 @@
+# Custom ignores for this project
+/java8
+/java6
+
+# Build outputs
 target
-.classpath
-.project
+bin
+
+# SBT build files
 .cache
 .cache-main
 .cache-tests
-.settings
-*.swp
 /project/project
-/bin/
-/java8
-/java6
+
+# Eclipse files
+.project
+.classpath
+.settings
+.worksheet
+
+# Scala worksheets
+*.sc
+
+# IDEA files
+.idea*
+*.iml
+
+# Ensime files
+.ensime
+.ensime_cache
+/ensime.sbt
+
+# Vim files
+.sw[a-z]
+*.sw[a-z]
+
+# macOS files
+.DS_Store
+
+# Never-commit files
+*.jar
+*.class
+
+# Assorted log files
+/*.log
+/log
+/*.script
+typescript
