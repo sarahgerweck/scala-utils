@@ -75,3 +75,8 @@
 
   - Update Scala to 2.12.3
   - Add `Throwing` JDBC objects
+
+#### 2.6.0
+
+  - Update to SBT 1.0
+  - Minor dependency updates
