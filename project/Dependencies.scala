@@ -2,20 +2,20 @@ import sbt._
 
 object Dependencies {
   final val slf4jVersion        = "1.7.25"
-  final val log4sVersion        = "1.3.6"
+  final val log4sVersion        = "1.4.0"
   final val logbackVersion      = "1.2.3"
   final val jodaTimeVersion     = "2.9.9"
-  final val jodaConvertVersion  = "1.8.2"
-  final val threeTenVersion     = "1.3.5"
-  final val commonsVfsVersion   = "2.1"
+  final val jodaConvertVersion  = "1.9.2"
+  final val threeTenVersion     = "1.3.6"
+  final val commonsVfsVersion   = "2.2"
   final val commonsIoVersion    = "2.5"
   final val spireVersion        = "0.13.0"
   final val groovyVersion       = "2.4.12"
-  final val json4sVersion       = "3.5.2"
-  final val twitterUtilVersion  = "6.45.0"
+  final val json4sVersion       = "3.5.3"
+  final val twitterUtilVersion  = "7.1.0"
   final val scalaParserVersion  = "1.0.6"
   final val scalaXmlVersion     = "1.0.6"
-  final val bouncyCastleVersion = "1.57"
+  final val bouncyCastleVersion = "1.58"
 
   val log4s            = "org.log4s"           %% "log4s"           % log4sVersion
   val slf4j            = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
@@ -55,7 +55,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                          Testing Dependencies                          */
   /* ********************************************************************** */
-  final val scalaTestVersion  = "3.0.3"
+  final val scalaTestVersion  = "3.0.4"
   final val scalaCheckVersion = "1.13.5"
 
   val scalaTest  = "org.scalatest"  %% "scalatest"  % scalaTestVersion
@@ -75,8 +75,8 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.5.3"
-  final val akkaHttpVersion    = "10.0.9"
+  final val akkaVersion        = "2.5.6"
+  final val akkaHttpVersion    = "10.0.10"
 
   val akkaActor    = "com.typesafe.akka" %% "akka-actor"     % akkaVersion
   val akkaAgent    = "com.typesafe.akka" %% "akka-agent"     % akkaVersion
