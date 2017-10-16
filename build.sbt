@@ -172,15 +172,7 @@ lazy val akka: Project = (project in file ("akka"))
   .settings(
     name := "Gerweck Utils Akka",
 
-    basicScalacOptions,
-    scalacOptions ++= {
-      sbt.CrossVersion.partialVersion(scalaBinaryVersion.value) match {
-        case Some((2, x)) if x >= 12 =>
-          Seq("-opt:l:project")
-        case _ =>
-          Seq.empty
-      }
-    },
+    addScalacOptions(),
     addJavacOptions(),
 
     /* Logging */
