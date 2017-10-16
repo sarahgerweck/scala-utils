@@ -22,8 +22,9 @@ sealed trait Basics {
   final val minimumJavaVersion    = "1.6"
   final val defaultOptimize       = true
   final val defaultOptimizeGlobal = false
+  final val inlinePatterns        = Seq("!akka.**,!slick.**")
 
-  final val parallelBuild         = false
+  final val parallelBuild         = true
   final val cachedResolution      = true
 
   final val defaultNewBackend     = false
@@ -101,6 +102,7 @@ object BasicSettings extends AutoPlugin with Basics {
   def basicScalacOptions = Def.derive {
     scalacOptions ++= {
       var options = Seq.empty[String]
+      val sv = sver.value
 
       options :+= "-unchecked"
       options :+= "-feature"
@@ -113,10 +115,10 @@ object BasicSettings extends AutoPlugin with Basics {
       if (importWarn) {
         options :+= "-Ywarn-unused-import"
       }
-      if (!sver.value.requireJava8) {
+      if (!sv.requireJava8) {
         options :+= "-target:jvm-" + minimumJavaVersion
       }
-      if (sver.value.backend == SupportsNewBackend && newBackend) {
+      if (sv.backend == SupportsNewBackend && newBackend) {
         options :+= "-Ybackend:GenBCode"
       }
 
@@ -128,18 +130,39 @@ object BasicSettings extends AutoPlugin with Basics {
     scalacOptions ++= {
       var options = Seq.empty[String]
       val sv = sver.value
+      val fos = forceOldInlineSyntax.value
 
       if (optim) {
-        val useNewBackend = sv.backend == NewBackend || sv.supportsNewBackend && newBackend
-        if (useNewBackend) {
+        def doNewWarn(): Unit = {
+          if (optimizeWarn) {
+            options :+= "-opt-warnings:_"
+          }
+        }
+
+        if (sv.backend == NewBackend && !fos) {
+          options :+= "-opt:l:inline"
+
+          val inlineFrom = {
+            var patterns = Seq.empty[String]
+            if (optimizeGlobal) {
+              patterns :+= "**"
+            } else {
+              patterns :+= "<sources>"
+            }
+            patterns ++= inlinePatterns
+            patterns
+          }
+
+          options :+= inlineFrom.mkString("-opt-inline-from:", ":", "")
+
+          doNewWarn()
+        } else if (sv.backend == NewBackend && fos || sv.backend == SupportsNewBackend && newBackend) {
           if (optimizeGlobal) {
             options :+= "-opt:l:classpath"
           } else {
             options :+= "-opt:l:project"
           }
-          if (optimizeWarn) {
-            options :+= "-opt-warnings:_"
-          }
+          doNewWarn()
         } else {
           options :+= "-optimize"
           if (optimizeWarn) {

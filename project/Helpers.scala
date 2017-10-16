@@ -29,6 +29,14 @@ object Helpers {
     Def.map(scalaBinaryVersion)(SVer.apply)
   }
 
+  final lazy val forceOldInlineSyntax: Def.Initialize[Boolean] = {
+    val pat = """(?x)^ 2\.12\.[0-2] (?:[^\d].*)? $""".r
+    Def.map(scalaVersion) {
+      case pat() => true
+      case _     => false
+    }
+  }
+
   sealed trait Backend
   case object NewBackend extends Backend
   case object SupportsNewBackend extends Backend
