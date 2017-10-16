@@ -23,9 +23,11 @@ sealed trait Basics {
   final val defaultOptimize       = true
   final val defaultOptimizeGlobal = false
   final val inlinePatterns        = Seq("!akka.**,!slick.**")
+  final val autoAddCompileOptions = false
 
   final val parallelBuild         = true
   final val cachedResolution      = true
+  final val sonatypeResolver      = true
 
   final val defaultNewBackend     = false
 
@@ -70,16 +72,22 @@ object BasicSettings extends AutoPlugin with Basics {
       updateOptions        :=  updateOptions.value.withCachedResolution(cachedResolution),
       parallelExecution    :=  parallelBuild,
 
-      /* Many OSS projects push here and then appear in Maven Central later */
-      resolvers            +=  Resolver.sonatypeRepo("releases"),
-
       evictionWarningOptions in update :=
         EvictionWarningOptions.default.withWarnTransitiveEvictions(false).withWarnDirectEvictions(false).withWarnScalaVersionEviction(false)
-    ) ++ {
-      // This project requires some unusual build & optimization settings
-      // addScalacOptions() ++ addJavacOptions()
-      Seq.empty
-    }
+    ) ++ (
+      if (autoAddCompileOptions) {
+        addScalacOptions() ++ addJavacOptions()
+      } else {
+        Seq.empty
+      }
+    ) ++ (
+      if (sonatypeResolver) {
+        /* Many OSS projects push here and then appear in Maven Central later */
+        Seq(resolvers += Resolver.sonatypeRepo("releases"))
+      } else {
+        Seq.empty
+      }
+    )
   )
 
   /* Overridable flags */
