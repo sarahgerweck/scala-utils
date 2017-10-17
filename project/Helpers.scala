@@ -14,6 +14,8 @@ object HelpersImpl {
     def parseBool(str: String): Boolean = boolNames(str.trim.toLowerCase)
     def boolFlag(name: String): Option[Boolean] = getProp(name).map(parseBool)
     def boolFlag(name: String, default: Boolean): Boolean = boolFlag(name) getOrElse default
+    def intFlag(name: String) = getProp(name).map(_.toInt)
+    def intFlag(name: String, default: Int): Int = intFlag(name) getOrElse default
     def opts(names: String*): Option[String] = names.collectFirst(Function.unlift(getProp))
 
     lazy val buildNumberOpt = sys.env.get("BUILD_NUMBER")
