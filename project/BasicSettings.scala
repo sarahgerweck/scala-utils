@@ -7,62 +7,66 @@ import com.typesafe.sbt.site._
 
 import Helpers._
 
-sealed trait Basics {
-  final val buildOrganization     = "org.gerweck.scala"
-  final val buildOrganizationName = "Sarah Gerweck"
-  final val buildOrganizationUrl  = Some("https://github.com/sarahgerweck")
-  final val githubOrganization    = "sarahgerweck"
-  final val githubProject         = "scala-utils"
-  final val projectDescription    = "General utilies for Scala applications"
-  final val projectStartYear      = 2012
-  final val projectHomepage       = None
+trait BasicSettings {
+  val buildOrganization: String
+  val buildOrganizationName: String
+  val buildOrganizationUrl: Option[java.net.URL] = None
+  val projectDescription: String
+  val projectStartYear: Int
+  val projectHomepage: Option[java.net.URL] = None
 
-  final val buildScalaVersion     = "2.12.3"
-  final val extraScalaVersions    = Seq("2.11.11")
-  final val minimumJavaVersion    = "1.6"
-  final val defaultOptimize       = true
-  final val defaultOptimizeGlobal = false
-  final val inlinePatterns        = Seq("!akka.**,!slick.**")
-  final val autoAddCompileOptions = false
+  val buildScalaVersion: String
+  val extraScalaVersions: Seq[String]
+  val minimumJavaVersion: String = "1.8"
+  val defaultOptimize: Boolean = true
+  val defaultOptimizeGlobal: Boolean = false
+  val inlinePatterns: Seq[String]
+  val autoAddCompileOptions: Boolean = true
 
-  final val parallelBuild         = true
-  final val cachedResolution      = true
-  final val sonatypeResolver      = true
+  val parallelBuild: Boolean = true
+  val cachedResolution: Boolean = true
+  val sonatypeResolver: Boolean = false
 
-  final val defaultNewBackend     = false
+  val projectLicenses: Seq[(String, java.net.URL)]
 
-  /* Metadata definitions */
+  val defaultNewBackend: Boolean = false
+
+  val developerInfo: scala.xml.Elem
+
+  val buildMetadata: Seq[Setting[_]]
+}
+
+trait GithubProject extends BasicSettings {
+  val githubOrganization: String
+  val githubProject: String
+
+  val githubOrgPageFallback: Boolean = true
   lazy val githubPage = url(s"https://github.com/${githubOrganization}/${githubProject}")
+
   lazy val buildMetadata = Vector(
-    licenses    := Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt")),
+    licenses    := projectLicenses,
     homepage    := Some(projectHomepage.getOrElse(githubPage)),
     description := projectDescription,
     startYear   := Some(projectStartYear),
     scmInfo     := Some(ScmInfo(githubPage, s"scm:git:git@github.com:${githubOrganization}/${githubProject}.git"))
   )
-
-  lazy val developerInfo = {
-    <developers>
-      <developer>
-        <id>sarah</id>
-        <name>Sarah Gerweck</name>
-        <email>sarah.a180@gmail.com</email>
-        <url>https://github.com/sarahgerweck</url>
-        <timezone>America/Los_Angeles</timezone>
-      </developer>
-    </developers>
-  }
 }
 
-object BasicSettings extends AutoPlugin with Basics {
+trait ApacheLicensed extends BasicSettings {
+  final val projectLicenses = Seq("Apache License, Version 2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
+}
+
+object BasicSettings extends AutoPlugin with ProjectSettings { BasicSettings =>
   override def requires = SiteScaladocPlugin
+
+  private[this] lazy val githubOrgPage = url(s"https://github.com/${githubOrganization}")
 
   override lazy val projectSettings = (
     buildMetadata ++
     Seq (
       organization         :=  buildOrganization,
       organizationName     :=  buildOrganizationName,
-      organizationHomepage :=  buildOrganizationUrl map { url _ },
+      organizationHomepage :=  buildOrganizationUrl.orElse(if (githubOrgPageFallback) Some(githubOrgPage) else None),
 
       scalaVersion         :=  buildScalaVersion,
       crossScalaVersions   :=  buildScalaVersions,
