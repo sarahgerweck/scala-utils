@@ -3,14 +3,30 @@
 import sbt._
 import sbt.Keys._
 
-import scala.util.Properties.envOrNone
-
 import Helpers._
 
-object BasicSettings extends AutoPlugin with ProjectSettings { st: SettingTemplate =>
-  private[this] lazy val githubOrgPage = url(s"https://github.com/${githubOrganization}")
+object BasicSettings extends AutoPlugin with BasicSettings {
+  override def projectSettings = basicSettings
+}
 
-  override lazy val projectSettings = (
+trait BasicSettings extends ProjectSettings { st: SettingTemplate =>
+  /* Overridable flags */
+  lazy val optimize       = boolFlag("OPTIMIZE") orElse boolFlag("OPTIMISE") getOrElse defaultOptimize
+  lazy val optimizeGlobal = boolFlag("OPTIMIZE_GLOBAL") getOrElse defaultOptimizeGlobal
+  lazy val optimizeWarn   = boolFlag("OPTIMIZE_WARNINGS") getOrElse false
+  lazy val noFatalWarn    = boolFlag("NO_FATAL_WARNINGS") getOrElse false
+  lazy val deprecation    = boolFlag("NO_DEPRECATION") map (!_) getOrElse true
+  lazy val inlineWarn     = boolFlag("INLINE_WARNINGS") getOrElse false
+  lazy val debug          = boolFlag("DEBUGGER") getOrElse false
+  lazy val debugPort      = intFlag("DEBUGGER_PORT", 5050)
+  lazy val debugSuspend   = boolFlag("DEBUGGER_SUSPEND") getOrElse true
+  lazy val unusedWarn     = boolFlag("UNUSED_WARNINGS") getOrElse false
+  lazy val importWarn     = boolFlag("IMPORT_WARNINGS") getOrElse false
+  lazy val findbugsHtml   = boolFlag("FINDBUGS_HTML") getOrElse !isJenkins
+  lazy val newBackend     = boolFlag("NEW_BCODE_BACKEND") getOrElse defaultNewBackend
+  lazy val noBuildDocs    = boolFlag("NO_SBT_DOCS").getOrElse(false) && !isJenkins
+
+  lazy val basicSettings = new Def.SettingList(
     buildMetadata ++
     Seq (
       organization         :=  buildOrganization,
@@ -28,6 +44,12 @@ object BasicSettings extends AutoPlugin with ProjectSettings { st: SettingTempla
       evictionWarningOptions in update :=
         EvictionWarningOptions.default.withWarnTransitiveEvictions(false).withWarnDirectEvictions(false).withWarnScalaVersionEviction(false)
     ) ++ (
+      if (noBuildDocs) {
+        Seq(sources in (Compile, doc) := Seq.empty)
+      } else {
+        Seq.empty
+      }
+    ) ++ (
       if (autoAddCompileOptions) {
         addScalacOptions() ++ addJavacOptions()
       } else {
@@ -42,21 +64,6 @@ object BasicSettings extends AutoPlugin with ProjectSettings { st: SettingTempla
       }
     )
   )
-
-  /* Overridable flags */
-  lazy val optimize       = boolFlag("OPTIMIZE") orElse boolFlag("OPTIMISE") getOrElse defaultOptimize
-  lazy val optimizeGlobal = boolFlag("OPTIMIZE_GLOBAL") getOrElse defaultOptimizeGlobal
-  lazy val optimizeWarn   = boolFlag("OPTIMIZE_WARNINGS") getOrElse false
-  lazy val noFatalWarn    = boolFlag("NO_FATAL_WARNINGS") getOrElse false
-  lazy val deprecation    = boolFlag("NO_DEPRECATION") map (!_) getOrElse true
-  lazy val inlineWarn     = boolFlag("INLINE_WARNINGS") getOrElse false
-  lazy val debug          = boolFlag("DEBUGGER") getOrElse false
-  lazy val debugPort      = intFlag("DEBUGGER_PORT", 5050)
-  lazy val debugSuspend   = boolFlag("DEBUGGER_SUSPEND") getOrElse true
-  lazy val unusedWarn     = boolFlag("UNUSED_WARNINGS") getOrElse false
-  lazy val importWarn     = boolFlag("IMPORT_WARNINGS") getOrElse false
-  lazy val java8Flag      = boolFlag("BUILD_JAVA_8") getOrElse false
-  lazy val newBackend     = boolFlag("NEW_BCODE_BACKEND") getOrElse defaultNewBackend
 
   lazy val buildScalaVersions = buildScalaVersion +: extraScalaVersions
 
@@ -161,4 +168,6 @@ object BasicSettings extends AutoPlugin with ProjectSettings { st: SettingTempla
       options
     }
   }
+
+  private[this] lazy val githubOrgPage = url(s"https://github.com/${githubOrganization}")
 }

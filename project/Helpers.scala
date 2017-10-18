@@ -1,5 +1,5 @@
 import sbt._
-import Keys._
+import sbt.Keys._
 
 import HelpersImpl._
 object Helpers extends AnyRef with PropertyHelper with VersionHelper with PomHelper
