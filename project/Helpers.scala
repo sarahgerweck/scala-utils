@@ -4,6 +4,8 @@ import Keys._
 import HelpersImpl._
 object Helpers extends AnyRef with PropertyHelper with VersionHelper with PomHelper
 
+/* Note: This file is shared among many projects. Avoid putting project-specific things here. */
+
 object HelpersImpl {
   sealed trait PropertyHelper {
     private[this] lazy val boolNames = Set("yes", "y", "true", "t", "1")
