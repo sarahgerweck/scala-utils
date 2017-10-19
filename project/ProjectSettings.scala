@@ -5,10 +5,11 @@ trait ProjectSettings
     with SettingTemplate.GithubProject {
   override final val buildOrganization     = "org.gerweck.scala"
   override final val buildOrganizationName = "Sarah Gerweck"
-  override final val githubOrganization    = "sarahgerweck"
-  override final val githubProject         = "scala-utils"
   override final val projectDescription    = "General utilies for Scala applications"
   override final val projectStartYear      = 2012
+
+  override final val githubOrganization    = "sarahgerweck"
+  override final val githubProject         = "scala-utils"
 
   override final val buildScalaVersion     = "2.12.3"
   override final val extraScalaVersions    = Seq("2.11.11")

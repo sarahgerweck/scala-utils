@@ -18,7 +18,7 @@ trait SettingTemplate {
   val minimumJavaVersion: String = "1.8"
   val defaultOptimize: Boolean = true
   val defaultOptimizeGlobal: Boolean = false
-  val inlinePatterns: Seq[String]
+  val inlinePatterns: Seq[String] = Seq("!akka.**","!slick.**")
   val autoAddCompileOptions: Boolean = true
 
   val parallelBuild: Boolean = true
@@ -32,6 +32,8 @@ trait SettingTemplate {
   val developerInfo: scala.xml.Elem
 
   val buildMetadata: Seq[Setting[_]]
+
+  def sourceLocation(branch: String): Option[URL] = None
 }
 
 object SettingTemplate {
@@ -41,6 +43,7 @@ object SettingTemplate {
 
     val githubOrgPageFallback: Boolean = true
     lazy val githubPage = url(s"https://github.com/${githubOrganization}/${githubProject}")
+    override def sourceLocation(branch: String) = Some(url(s"${githubPage.toExternalForm}/blob/branch"))
 
     lazy val buildMetadata = Vector(
       licenses    := projectLicenses,
