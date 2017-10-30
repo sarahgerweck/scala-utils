@@ -51,7 +51,7 @@ lazy val macros = (project in file ("macro"))
 
 lazy val core: Project = (project in file ("core"))
   .dependsOn(macros % "optional")
-  .enablePlugins(ModuleSettings)
+  .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
     name := "Gerweck Utils",
 
@@ -91,7 +91,7 @@ lazy val core: Project = (project in file ("core"))
 
 lazy val java6 = (project in file ("java6"))
   .dependsOn(macros % "optional")
-  .enablePlugins(ModuleSettings)
+  .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
     name := "Gerweck Utils (Java 6)",
     normalizedName := "gerweck-utils-java6",
@@ -157,7 +157,7 @@ lazy val java6 = (project in file ("java6"))
   )
 
 lazy val twitter = (project in file ("twitter"))
-  .enablePlugins(ModuleSettings)
+  .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
     name := "Gerweck Utils Twitter",
     libraryDependencies ++= basicLogDeps,
@@ -168,7 +168,7 @@ lazy val twitter = (project in file ("twitter"))
 
 lazy val akka: Project = (project in file ("akka"))
   .dependsOn(core)
-  .enablePlugins(ModuleSettings)
+  .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
     name := "Gerweck Utils Akka",
 
@@ -191,7 +191,7 @@ lazy val akka: Project = (project in file ("akka"))
 
 lazy val dbutil: Project = (project in file ("dbutil"))
   .dependsOn(core)
-  .enablePlugins(ModuleSettings)
+  .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
     name := "Gerweck Utils DB",
 
