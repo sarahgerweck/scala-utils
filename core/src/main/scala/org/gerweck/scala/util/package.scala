@@ -126,4 +126,15 @@ package object util {
     final def apply(str: String) = mf.format(Array(str))
     final def apply(str: String, others: String*) = mf.format((str +: others).toArray)
   }
+
+  /** Enhancements to Scala's `Regex` class. */
+  implicit final class RichRegex(val inner: scala.util.matching.Regex) extends AnyVal {
+    /** Check whether the given regex matches a provided string.
+      *
+      * Whether the entire string must match is governed by whether this is an anchored regex.
+      *
+      * @param s the string to test
+     */
+    def matches(s: String): Boolean = inner.unapplySeq(s).isDefined
+  }
 }
