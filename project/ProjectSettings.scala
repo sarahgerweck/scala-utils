@@ -11,7 +11,7 @@ trait ProjectSettings
   override final val githubOrganization    = "sarahgerweck"
   override final val githubProject         = "scala-utils"
 
-  override final val buildScalaVersion     = "2.12.3"
+  override final val buildScalaVersion     = "2.12.4"
   override final val extraScalaVersions    = Seq("2.11.11")
   override final val minimumJavaVersion    = "1.6"
   override final val defaultOptimize       = true
