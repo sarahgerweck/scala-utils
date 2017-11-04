@@ -81,3 +81,4 @@
 - Update to SBT 1.0
 - Minor dependency updates
 - Update Scala to 2.12.4
+- Add support for `java.nio.file.Path` preferences
