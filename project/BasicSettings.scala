@@ -14,6 +14,7 @@ trait BasicSettings extends ProjectSettings { st: SettingTemplate =>
   lazy val optimize       = boolFlag("OPTIMIZE") orElse boolFlag("OPTIMISE") getOrElse defaultOptimize
   lazy val optimizeGlobal = boolFlag("OPTIMIZE_GLOBAL") getOrElse defaultOptimizeGlobal
   lazy val optimizeWarn   = boolFlag("OPTIMIZE_WARNINGS") getOrElse false
+  lazy val disableAsserts = boolFlag("DISABLE_ASSERTIONS") getOrElse defaultDisableAssertions
   lazy val noFatalWarn    = boolFlag("NO_FATAL_WARNINGS") getOrElse false
   lazy val deprecation    = boolFlag("NO_DEPRECATION") map (!_) getOrElse true
   lazy val inlineWarn     = boolFlag("INLINE_WARNINGS") getOrElse false
@@ -88,6 +89,9 @@ trait BasicSettings extends ProjectSettings { st: SettingTemplate =>
       }
       if (sv.backend == SupportsNewBackend && newBackend) {
         options :+= "-Ybackend:GenBCode"
+      }
+      if (disableAsserts) {
+        options :+= "-Xdisable-assertions"
       }
 
       options
