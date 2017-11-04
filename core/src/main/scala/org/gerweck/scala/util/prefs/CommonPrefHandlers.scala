@@ -1,5 +1,6 @@
 package org.gerweck.scala.util.prefs
 
+import java.nio.file.{ Path, Paths }
 import java.io.File
 import java.net.{ URI, URL }
 import java.util.prefs.Preferences
@@ -39,10 +40,15 @@ trait CommonPrefHandlers {
 
   private[this] implicit val string2FileMorphism: Homomorphism[String, File] = Homomorphism[String, File](new File(_), _.getCanonicalPath)
   private[this] implicit val string2UriMorphism: Homomorphism[String, URI] = Homomorphism[String, URI](new URI(_), _.toString)
+  private[this] implicit val string2PathMorphism: Homomorphism[String, Path] = Homomorphism[String, Path](Paths.get(_), _.toString)
   private[this] implicit val uri2UrlMorphism: Homomorphism[URI, URL] = Homomorphism[URI, URL](_.toURL, _.toURI)
 
   implicit val filePrefHandler: PrefHandler[File] = {
     mappedPrefHandler[String, File]
+  }
+
+  implicit val pathPrefHandler: PrefHandler[Path] = {
+    mappedPrefHandler[String, Path]
   }
 
   implicit val uriPrefHandler: PrefHandler[URI] = {
