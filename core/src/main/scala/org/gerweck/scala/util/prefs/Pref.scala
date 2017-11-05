@@ -1,11 +1,6 @@
 package org.gerweck.scala.util.prefs
 
-import scala.concurrent.duration.Duration
-
-import java.io.File
 import java.util.prefs.Preferences
-
-import org.gerweck.scala.util.mapping.Homomorphism
 
 /** A class that represents a preference stored in the Java preferences system.
   *
