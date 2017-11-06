@@ -17,6 +17,9 @@ trait ProjectSettings
   override final val defaultOptimize       = true
   override final val defaultOptimizeGlobal = false
   override final val inlinePatterns        = Seq("!akka.**", "!slick.**")
+  override final val defaultWarnUnused     = false
+  override final val defaultWarnImport     = true
+  override final val defaultWarnInline     = true
   override final val autoAddCompileOptions = false
 
   override final val parallelBuild         = true
