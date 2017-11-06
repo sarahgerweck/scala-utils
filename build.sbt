@@ -222,12 +222,11 @@ lazy val basicLogDeps = Seq(
 )
 
 lazy val utilsDeps = basicLogDeps ++ Seq (
-  jclBridge,
+  jclBridge % "optional",
   scalaCheck % "test",
-  commonsIo,
+  commonsIo % "optional",
   jodaTime % "optional",
   jodaConvert % "optional",
-  /* ThreeTen is optional in some versions and not others, so see below */
   spire % "provided,optional",
-  commonsVfs
+  commonsVfs % "optional"
 )
