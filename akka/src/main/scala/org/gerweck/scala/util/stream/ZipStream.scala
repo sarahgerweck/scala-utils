@@ -14,8 +14,6 @@ import akka.stream._
 import akka.stream.scaladsl._
 import akka.util.ByteString
 
-import org.log4s._
-
 import org.gerweck.scala.util.io._
 import org.gerweck.scala.util.stream.impl._
 
@@ -37,8 +35,6 @@ import org.gerweck.scala.util.stream.impl._
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
 object ZipStream {
-  private[this] val logger = getLogger
-
   /** The maximum amount of time to allow the zip's write to block. This is an internal operation
     * in a dedicated thread pool, so we're setting it to be effectively infinite. */
   private[this] val outputTimeout = 4.hours

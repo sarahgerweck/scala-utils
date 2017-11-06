@@ -41,7 +41,6 @@ private[stream] class ZipOutputSink(level: Option[Int], ec: ExecutionContext) ex
         private[this] var entryCount = 0
         private[this] var outstandingFuture = Option.empty[Future[Done]]
 
-        private[this] def fos = streams.get.bs
         private[this] def zos = streams.get.ws
 
         override def preStart(): Unit = {
@@ -181,7 +180,7 @@ private[stream] object ZipOutputSink {
             pos.completeWith(osTry)
           }
         }
-        val mpd = b.materializedValue.map(_._1) ~> completer
+        b.materializedValue.map(_._1) ~> completer
         SinkShape(zos.in)
       }
     }.mapMaterializedValue(_._2)

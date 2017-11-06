@@ -39,7 +39,6 @@ private[stream] class ZipInputSource(ec: ExecutionContext)(readSize: Int = defau
 
         private[this] var currentlyReading = false
 
-        private[this] def is(implicit str: Streams): InputStream = str.bs
         private[this] def zis(implicit str: Streams): ZipInputStream = str.ws
 
         override def preStart(): Unit = {
