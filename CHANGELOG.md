@@ -82,3 +82,13 @@
 - Minor dependency updates
 - Update Scala to 2.12.4
 - Add support for `java.nio.file.Path` preferences
+
+### 2.7.0
+
+- Update the `Prefs` API to allow for optional preferences
+- Make Commons-IO and Commons-VFS optional dependencies
+  - These are only used by the deprecated `FileUtils` system
+- Make JCL-over-SLF4J an optional dependency
+  - This should have always been optional.
+  - I *strongly* recommend against using commons-logging, but there's no
+    reason this library should make that decision for you.
