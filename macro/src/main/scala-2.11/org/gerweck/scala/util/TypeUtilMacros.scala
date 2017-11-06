@@ -8,7 +8,7 @@ import scala.math.Ordering
 
 
 /** Module containing macro implementations */
-private object TypeUtilMacros {
+private[util] object TypeUtilMacros {
   /** Whether to emit info messages for type macros
     *
     * Info messages are controlled by the `-verbose` flag on the Scala compiler.

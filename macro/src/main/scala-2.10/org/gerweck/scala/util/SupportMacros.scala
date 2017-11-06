@@ -6,7 +6,7 @@ import scala.reflect.macros.Context
 
 import org.log4s._
 
-private object SupportMacros {
+private[util] object SupportMacros {
   def support_simple(c: Context): c.Expr[Nothing] = {
     import c.universe._
 

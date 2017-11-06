@@ -6,7 +6,7 @@ import scala.reflect.macros.Context
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-private object HexByteMacros {
+private[math] object HexByteMacros {
   /** Macro for hexadecimal byte literals. */
   def hexByte(c: Context)(): c.Expr[Byte] = {
     import c.universe._
