@@ -4,7 +4,7 @@ import language.implicitConversions
 
 import org.log4s._
 
-import com.twitter.util.{Future, Try, Return, Throw, Duration, Awaitable}
+import com.twitter.util.{ Future, Try, Return, Throw, Duration }
 
 /** Utilities for working with twitter futures.
   *

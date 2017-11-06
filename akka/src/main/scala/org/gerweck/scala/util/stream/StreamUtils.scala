@@ -3,9 +3,7 @@ package org.gerweck.scala.util.stream
 import scala.collection.mutable
 
 import akka.NotUsed
-import akka.stream._
 import akka.stream.scaladsl._
-import akka.stream.scaladsl.GraphDSL.Implicits._
 import akka.util.ByteString
 
 /** General utilities for building streams

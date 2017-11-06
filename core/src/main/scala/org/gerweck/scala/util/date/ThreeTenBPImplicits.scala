@@ -56,7 +56,6 @@ object ThreeTenBPWrappers extends ThreeTenBPImplicits {
   final class RichTTDate(val inner: tt.LocalDate) extends AnyVal with UniversalOrdering[tt.LocalDate] {
     def + (add: tt.Duration) = {
       // I think it's a bug in ThreeTen, but plus with a duration doesn't work for dates as of Dec 2014.
-      import scala.collection.JavaConversions._
       import tt.temporal.ChronoUnit
 
       require(tt.Duration.of(add.toDays(), ChronoUnit.DAYS) == add, "Cannot add a time-based duration to a date")

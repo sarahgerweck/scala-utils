@@ -1,11 +1,9 @@
 package org.gerweck.scala.util.stream
 
 import scala.concurrent._
-import scala.util.Try
 import scala.util.control.NonFatal
 
 import java.io._
-import java.util.concurrent.Executors
 import java.util.UUID
 
 import org.gerweck.scala.util._

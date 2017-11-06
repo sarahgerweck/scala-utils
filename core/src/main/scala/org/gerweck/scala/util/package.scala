@@ -1,7 +1,5 @@
 package org.gerweck.scala
 
-import scala.annotation.tailrec
-
 /** Miscellaneous utility code for manipulating standard objects.
   *
   * This package is designed to be maximally convenient if you `import org.gerweck.scala.util._`.

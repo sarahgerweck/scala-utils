@@ -103,8 +103,8 @@ trait ThrowingResultSet extends ResultSet with ThrowingWrapper {
   override def getTimestamp(x$1: String): Timestamp = nse
   override def getTimestamp(x$1: Int): Timestamp = nse
   override def getType(): Int = nse
-  override def getURL(x$1: String): java.net.URL = nse
-  override def getURL(x$1: Int): java.net.URL = nse
+  override def getURL(x$1: String): URL = nse
+  override def getURL(x$1: Int): URL = nse
   @deprecated("1.0", "Deprecated by Java.")
   override def getUnicodeStream(x$1: String): InputStream = nse
   @deprecated("1.0", "Deprecated by Java.")

@@ -1,10 +1,7 @@
 package org.gerweck.scala.util.hashing
 
-import scala.collection.SeqLike
-
 import java.nio.ByteBuffer
 import java.nio.charset.{ Charset, StandardCharsets }
-import java.security.MessageDigest
 
 /** An algorithm that can provide hash operations.
   *

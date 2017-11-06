@@ -1,7 +1,5 @@
 package org.gerweck.scala.util
 
-import language.experimental.macros
-
 import scala.reflect.macros.blackbox.Context
 
 import scala.math.Ordering

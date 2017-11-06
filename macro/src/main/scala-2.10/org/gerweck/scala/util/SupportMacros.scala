@@ -1,7 +1,5 @@
 package org.gerweck.scala.util
 
-import language.experimental.macros
-
 import scala.reflect.macros.Context
 
 import org.log4s._

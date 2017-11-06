@@ -12,8 +12,6 @@ import java.util.concurrent.ConcurrentHashMap
 import scala.util.parsing._
 import combinator._
 import lexical._
-import token._
-import input.CharArrayReader.EofCh
 
 import org.log4s._
 

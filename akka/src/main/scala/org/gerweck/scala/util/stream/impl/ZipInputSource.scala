@@ -5,19 +5,13 @@ import scala.concurrent._
 import scala.util._
 
 import java.io.{ InputStream, IOException }
-import java.nio.file.attribute.FileTime
-import java.time.Instant
 import java.util.zip.{ ZipInputStream, ZipEntry }
 
-import akka.Done
 import akka.stream._
 import akka.stream.stage._
-import akka.stream.scaladsl._
 import akka.util._
 
 import org.log4s._
-
-import org.gerweck.scala.util.io.ioExecutorContext
 
 import ZipStream._
 

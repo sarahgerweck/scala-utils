@@ -1,12 +1,9 @@
 package org.gerweck.scala.util.stream
 
-import scala.concurrent._
 import scala.concurrent.duration._
 
-import akka._
 import akka.actor._
 import akka.stream._
-import akka.stream.scaladsl._
 
 import com.typesafe.config._
 

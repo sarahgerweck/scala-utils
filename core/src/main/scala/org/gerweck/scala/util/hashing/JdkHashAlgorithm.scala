@@ -1,7 +1,5 @@
 package org.gerweck.scala.util.hashing
 
-import language.implicitConversions
-
 import java.security.MessageDigest
 import java.nio.ByteBuffer
 

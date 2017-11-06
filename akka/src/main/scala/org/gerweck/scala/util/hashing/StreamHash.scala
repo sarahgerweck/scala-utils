@@ -3,14 +3,10 @@ package org.gerweck.scala.util.hashing
 import scala.concurrent._
 import scala.util._
 
-import java.security.MessageDigest
-
-import akka.NotUsed
 import akka.stream._
 import akka.stream.scaladsl._
 import akka.stream.stage._
 import akka.util.ByteString
-import java.nio.ByteBuffer
 
 /** Utilities providing streaming hash functions.
   *

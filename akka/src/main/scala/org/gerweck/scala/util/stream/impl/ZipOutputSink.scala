@@ -12,7 +12,6 @@ import akka.Done
 import akka.stream._
 import akka.stream.stage._
 import akka.stream.scaladsl._
-import akka.util._
 
 import org.log4s._
 

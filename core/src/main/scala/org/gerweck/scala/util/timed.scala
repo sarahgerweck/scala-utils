@@ -2,7 +2,7 @@ package org.gerweck.scala.util
 
 import scala.concurrent._
 
-import java.lang.System.{ nanoTime, currentTimeMillis => millisTime }
+import java.lang.System.nanoTime
 
 import org.log4s._
 
@@ -50,7 +50,6 @@ object timed {
   */
 object timedFuture {
   private[this] val logger = getLogger
-  import timed._
 
   def apply[A](logger: Logger = logger, taskName: String = "task", level: LogLevel = Debug, captureMDC: Boolean = true, inline: Boolean = true)(f: => Future[A])(implicit ec: ExecutionContext): Future[A] = {
     val currentMDC = (if (captureMDC) MDC.toMap else Map.empty).toSeq

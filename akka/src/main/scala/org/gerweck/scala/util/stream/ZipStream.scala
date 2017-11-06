@@ -3,17 +3,15 @@ package org.gerweck.scala.util.stream
 import scala.collection.immutable
 import scala.concurrent._
 import scala.concurrent.duration._
-import scala.util._
 
 import java.io._
 import java.nio.file._
 import java.time.Instant
 import java.util.zip._
 
-import akka.{ Done, NotUsed }
+import akka.NotUsed
 import akka.stream._
 import akka.stream.scaladsl._
-import akka.stream.stage._
 import akka.util.ByteString
 
 import org.log4s._
