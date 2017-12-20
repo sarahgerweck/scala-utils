@@ -149,7 +149,8 @@ trait BasicSettings extends ProjectSettings { st: SettingTemplate =>
 
   def addScalacOptions(optim: Boolean = optimize) = new Def.SettingList(Seq(
     basicScalacOptions,
-    optimizationScalacOptions(optim)
+    optimizationScalacOptions(optim),
+    scalacOptions ++= extraScalacOptions
   ))
 
   def addJavacOptions() = Def.derive {

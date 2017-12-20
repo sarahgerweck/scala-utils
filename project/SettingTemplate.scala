@@ -23,6 +23,7 @@ trait SettingTemplate {
   val defaultWarnUnused: Boolean = false
   val defaultWarnImport: Boolean = false
   val defaultWarnInline: Boolean = false
+  val extraScalacOptions: Seq[String] = Seq.empty
   val autoAddCompileOptions: Boolean = true
 
   val parallelBuild: Boolean = true
