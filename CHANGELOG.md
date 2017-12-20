@@ -92,3 +92,7 @@
   - This should have always been optional.
   - I *strongly* recommend against using commons-logging, but there's no
     reason this library should make that decision for you.
+
+#### 2.7.1
+
+- Update Twitter Util to 17.12
