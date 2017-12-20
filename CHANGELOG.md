@@ -96,3 +96,5 @@
 #### 2.7.1
 
 - Update Twitter Util to 17.12
+- Update Akka to 2.5.8
+- Update Akka HTTP to 10.0.11
