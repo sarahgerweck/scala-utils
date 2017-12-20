@@ -64,7 +64,7 @@ lazy val core: Project = (project in file ("core"))
     libraryDependencies += bouncyCastle % "optional",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
-    libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
+    scalaParserDependency,
     libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
 
     resolvers += Resolver.sonatypeRepo("releases"),
@@ -105,7 +105,7 @@ lazy val java6 = (project in file ("java6"))
     libraryDependencies += bouncyCastle % "optional",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
-    libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
+    scalaParserDependency,
     libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
 
     resolvers += Resolver.sonatypeRepo("releases"),
@@ -154,6 +154,16 @@ lazy val java6 = (project in file ("java6"))
 
     // Do not include macros as a dependency.
     pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
+  )
+
+lazy val parsing = (project in file ("parsing"))
+  .enablePlugins(ModuleSettings, SiteSettingsPlugin, ScalaJSPlugin)
+  .settings(
+    name := "Gerweck Utils Parsing",
+    scalaJSLinkerConfig ~= { _.withModuleKind(ModuleKind.CommonJSModule) },
+    addScalacOptions(),
+    addJavacOptions(),
+    scalaParserDependency
   )
 
 lazy val twitter = (project in file ("twitter"))

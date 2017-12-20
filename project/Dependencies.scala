@@ -1,4 +1,7 @@
 import sbt._
+import sbt.Keys._
+
+import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 object Dependencies {
   final val slf4jVersion        = "1.7.25"
@@ -13,7 +16,7 @@ object Dependencies {
   final val groovyVersion       = "2.4.12"
   final val json4sVersion       = "3.5.3"
   final val twitterUtilVersion  = "17.10.0"
-  final val scalaParserVersion  = "1.0.6"
+  final val scalaParserVersion  = "1.0.5"
   final val scalaXmlVersion     = "1.0.6"
   final val bouncyCastleVersion = "1.58"
 
@@ -61,11 +64,14 @@ object Dependencies {
   val scalaTest  = "org.scalatest"  %% "scalatest"  % scalaTestVersion
   val scalaCheck = "org.scalacheck" %% "scalacheck" % scalaCheckVersion
 
-  /* Use like this: libraryDependencies <++= (scalaBinaryVersion) (scalaParser) */
-  def scalaParser(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
-    case "2.10" => Seq.empty
-    case _      => Seq("org.scala-lang.modules" %% "scala-parser-combinators" % scalaParserVersion % "optional")
-  }
+  val scalaParserDependency = new Def.SettingList(
+    libraryDependencies ++= {
+      scalaBinaryVersion.value match {
+        case "2.10" => Seq.empty
+        case _      => Seq("org.scala-lang.modules" %%% "scala-parser-combinators" % scalaParserVersion)
+      }
+    }
+  )
 
   def scalaXml(scalaBinaryVersion: String): Seq[ModuleID] = scalaBinaryVersion match {
     case "2.10" => Seq.empty

@@ -13,15 +13,12 @@ import scala.util.parsing._
 import combinator._
 import lexical._
 
-import org.log4s._
-
 object LexerUtil {
   implicit def stringToReader(s: String) = new util.parsing.input.CharSequenceReader(s)
 }
 
 trait LexerUtil extends Scanners with ParserUtil {
-  protected[this] val logger: Logger = getLogger("org.gerweck.scala.util.LexerUtil")
-  def lex(input:String): Iterable[Token] = timed (logger = logger, taskName = "lexing", level = Debug) {
+  def lex(input:String): Iterable[Token] = {
     @tailrec
     def lex(scanner: Scanner, prefix: Vector[Token]): Vector[Token] =
       if (scanner.atEnd)
@@ -35,7 +32,7 @@ trait LexerUtil extends Scanners with ParserUtil {
   private[this] val charParsers = new ConcurrentHashMap[(String,Boolean),Parser[Vector[Char]]].asScala
   private[this] val strParsers = new ConcurrentHashMap[(String,Boolean),Parser[String]].asScala
 
-  def insensitive(c: Char) = elem(c.toString, { _ =~= c })
+  def insensitive(c: Char) = elem(c.toString, { String.valueOf(_) equalsIgnoreCase String.valueOf(c) })
 
   // TBD: This might perform better as a macro
   final def chars(s: String, sensitive: Boolean = false): Parser[Vector[Char]] = charParsers.getOrElseUpdate((s, sensitive), {
@@ -52,14 +49,6 @@ trait LexerUtil extends Scanners with ParserUtil {
   final def str(s: String, sensitive: Boolean = false): Parser[String] = strParsers.getOrElseUpdate((s, sensitive), {
     chars(s, sensitive) ^^ { _.mkString }
   })
-
-  final def longest[A <: { def chars: String }](constants: Iterable[A]): Parser[A] = {
-    longest(constants, { a: A => a.chars })
-  }
-
-  final def longest[A <: { def chars: String }](constants: Iterable[A], sensitive: Boolean): Parser[A] = {
-    longest(constants, { a: A => a.chars }, sensitive)
-  }
 
   final def longest[A](constants: Iterable[A], chars: A => String, sensitive: Boolean = false): Parser[A] = {
     val sorted = constants.toIndexedSeq sortWith { chars(_).length > chars(_).length }
