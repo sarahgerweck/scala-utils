@@ -102,3 +102,4 @@
 #### 2.7.2
 
 - Update SBT to 1.1
+- Update BouncyCastle to 1.59
