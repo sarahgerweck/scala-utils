@@ -98,3 +98,7 @@
 - Update Twitter Util to 17.12
 - Update Akka to 2.5.8
 - Update Akka HTTP to 10.0.11
+
+#### 2.7.2
+
+- Update SBT to 1.1
