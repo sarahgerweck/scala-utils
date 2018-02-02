@@ -92,33 +92,6 @@ package object util {
       else self equalsIgnoreCase that
   }
 
-  /** Additional methods for `traversable`s.
-    *
-    * @author Sarah Gerweck <sarah.a180@gmail.com>
-    */
-  implicit final class TraversableUtil[A](val t: Traversable[A]) extends AnyVal {
-
-    /** A same-type fold for associative operators that requires at least one
-      * member present in the collection.
-      */
-    @deprecated("Use the built-in `reduce` method", "2.5")
-    @inline def fold1(op: (A, A) => A): A = t.tail.fold(t.head)(op)
-
-    /** A same-type non-empty left fold.
-      *
-      * This requires at least one member present in the collection.
-      */
-    @deprecated("Use the built-in `reduceLeft` method", "2.5")
-    @inline def foldl1(op: (A, A) => A): A = (t.head /: t.tail)(op)
-
-    /** A same-type non-empty right fold.
-      *
-      * This requires at least one member present in the collection.
-      */
-    @deprecated("Use the built-in `reduceRight` method", "2.5")
-    @inline def foldr1(op: (A, A) => A): A = (t.init :\ t.last)(op)
-  }
-
   /** Enhancements to Java's `MessageFormat` API. */
   implicit final class RichMessageFormat(val mf: java.text.MessageFormat) extends AnyVal {
     final def apply(str: String) = mf.format(Array(str))

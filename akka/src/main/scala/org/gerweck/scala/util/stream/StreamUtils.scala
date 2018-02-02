@@ -71,24 +71,4 @@ object StreamUtils {
         }
       }
   }
-
-  /** A flow that turns a stream of [[akka.util.ByteString]] into a stream of
-    * UTF-8 strings, each containing one line.
-    */
-  @deprecated("Use splittingFlow instead", "2.2.3")
-  lazy val linesFlow: Flow[ByteString, String, NotUsed] = {
-    Flow[ByteString]
-      .via(Framing.delimiter(
-        ByteString("\n"),
-        maximumFrameLength = 256,
-        allowTruncation = true))
-      .map(_.utf8String)
-  }
-
-  /** Create a [[akka.stream.scaladsl.Flow]] that sends all events to a given
-    * [[akka.stream.scaladsl.Sink]], while still allowing them to flow to the
-    * output as well.
-    */
-  @deprecated("Use alsoTo or alsoToMat instead", "2.5.0")
-  def makeTap[A, B](sink: Sink[A, B]): Flow[A, A, B] = Flow[A].alsoToMat(sink)(Keep.right)
 }

@@ -103,3 +103,7 @@
 
 - Update SBT to 1.1
 - Update BouncyCastle to 1.59
+
+## 3.0.0
+
+- Remove all deprecated interfaces
