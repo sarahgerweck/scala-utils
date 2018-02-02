@@ -107,3 +107,5 @@
 ## 3.0.0
 
 - Remove all deprecated interfaces
+- Update Scala Parser Combinators to 1.1.0
+- Update Akka to 2.5.9

@@ -12,8 +12,8 @@ object Dependencies {
   final val spireVersion        = "0.13.0"
   final val groovyVersion       = "2.4.13"
   final val json4sVersion       = "3.5.3"
-  final val twitterUtilVersion  = "17.12.0"
-  final val scalaParserVersion  = "1.0.6"
+  final val twitterUtilVersion  = "18.1.0"
+  final val scalaParserVersion  = "1.1.0"
   final val scalaXmlVersion     = "1.0.6"
   final val bouncyCastleVersion = "1.59"
 
@@ -55,7 +55,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                          Testing Dependencies                          */
   /* ********************************************************************** */
-  final val scalaTestVersion  = "3.0.4"
+  final val scalaTestVersion  = "3.0.5"
   final val scalaCheckVersion = "1.13.5"
 
   val scalaTest  = "org.scalatest"  %% "scalatest"  % scalaTestVersion
@@ -75,7 +75,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.5.8"
+  final val akkaVersion        = "2.5.9"
   final val akkaHttpVersion    = "10.0.11"
 
   val akkaActor    = "com.typesafe.akka" %% "akka-actor"     % akkaVersion
