@@ -104,8 +104,13 @@
 - Update SBT to 1.1
 - Update BouncyCastle to 1.59
 
-## 3.0.0
+## 3.0
 
 - Remove all deprecated interfaces
 - Update Scala Parser Combinators to 1.1.0
 - Update Akka to 2.5.9
+
+#### 3.0.1
+
+- Fix a bug that affects the `equals` of `VersionNumber` and add tests
+

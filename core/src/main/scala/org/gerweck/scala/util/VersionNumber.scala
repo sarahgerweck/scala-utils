@@ -26,10 +26,9 @@ final class VersionNumber(val versionParts: Seq[Int]) extends Ordered[VersionNum
 
   override def equals(that: Any): Boolean = {
     that match {
-      case _ if this == that => true
-      case null              => false
-      case vn: VersionNumber => (this compareTo vn) == 0
-      case _                 => false
+      case ar: AnyRef if this eq ar => true
+      case vn: VersionNumber        => (this compareTo vn) == 0
+      case _                        => false
     }
   }
 }
