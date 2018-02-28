@@ -34,6 +34,6 @@ final class VersionNumber(val versionParts: Seq[Int]) extends Ordered[VersionNum
 }
 
 object VersionNumber {
-  def apply(s: String): VersionNumber = apply(s split "\\." map { _.toInt })
+  def apply(s: String): VersionNumber = this(s.split("\\.").map(_.toInt))
   def apply(parts: Seq[Int]): VersionNumber = new VersionNumber(parts)
 }
