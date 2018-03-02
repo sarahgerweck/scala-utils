@@ -113,4 +113,4 @@
 #### 3.0.1
 
 - Fix a bug that affects the `equals` of `VersionNumber` and add tests
-
+- Update Akka to 2.5.11
