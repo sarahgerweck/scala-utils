@@ -116,4 +116,3 @@
 - Update Akka to 2.5.11
 - Update Scala XML to 1.1.0
 - Update Liquibase to 3.5.5
-- Update Joda Convert to 2.0
