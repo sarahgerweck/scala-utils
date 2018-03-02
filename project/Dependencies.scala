@@ -5,7 +5,7 @@ object Dependencies {
   final val log4sVersion        = "1.4.0"
   final val logbackVersion      = "1.2.3"
   final val jodaTimeVersion     = "2.9.9"
-  final val jodaConvertVersion  = "1.9.2"
+  final val jodaConvertVersion  = "2.0"
   final val threeTenVersion     = "1.3.6"
   final val commonsVfsVersion   = "2.2"
   final val commonsIoVersion    = "2.6"
