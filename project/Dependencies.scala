@@ -14,7 +14,7 @@ object Dependencies {
   final val json4sVersion       = "3.5.3"
   final val twitterUtilVersion  = "18.2.0"
   final val scalaParserVersion  = "1.1.0"
-  final val scalaXmlVersion     = "1.0.6"
+  final val scalaXmlVersion     = "1.1.0"
   final val bouncyCastleVersion = "1.59"
 
   val log4s            = "org.log4s"           %% "log4s"           % log4sVersion
