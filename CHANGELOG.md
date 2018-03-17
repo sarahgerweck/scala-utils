@@ -113,6 +113,16 @@
 #### 3.0.1
 
 - Fix a bug that affects the `equals` of `VersionNumber` and add tests
-- Update Akka to 2.5.11
-- Update Scala XML to 1.1.0
-- Update Liquibase to 3.5.5
+- Dependency updates. (These are all binary compatible.)
+  - Update Akka to 2.5.11
+  - Update Scala XML to 1.1.0
+  - Update Liquibase to 3.5.5
+  - Update Log4s to 1.6.0
+  - Update SBT to 1.1.1
+  - Update Slick to 3.2.2
+  - Update Akka HTTP to 10.1.0
+  - Update Twitter Util to 18.3.0
+- Added `unwrapOption` extension to `java.sql.Wrapper` classes
+  - This is a more convenient way to do unwrapping in Scala
+  - Import `org.gerweck.scala.util.jdbc._` to make it available
+- Remove some dead code from Scala 2.10 & simplify the build
