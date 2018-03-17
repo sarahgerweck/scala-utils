@@ -33,14 +33,6 @@ lazy val macros = (project in file ("macro"))
     addScalacOptions(),
     addJavacOptions(),
 
-    scalaSource in Compile := {
-      val mainDir = baseDirectory.value / "src" / "main"
-      scalaBinaryVersion.value match {
-        case "2.10" => mainDir / "scala-2.10"
-        case _      => mainDir / "scala-2.11"
-      }
-    },
-
     publish := {},
     publishLocal := {},
     publishArtifact := false,
@@ -68,14 +60,6 @@ lazy val core: Project = (project in file ("core"))
     libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
 
     resolvers += Resolver.sonatypeRepo("releases"),
-
-    unmanagedSourceDirectories in Compile += {
-      val srcBase = baseDirectory.value / "src" / "main"
-      scalaBinaryVersion.value match {
-        case "2.10" => srcBase / "scala-2.10"
-        case _      => srcBase / "scala-2.11"
-      }
-    },
 
     unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala-java8",
 
