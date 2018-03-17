@@ -5,7 +5,7 @@ import PublishSettings._
 import Helpers._
 
 lazy val root: Project = (project in file ("."))
-  .aggregate(macros, core, java6, twitter, akka, dbutil)
+  .aggregate(macrosJS, macrosJVM, coreJS, coreJVM, java6, twitter, akka, dbutil)
   .enablePlugins(ModuleSettings)
   .settings (
     name := "Gerweck Utils Root",
@@ -20,7 +20,7 @@ lazy val root: Project = (project in file ("."))
     skip in Test := true
   )
 
-lazy val macros = (project in file ("macro"))
+lazy val macros = (crossProject in file ("macro"))
   .enablePlugins(BasicSettings)
   .settings(Eclipse.settings: _*)
   .settings(falsePublishSettings: _*)
@@ -48,8 +48,10 @@ lazy val macros = (project in file ("macro"))
     exportJars := false,
     releaseProcess := Seq.empty
   )
+lazy val macrosJS = macros.js
+lazy val macrosJVM = macros.jvm
 
-lazy val core: Project = (project in file ("core"))
+lazy val core = (crossProject in file ("core"))
   .dependsOn(macros % "optional")
   .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
@@ -64,33 +66,27 @@ lazy val core: Project = (project in file ("core"))
     libraryDependencies += bouncyCastle % "optional",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
-    libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
+    libraryDependencies ++=  scalaParser(scalaBinaryVersion.value),
     libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
 
     resolvers += Resolver.sonatypeRepo("releases"),
 
-    unmanagedSourceDirectories in Compile += {
-      val srcBase = baseDirectory.value / "src" / "main"
-      scalaBinaryVersion.value match {
-        case "2.10" => srcBase / "scala-2.10"
-        case _      => srcBase / "scala-2.11"
-      }
-    },
-
-    unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala-java8",
+    unmanagedSourceDirectories in Compile += baseDirectory.value / ".." / "shared" / "src" / "main" / "scala-java8",
 
     // include the macro classes and resources in the main jar
-    mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
+    mappings in (Compile, packageBin) ++= mappings.in(macrosJVM, Compile, packageBin).value,
 
     // include the macro sources in the main source jar
-    mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
+    mappings in (Compile, packageSrc) ++= mappings.in(macrosJVM, Compile, packageSrc).value,
 
     // Do not include macros as a dependency.
     pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
   )
+lazy val coreJS = core.js
+lazy val coreJVM = core.jvm
 
 lazy val java6 = (project in file ("java6"))
-  .dependsOn(macros % "optional")
+  .dependsOn(macrosJVM % "optional")
   .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
     name := "Gerweck Utils (Java 6)",
@@ -105,13 +101,13 @@ lazy val java6 = (project in file ("java6"))
     libraryDependencies += bouncyCastle % "optional",
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
 
-    libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
+    libraryDependencies += "org.scala-lang.modules" %%% "scala-parser-combinators" % scalaParserVersion % "optional",
     libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
 
     resolvers += Resolver.sonatypeRepo("releases"),
 
     unmanagedSourceDirectories in Compile += {
-      val mainDir = baseDirectory.value / ".." / "core" / "src" / "main"
+      val mainDir = baseDirectory.value / ".." / "core" / "shared" / "src" / "main"
       scalaBinaryVersion.value match {
         case "2.10" => mainDir / "scala-2.10"
         case _      => mainDir / "scala-2.11"
@@ -147,10 +143,10 @@ lazy val java6 = (project in file ("java6"))
     },
 
     // include the macro classes and resources in the main jar
-    mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
+    mappings in (Compile, packageBin) ++= mappings.in(macrosJVM, Compile, packageBin).value,
 
     // include the macro sources in the main source jar
-    mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
+    mappings in (Compile, packageSrc) ++= mappings.in(macrosJVM, Compile, packageSrc).value,
 
     // Do not include macros as a dependency.
     pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
@@ -167,7 +163,7 @@ lazy val twitter = (project in file ("twitter"))
   )
 
 lazy val akka: Project = (project in file ("akka"))
-  .dependsOn(core)
+  .dependsOn(coreJVM)
   .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
     name := "Gerweck Utils Akka",
@@ -190,7 +186,7 @@ lazy val akka: Project = (project in file ("akka"))
   )
 
 lazy val dbutil: Project = (project in file ("dbutil"))
-  .dependsOn(core)
+  .dependsOn(coreJVM)
   .enablePlugins(ModuleSettings, SiteSettingsPlugin)
   .settings(
     name := "Gerweck Utils DB",
