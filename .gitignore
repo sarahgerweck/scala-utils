@@ -6,6 +6,15 @@
 target
 bin
 
+# VS Code files
+.history
+.vscode
+
+# Ensime files
+.ensime
+.ensime_cache
+ensime.sbt
+
 # SBT build files
 .cache
 .cache-main
