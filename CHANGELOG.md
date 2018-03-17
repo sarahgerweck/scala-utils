@@ -126,3 +126,7 @@
   - This is a more convenient way to do unwrapping in Scala
   - Import `org.gerweck.scala.util.jdbc._` to make it available
 - Remove some dead code from Scala 2.10 & simplify the build
+
+#### 3.0.2
+
+- Build Scala 2.11 version with Scala 2.11.12
