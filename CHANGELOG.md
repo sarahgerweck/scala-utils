@@ -130,3 +130,6 @@
 #### 3.0.2
 
 - Build Scala 2.11 version with Scala 2.11.12
+- Build Scala 2.12 version with Scala 2.12.5
+  - Scala 2.12.5 includes some substantial performance improvements for string
+    interpolation, so this may improve performance in some situations.
