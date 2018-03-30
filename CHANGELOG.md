@@ -133,3 +133,7 @@
 - Build Scala 2.12 version with Scala 2.12.5
   - Scala 2.12.5 includes some substantial performance improvements for string
     interpolation, so this may improve performance in some situations.
+
+### 3.1
+
+- Add SHAKE-128 and SHAKE-256 hash methods

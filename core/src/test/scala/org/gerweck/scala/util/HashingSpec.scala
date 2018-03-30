@@ -65,6 +65,23 @@ class HashingSpec extends FlatSpec with Matchers with PropertyChecks with GivenW
     "hello" -> "75d527c368f2efe848ecf6b073a36767800805e9eef2b1857d5f984f036eb6df891d75f72d9b154518c1cd58835286d1da9a38deba3de98b5a53e5ed78a84976",
     "Sarah" -> "a9152df0293158789d28dc3c29341a9ee77e3d2f5c0531149b4d91931244980ded153c1f62bc97fdf367af48d0d765fcd6cf19797091b11844055e521813f8a6")
 
+  behavior of "SHAKE-128 algorithm"
+  commonTests("Bouncy" -> BouncyHashAlgorithm.shake_128)
+  fixedValues(BouncyHashAlgorithm.shake_128)(
+    ""      -> "7f9c2ba4e88f827d616045507605853ed73b8093f6efbc88eb1a6eacfa66ef26",
+    "hello" -> "8eb4b6a932f280335ee1a279f8c208a349e7bc65daf831d3021c213825292463",
+    "Sarah" -> "ec592cfbe7b5df99c1f34d326549a75d41f920a10f39c2cf026505175d1d0f3a"
+  )
+
+
+  behavior of "SHAKE-256 algorithm"
+  commonTests("Bouncy" -> BouncyHashAlgorithm.shake_256)
+  fixedValues(BouncyHashAlgorithm.shake_256)(
+    ""      -> "46b9dd2b0ba88d13233b3feb743eeb243fcd52ea62b81b82b50c27646ed5762fd75dc4ddd8c0f200cb05019d67b592f6fc821c49479ab48640292eacb3b7c4be",
+    "hello" -> "1234075ae4a1e77316cf2d8000974581a343b9ebbca7e3d1db83394c30f221626f594e4f0de63902349a5ea5781213215813919f92a4d86d127466e3d07e8be3",
+    "Sarah" -> "dcbef227609044ebae350bcfb946b6901da8365432d9abf9808b4f14a26b4fb3d37c7503162c1d57af4292d40a762c159538a503ac7f63ed271350f55a4c01b6"
+  )
+
   protected[this] def fixedValues(algo: HashAlgorithm)(values: (String, String)*) = {
     it should "produce the expected value" in {
       for ((input, target) <- values) {
