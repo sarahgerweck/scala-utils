@@ -86,7 +86,7 @@ class HashingSpec extends FlatSpec with Matchers with PropertyChecks with GivenW
     it should "produce the expected value" in {
       for ((input, target) <- values) {
         Given(input)
-        algo.hash(input).map(b => f"$b%02x").mkString shouldEqual target
+        algo.hash(input).toHexString shouldEqual target
       }
     }
   }

@@ -1,5 +1,7 @@
 package org.gerweck.scala
 
+import scala.collection.mutable
+
 /** Miscellaneous utility code for manipulating standard objects.
   *
   * This package is designed to be maximally convenient if you `import org.gerweck.scala.util._`.
@@ -107,5 +109,27 @@ package object util {
       * @param s the string to test
      */
     def matches(s: String): Boolean = inner.unapplySeq(s).isDefined
+  }
+
+  implicit final class RichByteArray(val inner: Array[Byte]) extends AnyVal {
+    def toHexString = {
+      def hexLow(b: Int): Char = {
+        val n = b & 0xf
+        val baseChar = if (n > 9) 'W' else '0'
+        (baseChar + n).toChar
+      }
+      val sb = new mutable.StringBuilder(inner.length * 2)
+      for (b <- inner) {
+        sb += hexLow(b >> 4)
+        sb += hexLow(b)
+      }
+      sb.mkString
+    }
+    def toUriBase64 = {
+      java.util.Base64.getUrlEncoder().encodeToString(inner)
+    }
+    def toBasicBase64 = {
+      java.util.Base64.getEncoder().encodeToString(inner)
+    }
   }
 }

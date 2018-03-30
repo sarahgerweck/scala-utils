@@ -137,3 +137,7 @@
 ### 3.1
 
 - Add SHAKE-128 and SHAKE-256 hash methods
+- New `RichByteArray` extension methods
+  - `toHexString`
+  - `toBasicBase64`
+  - `toUriBase64`
