@@ -144,6 +144,8 @@
 
 #### 3.1.1
 
+- Update Slick to 3.2.3
+  - This is binary compatible with Slick 3.2.1 and 3.2.2.
 - Non-functional changes
   - Update JVM options to build
   - Update SBT to 1.1.2

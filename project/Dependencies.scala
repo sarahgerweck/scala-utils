@@ -46,7 +46,7 @@ object Dependencies {
   /* ********************************************************************** */
   final val liquibaseVersion        = "3.5.5"
   final val liquibaseLoggingVersion = "2.0.0"
-  final val slickVersion            = "3.2.2"
+  final val slickVersion            = "3.2.3"
 
   val liquibase        = "org.liquibase"      %  "liquibase-core"  % liquibaseVersion
   val liquibaseLogging = "com.mattbertolini"  %  "liquibase-slf4j" % liquibaseLoggingVersion
