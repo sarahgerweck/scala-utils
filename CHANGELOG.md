@@ -141,3 +141,8 @@
   - `toHexString`
   - `toBasicBase64`
   - `toUriBase64`
+
+#### 3.1.1
+
+- Non-functional changes
+  - Update SBT to 1.1.2
