@@ -145,4 +145,5 @@
 #### 3.1.1
 
 - Non-functional changes
+  - Update JVM options to build
   - Update SBT to 1.1.2

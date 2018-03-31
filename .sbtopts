@@ -1,3 +1,5 @@
+-J-Xmx4G
 -J-XX:MaxMetaspaceSize=4g
+-J-XX:+UseG1GC
 -J-XX:+UseCompressedOops
 -J-XX:+UseCompressedClassPointers
