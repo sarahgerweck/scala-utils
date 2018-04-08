@@ -142,7 +142,7 @@
   - `toBasicBase64`
   - `toUriBase64`
 
-#### 3.1.1
+### 3.2
 
 - Update Slick to 3.2.3
   - This is binary compatible with Slick 3.2.1 and 3.2.2.
