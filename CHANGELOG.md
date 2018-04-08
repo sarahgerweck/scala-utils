@@ -149,3 +149,5 @@
 - Non-functional changes
   - Update JVM options to build
   - Update SBT to 1.1.2
+- Add experimental `ObjectTree` pretty printer
+  - As documented, this is not suitable for use beyond debugging.
