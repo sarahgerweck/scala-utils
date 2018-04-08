@@ -15,21 +15,6 @@ do something that seems like it might be a bad idea, you're on your own. :-)
 
 Because of dependencies, this requires Scala 2.11 or higher.
 
-
-### When we will get builds for Scala 2.12? ###
-
-I do my best to put out my libraries within one or two business days of any
-milestone or release candidate, provided any libraries that I require are
-available. Most of this project's dependencies are widely available, except
-that the maintainers of [Spire](https://github.com/non/spire) have not kept
-up with the community standards in terms of publishing libraries for release
-candidates and producing a build shortly after the final version is released.
-A number of us have reached out to the Spire project to ask that they follow
-the community best practices, but with no real luck so far. (For the record,
-Spire _is_ a fantastic library: it just needs to have a bit more attention
-paid to its infrastructure, tooling and publication.)
-
-
 ## Installation ##
 
 For Java 8, use this line as your dependency:
