@@ -52,6 +52,15 @@ object BouncyHashAlgorithm extends StandardHashAlgorithms {
     def instantiate() = new SHA256Digest
   }
 
+  sealed abstract class Blake2bAlgorithm(protected[this] final val bits: Int)
+      extends SimpleBouncyHashAlgorithm("BLAKE2b-" + bits, bits >> 3) {
+    def instantiate = new Blake2bDigest(bits)
+  }
+  object blake2b_160 extends Blake2bAlgorithm(160)
+  object blake2b_256 extends Blake2bAlgorithm(256)
+  object blake2b_384 extends Blake2bAlgorithm(384)
+  object blake2b_512 extends Blake2bAlgorithm(512)
+
   sealed abstract class ShakeAlgorithm(name: String, protected[this] final val bits: Int)
       extends AbstractBouncyHashAlgorithm(name, bits >> 2) {
     override type D = SHAKEDigest

@@ -82,6 +82,40 @@ class HashingSpec extends FlatSpec with Matchers with PropertyChecks with GivenW
     "Sarah" -> "dcbef227609044ebae350bcfb946b6901da8365432d9abf9808b4f14a26b4fb3d37c7503162c1d57af4292d40a762c159538a503ac7f63ed271350f55a4c01b6"
   )
 
+  behavior of "BLAKE2b-160 algorithm"
+  commonTests("Bouncy" -> BouncyHashAlgorithm.blake2b_160)
+  fixedValues(BouncyHashAlgorithm.blake2b_160)(
+    ""      -> "3345524abf6bbe1809449224b5972c41790b6cf2",
+    "hello" -> "b5531c7037f06c9f2947132a6a77202c308e8939",
+    "Sarah" -> "a9ef19821ff97f275b7db4d89bfbf7cdc0045f02"
+  )
+
+  behavior of "BLAKE2b-256 algorithm"
+  commonTests("Bouncy" -> BouncyHashAlgorithm.blake2b_256)
+  fixedValues(BouncyHashAlgorithm.blake2b_256)(
+    ""      -> "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8",
+    "hello" -> "324dcf027dd4a30a932c441f365a25e86b173defa4b8e58948253471b81b72cf",
+    "Sarah" -> "96a986eeaaebe8929af886ced3023d8cf9cd905160d4e63dca8f36410d257fa0"
+  )
+
+  behavior of "BLAKE2b-384 algorithm"
+  commonTests("Bouncy" -> BouncyHashAlgorithm.blake2b_384)
+  fixedValues(BouncyHashAlgorithm.blake2b_384)(
+    ""      -> "b32811423377f52d7862286ee1a72ee540524380fda1724a6f25d7978c6fd3244a6caf0498812673c5e05ef583825100",
+    "hello" -> "85f19170be541e7774da197c12ce959b91a280b2f23e3113d6638a3335507ed72ddc30f81244dbe9fa8d195c23bceb7e",
+    "Sarah" -> "92e615cfde69d9422472e41d8535fb7141239d12df52c0fc1506bb3da3dbc6f4da670c3be808d908a0166e7e049d67bb"
+  )
+
+  behavior of "BLAKE2b-512 algorithm"
+  commonTests("Bouncy" -> BouncyHashAlgorithm.blake2b_512)
+  fixedValues(BouncyHashAlgorithm.blake2b_512)(
+    /* "abc" is from the RFC */
+    "abc" -> "ba80a53f981c4d0d6a2797b69f12f6e94c212f14685ac4b74b12bb6fdbffa2d17d87c5392aab792dc252d5de4533cc9518d38aa8dbf1925ab92386edd4009923",
+    /* Next two are from Wikipedia */
+    "" -> "786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce",
+    "The quick brown fox jumps over the lazy dog" -> "a8add4bdddfd93e4877d2746e62817b116364a1fa7bc148d95090bc7333b3673f82401cf7aa2e4cb1ecd90296e3f14cb5413f8ed77be73045b13914cdcd6a918"
+  )
+
   protected[this] def fixedValues(algo: HashAlgorithm)(values: (String, String)*) = {
     it should "produce the expected value" in {
       for ((input, target) <- values) {
