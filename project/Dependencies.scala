@@ -44,7 +44,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                Database                                */
   /* ********************************************************************** */
-  final val liquibaseVersion        = "3.6.0"
+  final val liquibaseVersion        = "3.6.1"
   final val liquibaseLoggingVersion = "2.0.0"
   final val slickVersion            = "3.2.3"
 
