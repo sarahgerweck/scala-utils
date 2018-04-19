@@ -160,3 +160,4 @@
 - Add `skipNones` support in `ObjectTree`. It remains experimental
 - Dependency updates (binary compatible)
   - Update Akka to 2.5.12
+  - Update Twitter Util to 18.4.0
