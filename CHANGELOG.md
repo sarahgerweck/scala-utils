@@ -153,3 +153,7 @@
   - Update SBT to 1.1.2
 - Add experimental `ObjectTree` pretty printer
   - As documented, this is not suitable for use beyond debugging.
+
+## 4.0
+
+- Drop support for Java 6

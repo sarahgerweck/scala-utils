@@ -5,7 +5,7 @@ import PublishSettings._
 import Helpers._
 
 lazy val root: Project = (project in file ("."))
-  .aggregate(macros, core, java6, twitter, akka, dbutil)
+  .aggregate(macros, core, twitter, akka, dbutil)
   .enablePlugins(ModuleSettings)
   .settings (
     name := "Gerweck Utils Root",
@@ -60,75 +60,6 @@ lazy val core: Project = (project in file ("core"))
     libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
 
     resolvers += Resolver.sonatypeRepo("releases"),
-
-    unmanagedSourceDirectories in Compile += baseDirectory.value / "src" / "main" / "scala-java8",
-
-    // include the macro classes and resources in the main jar
-    mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
-
-    // include the macro sources in the main source jar
-    mappings in (Compile, packageSrc) ++= mappings.in(macros, Compile, packageSrc).value,
-
-    // Do not include macros as a dependency.
-    pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
-  )
-
-lazy val java6 = (project in file ("java6"))
-  .dependsOn(macros % "optional")
-  .enablePlugins(ModuleSettings, SiteSettingsPlugin)
-  .settings(
-    name := "Gerweck Utils (Java 6)",
-    normalizedName := "gerweck-utils-java6",
-
-    addScalacOptions(),
-    addJavacOptions(),
-
-    libraryDependencies ++= utilsDeps,
-    libraryDependencies += threeTen,
-    libraryDependencies += scalaTest % "test",
-    libraryDependencies += bouncyCastle % "optional",
-    libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-
-    libraryDependencies ++= scalaParser(scalaBinaryVersion.value),
-    libraryDependencies ++= scalaXml(scalaBinaryVersion.value),
-
-    resolvers += Resolver.sonatypeRepo("releases"),
-
-    unmanagedSourceDirectories in Compile += {
-      val mainDir = baseDirectory.value / ".." / "core" / "src" / "main"
-      scalaBinaryVersion.value match {
-        case "2.10" => mainDir / "scala-2.10"
-        case _      => mainDir / "scala-2.11"
-      }
-    },
-    scalaSource in Compile := baseDirectory.value / ".." / "core" / "src" / "main" / "scala",
-    scalaSource in Test := baseDirectory.value / ".." / "core" / "src" / "test" / "scala",
-    unmanagedSourceDirectories in Compile += baseDirectory.value / ".." / "core" / "src" / "main" / "scala-java6",
-
-    publish := {
-      scalaBinaryVersion.value match {
-        case "2.12" => ()
-        case _      => publish.value
-      }
-    },
-    publishLocal := {
-      scalaBinaryVersion.value match {
-        case "2.12" => ()
-        case _      => publishLocal.value
-      }
-    },
-    publishArtifact := {
-      scalaBinaryVersion.value match {
-        case "2.12" => false
-        case _      => publishArtifact.value
-      }
-    },
-    releaseProcess := {
-      scalaBinaryVersion.value match {
-        case "2.12" => Seq.empty
-        case _      => releaseProcess.value
-      }
-    },
 
     // include the macro classes and resources in the main jar
     mappings in (Compile, packageBin) ++= mappings.in(macros, Compile, packageBin).value,
