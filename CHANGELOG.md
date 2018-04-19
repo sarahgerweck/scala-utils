@@ -158,3 +158,5 @@
 
 - Drop support for Java 6
 - Add `skipNones` support in `ObjectTree`. It remains experimental
+- Dependency updates (binary compatible)
+  - Update Akka to 2.5.12

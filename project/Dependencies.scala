@@ -75,7 +75,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.5.11"
+  final val akkaVersion        = "2.5.12"
   final val akkaHttpVersion    = "10.1.1"
 
   val akkaActor    = "com.typesafe.akka" %% "akka-actor"     % akkaVersion
