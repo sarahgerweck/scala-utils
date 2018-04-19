@@ -13,7 +13,7 @@ import scala.reflect.runtime.universe._
   */
 object ObjectTree {
   private[this] lazy val currentMirror = runtimeMirror(this.getClass.getClassLoader)
-  def apply(any: Any, indent: Int = 2) = {
+  def apply(any: Any, indent: Int = 2, skipNones: Boolean = false) = {
     def ind(s: String) = s.linesWithSeparators.map(" " * indent + _).mkString
     def singleLine(s: String) = s.lines.drop(1).isEmpty
     def smartShow(any: Any): String = {
@@ -46,6 +46,7 @@ object ObjectTree {
               .filter(a => a.isParamAccessor)
               .filterNot(a => a.isMethod || a.isModule)
               .map(aMirror.reflectField)
+              .filterNot(!skipNones || _.get == None)
               .map(f => f.symbol.name.toString.trim -> f.get)
               .reverse
           val shownFields = smartShow(Seq(fieldStrings: _*))

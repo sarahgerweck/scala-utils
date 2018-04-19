@@ -157,3 +157,4 @@
 ## 4.0
 
 - Drop support for Java 6
+- Add `skipNones` support in `ObjectTree`. It remains experimental
