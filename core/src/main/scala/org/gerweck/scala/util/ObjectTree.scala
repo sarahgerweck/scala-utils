@@ -14,11 +14,13 @@ import org.log4s._
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
 object ObjectTree {
-  private[this] lazy val currentMirror = runtimeMirror(this.getClass.getClassLoader)
   private[this] final val logger = getLogger
+
   private[this] final val nestingLimitString = "{∅}"
   private[this] final val defaultDepthLimit = 64
   private[this] final val defaultSingleLineLimit = 100
+
+  private[this] lazy val currentMirror = runtimeMirror(this.getClass.getClassLoader)
 
   def apply(any: Any, indent: Int = 2, skipNones: Boolean = false, maxDepth: Int = defaultDepthLimit, singleLineSizeLimit: Int = defaultSingleLineLimit) = {
     var hitDepthLimit: Boolean = false
