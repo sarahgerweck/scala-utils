@@ -16,7 +16,7 @@ import org.log4s._
 object ObjectTree {
   private[this] final val logger = getLogger
 
-  private[this] final val nestingLimitString = "{∅}"
+  private[this] final val nestingLimitString = "⟨∅⟩"
   private[this] final val defaultDepthLimit = 64
   private[this] final val defaultSingleLineLimit = 100
 
