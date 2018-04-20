@@ -169,3 +169,4 @@
   - Fix an inefficiency in sequence traversal
   - Fix a bug when `skipNones` was `false`
   - Add a maximum recursion depth
+  - Add a length limit for single-line 1-products

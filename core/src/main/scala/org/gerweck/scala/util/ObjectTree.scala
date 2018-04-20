@@ -18,10 +18,14 @@ object ObjectTree {
   private[this] final val logger = getLogger
   private[this] final val nestingLimitString = "{∅}"
   private[this] final val defaultDepthLimit = 64
-  def apply(any: Any, indent: Int = 2, skipNones: Boolean = false, maxDepth: Int = defaultDepthLimit) = {
+  private[this] final val defaultSingleLineLimit = 100
+
+  def apply(any: Any, indent: Int = 2, skipNones: Boolean = false, maxDepth: Int = defaultDepthLimit, singleLineSizeLimit: Int = defaultSingleLineLimit) = {
     var hitDepthLimit: Boolean = false
     def ind(s: String) = s.linesWithSeparators.map(" " * indent + _).mkString
-    def singleLine(s: String) = s.lines.drop(1).isEmpty
+    def singleLine(s: String) = {
+      s.size < singleLineSizeLimit && s.lines.drop(1).isEmpty
+    }
     def smartShow(any: Any, currentDepth: Int): String = {
       if (currentDepth > maxDepth) {
         if (!hitDepthLimit) {
