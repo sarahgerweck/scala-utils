@@ -46,7 +46,7 @@ object ObjectTree {
               .filter(a => a.isParamAccessor)
               .filterNot(a => a.isMethod || a.isModule)
               .map(aMirror.reflectField)
-              .filterNot(!skipNones || _.get == None)
+              .filterNot(skipNones && _.get == None)
               .map(f => f.symbol.name.toString.trim -> f.get)
               .reverse
           val shownFields = smartShow(Seq(fieldStrings: _*))

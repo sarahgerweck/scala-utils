@@ -165,4 +165,6 @@
 
 #### 4.0.1
 
-- Fix a performance and stack inefficiency in `ObjectTree`
+- Improvements to `ObjectTree`
+  - Fix an inefficiency in sequence traversal
+  - Fix a bug when `skipNones` was `false`
