@@ -162,3 +162,7 @@
   - Update Akka to 2.5.12
   - Update Twitter Util to 18.4.0
   - Update Liquibase to 3.6.1
+
+#### 4.0.1
+
+- Fix a performance and stack inefficiency in `ObjectTree`

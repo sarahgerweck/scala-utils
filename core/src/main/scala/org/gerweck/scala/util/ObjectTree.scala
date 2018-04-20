@@ -33,7 +33,7 @@ object ObjectTree {
           val shownValue = smartShow(v)
           ind(showKV(showKey(k), smartShow(v), true))
         case a: TraversableOnce[_] =>
-          a.toStream
+          a.toIterator
             .map(smartShow(_))
             .mkString("\n")
         case p: Product if p.productArity == 1 && singleLine(smartShow(p.productElement(0))) =>
