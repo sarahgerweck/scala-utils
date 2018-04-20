@@ -2,6 +2,8 @@ package org.gerweck.scala.util
 
 import scala.reflect.runtime.universe._
 
+import org.log4s._
+
 /** A pretty-printer that renders an object tree.
   *
   * This is meant for debugging purposes. Inspired by code from the
@@ -13,11 +15,23 @@ import scala.reflect.runtime.universe._
   */
 object ObjectTree {
   private[this] lazy val currentMirror = runtimeMirror(this.getClass.getClassLoader)
-  def apply(any: Any, indent: Int = 2, skipNones: Boolean = false) = {
+  private[this] final val logger = getLogger
+  private[this] final val nestingLimitString = "{∅}"
+  private[this] final val defaultDepthLimit = 64
+  def apply(any: Any, indent: Int = 2, skipNones: Boolean = false, maxDepth: Int = defaultDepthLimit) = {
+    var hitDepthLimit: Boolean = false
     def ind(s: String) = s.linesWithSeparators.map(" " * indent + _).mkString
     def singleLine(s: String) = s.lines.drop(1).isEmpty
-    def smartShow(any: Any): String = {
-      def showKey(k: Any) = smartShow(k)
+    def smartShow(any: Any, currentDepth: Int): String = {
+      if (currentDepth > maxDepth) {
+        if (!hitDepthLimit) {
+          logger.warn(s"Object tree exceeded depth limit of $maxDepth, showing further nested values as $nestingLimitString")
+          hitDepthLimit = true
+        }
+        return nestingLimitString
+      }
+      def depth = currentDepth + 1
+      def showKey(k: Any) = smartShow(k, depth)
       def showKV(shownKey: String, shownValue: String, indentValue: Boolean) = {
         def doIndent(v: String) = if (indentValue) ind(v) else v
         val sep = if (singleLine(shownValue)) ":" else ":\n"
@@ -30,13 +44,13 @@ object ObjectTree {
       any match {
         case (k, v) =>
           val shownKey = showKey(k)
-          val shownValue = smartShow(v)
-          ind(showKV(showKey(k), smartShow(v), true))
+          val shownValue = smartShow(v, depth)
+          ind(showKV(showKey(k), smartShow(v, depth), true))
         case a: TraversableOnce[_] =>
           a.toIterator
-            .map(smartShow(_))
+            .map(smartShow(_, depth))
             .mkString("\n")
-        case p: Product if p.productArity == 1 && singleLine(smartShow(p.productElement(0))) =>
+        case p: Product if p.productArity == 1 && singleLine(smartShow(p.productElement(0), depth)) =>
           p.toString
         case a: Product if a.productArity > 0 =>
           val aMirror = currentMirror.reflect(a)
@@ -49,7 +63,7 @@ object ObjectTree {
               .filterNot(skipNones && _.get == None)
               .map(f => f.symbol.name.toString.trim -> f.get)
               .reverse
-          val shownFields = smartShow(Seq(fieldStrings: _*))
+          val shownFields = smartShow(Seq(fieldStrings: _*), depth)
           showKV(a.productPrefix + ':', shownFields, false)
         case null =>
           "null"
@@ -57,6 +71,6 @@ object ObjectTree {
           other.toString
       }
     }
-    smartShow(any)
+    smartShow(any, 0)
   }
 }
