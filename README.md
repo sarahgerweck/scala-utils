@@ -19,7 +19,7 @@ version, please contact me.
 
 ## Installation ##
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "4.0.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "4.0.1"
 
 
 ### Twitter Utilities ###
@@ -27,7 +27,7 @@ version, please contact me.
 Since 1.7, the Twitter utilities are included through a separate jar. If you
 need these utilities, include this as well.
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-twitter" % "4.0.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-twitter" % "4.0.1"
 
 
 ### Akka Utilities ###
@@ -35,7 +35,7 @@ need these utilities, include this as well.
 For utilities related to Akka and Akka Streaming, use this include. The Akka
 utilities require Java 8 and Akka 2.4.
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-akka" % "4.0.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-akka" % "4.0.1"
 
 
 ### DB Utilities ###
@@ -44,4 +44,4 @@ Some DB lightweight utilities, based on pure JDBC, are included in the core
 module. However, advanced utilties or those requiring libraries are in a
 separate module. These modules require Java 8 and can be included as such:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-db" % "4.0.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-db" % "4.0.1"
