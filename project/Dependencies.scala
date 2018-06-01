@@ -56,7 +56,7 @@ object Dependencies {
   /*                          Testing Dependencies                          */
   /* ********************************************************************** */
   final val scalaTestVersion  = "3.0.5"
-  final val scalaCheckVersion = "1.13.5"
+  final val scalaCheckVersion = "1.14.0"
 
   val scalaTest  = "org.scalatest"  %% "scalatest"  % scalaTestVersion
   val scalaCheck = "org.scalacheck" %% "scalacheck" % scalaCheckVersion
