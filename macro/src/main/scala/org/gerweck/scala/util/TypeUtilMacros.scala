@@ -42,11 +42,12 @@ private[util] object TypeUtilMacros {
     /* The list of modules we are going to pass into the set builder */
     val modList: List[Ident] = {
       import Ordering._
-      val list = (modules map { m => Ident(m.name) }).toList
-      if (sorted)
-        list sorted (Ordering[String] on { x:Ident => x.name.encodedName.toString })
-      else
+      val list = modules.map(m => Ident(m.name)).toList
+      if (sorted) {
+        list.sortBy(_.name.encodedName.toString)
+      } else {
         list
+      }
     }
 
     c.Expr[Set[A]](q"_root_.scala.Predef.Set[..${List(parentType)}](..$modList)")
