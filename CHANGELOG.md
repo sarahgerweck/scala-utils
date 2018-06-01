@@ -173,5 +173,5 @@
 
 #### 4.0.2
 
-- Update SBT to 1.1.4
+- Update SBT to 1.1.6
 - Tweak `ObjectTree` placeholder string for too-deep recursion
