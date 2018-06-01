@@ -171,7 +171,8 @@
   - Add a maximum recursion depth
   - Add a length limit for single-line 1-products
 
-#### 4.0.2
+### 4.1
 
+- Update Scala to 2.12.6
 - Update SBT to 1.1.6
 - Tweak `ObjectTree` placeholder string for too-deep recursion
