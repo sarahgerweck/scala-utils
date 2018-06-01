@@ -178,3 +178,4 @@
 - Tweak `ObjectTree` placeholder string for too-deep recursion
 - Dependency updates (binary compatible)
   - Updated Json4s to 3.5.4
+  - Updated Twitter Util to 18.5.0

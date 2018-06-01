@@ -12,7 +12,7 @@ object Dependencies {
   final val spireVersion        = "0.13.0"
   final val groovyVersion       = "2.4.15"
   final val json4sVersion       = "3.5.4"
-  final val twitterUtilVersion  = "18.4.0"
+  final val twitterUtilVersion  = "18.5.0"
   final val scalaParserVersion  = "1.1.0"
   final val scalaXmlVersion     = "1.1.0"
   final val bouncyCastleVersion = "1.59"
