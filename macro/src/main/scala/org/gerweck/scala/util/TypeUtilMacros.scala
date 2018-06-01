@@ -4,7 +4,6 @@ import scala.reflect.macros.blackbox.Context
 
 import scala.math.Ordering
 
-
 /** Module containing macro implementations */
 private[util] object TypeUtilMacros {
   /** Whether to emit info messages for type macros
@@ -21,13 +20,17 @@ private[util] object TypeUtilMacros {
 
     val parentType = weakTypeOf[A]
     val symbol = weakTypeOf[A].typeSymbol.asClass
-    if (!symbol.isSealed)
+    if (!symbol.isSealed) {
       c.error(c.enclosingPosition, s"Type $parentType is not a sealed type, cannot get its case objects")
+    }
 
     def descendants(s: ClassSymbol): Set[Symbol] =
       s.knownDirectSubclasses flatMap { sub =>
-        if (sub.isClass) descendants(sub.asClass) + sub
-        else Set(sub)
+        if (sub.isClass) {
+          descendants(sub.asClass) + sub
+        } else {
+          Set(sub)
+        }
       }
 
     val modules =
@@ -36,12 +39,12 @@ private[util] object TypeUtilMacros {
         if desc.isModuleClass
       } yield desc.asClass.module
 
-    if (emitInfo)
+    if (emitInfo) {
       c.info(c.enclosingPosition, s"Found modules $modules for sealed type $parentType", false)
+    }
 
     /* The list of modules we are going to pass into the set builder */
     val modList: List[Ident] = {
-      import Ordering._
       val list = modules.map(m => Ident(m.name)).toList
       if (sorted) {
         list.sortBy(_.name.encodedName.toString)
