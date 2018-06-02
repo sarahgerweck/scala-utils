@@ -24,6 +24,8 @@ private[util] object TypeUtilMacros {
       c.error(c.enclosingPosition, s"Type $parentType is not a sealed type, cannot get its case objects")
     }
 
+    implicit def symbolOrder: Ordering[Symbol] = Ordering.by(s => (s.name.decodedName.toString, s.fullName))
+
     def descendants(s: ClassSymbol): Set[Symbol] =
       s.knownDirectSubclasses flatMap { sub =>
         if (sub.isClass) {
@@ -44,15 +46,14 @@ private[util] object TypeUtilMacros {
     }
 
     /* The list of modules we are going to pass into the set builder */
-    val modList: List[Ident] = {
-      val list = modules.map(m => Ident(m.name)).toList
-      if (sorted) {
-        list.sortBy(_.name.encodedName.toString)
-      } else {
-        list
+    val modIdentList: List[Ident] = {
+      val sortedList = {
+        val symbolList = modules.toList
+        if (sorted) symbolList.sorted else symbolList
       }
+      sortedList.map(Ident(_))
     }
 
-    c.Expr[Set[A]](q"_root_.scala.Predef.Set[..${List(parentType)}](..$modList)")
+    c.Expr[Set[A]](q"_root_.scala.Predef.Set[..${List(parentType)}](..$modIdentList)")
   }
 }
