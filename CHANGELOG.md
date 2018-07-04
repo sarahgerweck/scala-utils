@@ -181,5 +181,6 @@
   - Updated Akka HTTP to 10.1.3
   - Updated Json4s to 3.5.4
   - Updated Twitter Util to 18.6.0
+  - Updated Joda Time to 2.10
   - Updated Liquibase to 3.6.2
 - Add `WrappedPreparedStatement` and `WrappedResultSetMetadata`
