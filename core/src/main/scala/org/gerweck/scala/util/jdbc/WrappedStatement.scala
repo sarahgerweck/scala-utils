@@ -11,7 +11,7 @@ import java.sql.Statement
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-class WrappedStatement[T <: Statement](val inner: T) extends Statement with WrapperWrapping[T] {
+class WrappedStatement(val inner: Statement) extends Statement with WrapperWrapping[Statement] {
   def addBatch(x$1: String): Unit = inner.addBatch(x$1)
   def cancel(): Unit = inner.cancel()
   def clearBatch(): Unit = inner.clearBatch()

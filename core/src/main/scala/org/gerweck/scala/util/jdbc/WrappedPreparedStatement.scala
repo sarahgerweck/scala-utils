@@ -15,8 +15,7 @@ import java.util.Calendar
   *
   * @author Rouzbeh Safaie <rouzbeh.safaie@gmail.com>
   */
-class WrappedPreparedStatement(inner: PreparedStatement) extends WrappedStatement(inner) with PreparedStatement with WrapperWrapping[PreparedStatement] {
-
+class WrappedPreparedStatement(override val inner: PreparedStatement) extends WrappedStatement(inner) with PreparedStatement with WrapperWrapping[PreparedStatement] {
   def executeQuery(): ResultSet = inner.executeQuery()
   def executeUpdate(): Int = inner.executeUpdate()
   def setNull(x$1: Int, x$2: Int): Unit = inner.setNull(x$1, x$2)
