@@ -2,8 +2,6 @@ package org.gerweck.scala.util
 
 import scala.reflect.macros.blackbox.Context
 
-import scala.math.Ordering
-
 /** Module containing macro implementations */
 private[util] object TypeUtilMacros {
   /** Whether to emit info messages for type macros
