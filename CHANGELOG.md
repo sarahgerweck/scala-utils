@@ -179,3 +179,4 @@
 - Dependency updates (binary compatible)
   - Updated Json4s to 3.5.4
   - Updated Twitter Util to 18.5.0
+- Add `WrappedPreparedStatement` and `WrappedResultSetMetadata`
