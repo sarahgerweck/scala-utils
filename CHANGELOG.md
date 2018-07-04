@@ -177,6 +177,7 @@
 - Update SBT to 1.1.6
 - Tweak `ObjectTree` placeholder string for too-deep recursion
 - Dependency updates (binary compatible)
+  - Updated Akka to 2.5.13
   - Updated Akka HTTP to 10.1.3
   - Updated Json4s to 3.5.4
   - Updated Twitter Util to 18.5.0
