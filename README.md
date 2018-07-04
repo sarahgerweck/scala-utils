@@ -45,3 +45,8 @@ module. However, advanced utilties or those requiring libraries are in a
 separate module. These modules require Java 8 and can be included as such:
 
     libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-db" % "4.0.1"
+
+## Contributors
+
+- [Sarah Gerweck](https://github.com/sarahgerweck/) (primary author)
+- [Rouzbeh Safaie](https://github.com/rsafaie/)
