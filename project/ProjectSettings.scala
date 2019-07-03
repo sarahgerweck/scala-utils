@@ -11,11 +11,12 @@ trait ProjectSettings
   override final val githubOrganization    = "sarahgerweck"
   override final val githubProject         = "scala-utils"
 
-  override final val buildScalaVersion     = "2.12.6"
+  override final val buildScalaVersion     = "2.12.8"
   override final val extraScalaVersions    = Seq("2.11.12")
   override final val minimumJavaVersion    = "1.6"
   override final val defaultOptimize       = true
   override final val defaultOptimizeGlobal = false
+  override final val extraScalacOptions    = Seq("-Yrangepos")
   override final val inlinePatterns        = Seq("!akka.**", "!slick.**")
   override final val defaultWarnUnused     = false
   override final val defaultWarnImport     = true

@@ -38,6 +38,10 @@ ensime.sbt
 .ensime_cache
 /ensime.sbt
 
+# Metal files
+.metals
+.bloop
+
 # Vim files
 .sw[a-z]
 *.sw[a-z]

@@ -1,21 +1,21 @@
 import sbt._
 
 object Dependencies {
-  final val slf4jVersion        = "1.7.25"
-  final val log4sVersion        = "1.6.1"
+  final val slf4jVersion        = "1.7.26"
+  final val log4sVersion        = "1.8.2"
   final val logbackVersion      = "1.2.3"
-  final val jodaTimeVersion     = "2.10"
-  final val jodaConvertVersion  = "1.9.2"
-  final val threeTenVersion     = "1.3.6"
-  final val commonsVfsVersion   = "2.2"
+  final val jodaTimeVersion     = "2.10.2"
+  final val jodaConvertVersion  = "2.2.1"
+  final val threeTenVersion     = "1.4.0"
+  final val commonsVfsVersion   = "2.3"
   final val commonsIoVersion    = "2.6"
   final val spireVersion        = "0.13.0"
-  final val groovyVersion       = "2.4.15"
-  final val json4sVersion       = "3.5.4"
+  final val groovyVersion       = "2.5.7"
+  final val json4sVersion       = "3.6.7"
   final val twitterUtilVersion  = "18.6.0"
-  final val scalaParserVersion  = "1.1.1"
-  final val scalaXmlVersion     = "1.1.0"
-  final val bouncyCastleVersion = "1.59"
+  final val scalaParserVersion  = "1.1.2"
+  final val scalaXmlVersion     = "1.2.0"
+  final val bouncyCastleVersion = "1.62"
 
   val log4s            = "org.log4s"           %% "log4s"           % log4sVersion
   val slf4j            = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
@@ -44,9 +44,9 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                Database                                */
   /* ********************************************************************** */
-  final val liquibaseVersion        = "3.6.2"
+  final val liquibaseVersion        = "3.6.3"
   final val liquibaseLoggingVersion = "2.0.0"
-  final val slickVersion            = "3.2.3"
+  final val slickVersion            = "3.3.2"
 
   val liquibase        = "org.liquibase"      %  "liquibase-core"  % liquibaseVersion
   val liquibaseLogging = "com.mattbertolini"  %  "liquibase-slf4j" % liquibaseLoggingVersion
@@ -55,7 +55,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                          Testing Dependencies                          */
   /* ********************************************************************** */
-  final val scalaTestVersion  = "3.0.5"
+  final val scalaTestVersion  = "3.0.8"
   final val scalaCheckVersion = "1.14.0"
 
   val scalaTest  = "org.scalatest"  %% "scalatest"  % scalaTestVersion
@@ -75,8 +75,8 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                  Akka                                  */
   /* ********************************************************************** */
-  final val akkaVersion        = "2.5.13"
-  final val akkaHttpVersion    = "10.1.3"
+  final val akkaVersion        = "2.5.23"
+  final val akkaHttpVersion    = "10.1.8"
 
   val akkaActor    = "com.typesafe.akka" %% "akka-actor"     % akkaVersion
   val akkaAgent    = "com.typesafe.akka" %% "akka-agent"     % akkaVersion

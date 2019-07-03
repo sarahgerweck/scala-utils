@@ -30,6 +30,7 @@ lazy val macros = (project in file ("macro"))
     libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     resolvers += Resolver.sonatypeRepo("releases"),
 
+    addCompilerPlugin(MetalsPlugin.semanticdbModule),
     addScalacOptions(),
     addJavacOptions(),
 
@@ -47,6 +48,7 @@ lazy val core: Project = (project in file ("core"))
   .settings(
     name := "Gerweck Utils",
 
+    addCompilerPlugin(MetalsPlugin.semanticdbModule),
     addScalacOptions(),
     addJavacOptions(),
 
@@ -77,6 +79,7 @@ lazy val twitter = (project in file ("twitter"))
     name := "Gerweck Utils Twitter",
     libraryDependencies ++= basicLogDeps,
     libraryDependencies += twitterUtil % "optional",
+    addCompilerPlugin(MetalsPlugin.semanticdbModule),
     addScalacOptions(),
     addJavacOptions()
   )
@@ -87,6 +90,7 @@ lazy val akka: Project = (project in file ("akka"))
   .settings(
     name := "Gerweck Utils Akka",
 
+    addCompilerPlugin(MetalsPlugin.semanticdbModule),
     addScalacOptions(),
     addJavacOptions(),
 
@@ -110,6 +114,7 @@ lazy val dbutil: Project = (project in file ("dbutil"))
   .settings(
     name := "Gerweck Utils DB",
 
+    addCompilerPlugin(MetalsPlugin.semanticdbModule),
     addScalacOptions(),
     addJavacOptions(),
 
