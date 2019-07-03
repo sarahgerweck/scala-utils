@@ -185,3 +185,25 @@
   - Updated Joda Time to 2.10
   - Updated Liquibase to 3.6.2
 - Add `WrappedPreparedStatement` and `WrappedResultSetMetadata`
+
+### 4.2
+
+- Update Scala to 2.12.8
+- Update SBT to 1.2.8
+- Add Metals & Bloop to build
+- Dependency updates
+  - Updated Akka to 2.5.23
+  - Updated SLF4J to 1.7.26
+  - Updated Log4s to 1.8.2
+  - Updated Joda Time to 2.10.2
+  - Updated Joda Convert to 2.2.1
+  - Updated ThreeTenBP to 1.4.0
+  - Updated Commons VFS to 2.3
+  - Updated Groovy to 2.5.7
+  - Updated Json4s to 3.6.7
+  - Updated Scala Parser Combinators to 1.1.2
+  - Updated Scala XML to 1.2.0
+  - Updated BouncyCastle to 1.62
+  - Updated Liquibase to 3.6.3
+  - Updated Slick to 3.3.2
+  - Updated Scalatest to 3.0.8
