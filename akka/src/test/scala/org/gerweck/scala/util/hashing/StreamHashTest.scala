@@ -7,9 +7,9 @@ import akka.stream.scaladsl._
 import akka.util.ByteString
 
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class StreamHashTest extends FlatSpec with Matchers with PropertyChecks with GivenWhenThen {
+class StreamHashTest extends FlatSpec with Matchers with ScalaCheckPropertyChecks with GivenWhenThen {
   import org.gerweck.scala.util.stream.TestGlobals._
 
   behavior of "StreamHash"

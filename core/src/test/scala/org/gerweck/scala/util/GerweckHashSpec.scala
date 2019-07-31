@@ -1,14 +1,14 @@
 package org.gerweck.scala.util
 
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 
 /** Test specs for the gerweckHash function.
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-class GerweckHashSpec extends FlatSpec with Matchers with PropertyChecks {
+class GerweckHashSpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks {
   behavior of "1-argument RotateHash"
 
   it should "have a stable value" in {

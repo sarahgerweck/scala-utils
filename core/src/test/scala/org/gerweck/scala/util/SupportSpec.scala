@@ -2,13 +2,13 @@ package org.gerweck.scala.util
 
 import org.scalatest._
 import org.scalatest.matchers._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 /** Tests for the Support macro utility.
   *
   * @author Sarah Gerweck <sarah@atscale.com>
   */
-class SupportSpec extends FlatSpec with Matchers with PropertyChecks with SupportMethodMatchers {
+class SupportSpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks with SupportMethodMatchers {
   behavior of "SupportSpec"
 
   import SupportSpec._

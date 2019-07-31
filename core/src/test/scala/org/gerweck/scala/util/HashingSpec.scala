@@ -4,7 +4,7 @@ import java.nio.ByteBuffer
 
 import org.scalacheck.Arbitrary
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import org.gerweck.scala.util.hashing._
 
@@ -12,7 +12,7 @@ import org.gerweck.scala.util.hashing._
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-class HashingSpec extends FlatSpec with Matchers with PropertyChecks with GivenWhenThen {
+class HashingSpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks with GivenWhenThen {
   behavior of "MD5 algorithm"
   standardAlgo(_.md5)
   commonTests("JDK" -> JdkHashAlgorithm.md5, "Bouncy" -> BouncyHashAlgorithm.md5)

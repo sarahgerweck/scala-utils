@@ -2,13 +2,13 @@ package org.gerweck.scala.util
 
 import org.scalacheck._
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 /** Tests for the [[VersionNumber]] class.
   *
   * @author Sarah Gerweck <sarah@atscale.com>
   */
-class VersionNumberSpec extends FlatSpec with Matchers with PropertyChecks {
+class VersionNumberSpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks {
   behavior of "Version Numbers"
   private[this] final val maxVersionLength = 30
 

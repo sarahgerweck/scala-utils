@@ -1,13 +1,13 @@
 package org.gerweck.scala.util.math
 
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 /** Test specs for math utility functions
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
   */
-class MathSpec extends FlatSpec with Matchers with PropertyChecks {
+class MathSpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks {
   behavior of "Hexadecimal byte literals"
 
   it should "generate bytes" in {

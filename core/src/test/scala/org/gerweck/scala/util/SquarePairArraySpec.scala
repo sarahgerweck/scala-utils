@@ -1,9 +1,9 @@
 package org.gerweck.scala.util
 
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class SquarePairArraySpec extends FlatSpec with Matchers with PropertyChecks {
+class SquarePairArraySpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks {
   behavior of "Square Pair Arrays"
 
   val expected = Vector(0, 0, 1, 10, 2, 20, 10, 100, 11, 110, 12, 120, 20, 200, 21, 210, 22, 220)

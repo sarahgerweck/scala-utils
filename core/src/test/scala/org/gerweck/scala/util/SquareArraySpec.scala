@@ -1,9 +1,9 @@
 package org.gerweck.scala.util
 
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class SquareArraySpec extends FlatSpec with Matchers with PropertyChecks {
+class SquareArraySpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks {
   behavior of "Square Arrays"
 
   it should "tabulate correctly" in {

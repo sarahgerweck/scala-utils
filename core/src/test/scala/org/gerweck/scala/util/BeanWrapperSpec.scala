@@ -1,13 +1,13 @@
 package org.gerweck.scala.util
 
 import org.scalatest._
-import org.scalatest.prop.PropertyChecks
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 /** Tests for [[org.gerweck.sala.util.BeanWrapper]].
   *
   * @author Sarah Gerweck <sarah@atscale.com>
   */
-class BeanWrapperSpec extends FlatSpec with Matchers with PropertyChecks {
+class BeanWrapperSpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks {
   behavior of "BeanWrapper"
 
   import BeanWrapperSpec._
