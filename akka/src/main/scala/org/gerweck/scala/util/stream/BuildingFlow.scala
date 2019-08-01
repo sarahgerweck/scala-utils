@@ -75,15 +75,15 @@ abstract class BuildingFlow[A, B] extends GraphStage[FlowShape[A, B]] {
   protected[this] def absorb(a: A): B
 
   /** Combine the incoming element into the state, or indicate that you should emit the current
-    * state and start a new state using [[BuildingFlow.absorb]].
+    * state and start a new state using [[absorb]].
     *
-    * This method must produce a [[CombineResult]] through one of two mechanisms:
+    * This method must produce a [[BuildingFlow.CombineResult]] through one of two mechanisms:
     *  - Call [[CanCombine]] with the updated state if the incoming element can be added into the
     *    current state.
     *    - In this case, no element will be emitted.
     *  - Use [[NoCombine]] if the incoming element cannot be added into the current state.
-    *    - In this case, the current state will be emitted and then [[BuildingFlow.absorb]] will
-    *      be called to seed the new state with the incoming element.
+    *    - In this case, the current state will be emitted and then [[absorb]] will be called to
+    *      seed the new state with the incoming element.
     *    - If you have need to both update the state and emit an element, `BuildingFlow` is not
     *      suitable for your use case.
     *
@@ -95,7 +95,7 @@ abstract class BuildingFlow[A, B] extends GraphStage[FlowShape[A, B]] {
     *
     * @param state the current state
     * @param a the incoming element
-    * @return a [[CombineResult]] produced from [[CanCombine]] or [[NoCombine]]
+    * @return a [[BuildingFlow.CombineResult]] produced from [[CanCombine]] or [[NoCombine]]
     */
   protected[this] def combine(state: B, a: A): BuildingFlow.CombineResult[B]
 
