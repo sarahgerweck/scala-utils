@@ -212,3 +212,5 @@
 
 - Remove `gerweck-utils-twitter`
   - This is supported in Twitter's bijection library
+- Switch from `org.spire-math:spire:0.13.0` to `org.typelevel:spire:0.16.2`
+

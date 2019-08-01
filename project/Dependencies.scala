@@ -9,7 +9,7 @@ object Dependencies {
   final val threeTenVersion     = "1.4.0"
   final val commonsVfsVersion   = "2.4"
   final val commonsIoVersion    = "2.6"
-  final val spireVersion        = "0.13.0"
+  final val spireVersion        = "0.16.2"
   final val groovyVersion       = "2.5.7"
   final val json4sVersion       = "3.6.7"
   final val scalaParserVersion  = "1.1.2"
@@ -24,7 +24,7 @@ object Dependencies {
   val jodaTime         = "joda-time"           %  "joda-time"       % jodaTimeVersion
   val jodaConvert      = "org.joda"            %  "joda-convert"    % jodaConvertVersion
   val threeTen         = "org.threeten"        %  "threetenbp"      % threeTenVersion
-  val spire            = "org.spire-math"      %% "spire"           % spireVersion
+  val spire            = "org.typelevel"       %% "spire"           % spireVersion
   val groovy           = "org.codehaus.groovy" %  "groovy-all"      % groovyVersion
   val json4sNative     = "org.json4s"          %% "json4s-native"   % json4sVersion
   val json4sJackson    = "org.json4s"          %% "json4s-jackson"  % json4sVersion
