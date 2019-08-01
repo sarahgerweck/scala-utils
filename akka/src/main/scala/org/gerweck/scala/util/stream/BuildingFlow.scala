@@ -25,7 +25,7 @@ import akka.stream.stage._
   *       // We have the same symbol, so increment our counter and keep our state
   *       CanCombine((a, state._2 + 1))
   *     } else {
-  *       // This is a new symbol, so absorb our existing state and absorb this element
+  *       // This is a new symbol, so emit our existing state and absorb this element
   *       NoCombine
   *     }
   *   }
