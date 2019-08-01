@@ -1,10 +1,10 @@
 package org.gerweck.scala.util
 
-import java.util.concurrent.ConcurrentHashMap
-
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.reflect.{ ClassTag, classTag }
 import scala.util.parsing.combinator.syntactical.TokenParsers
+
+import java.util.concurrent.ConcurrentHashMap
 
 /** Mix-in utility code to assist with Parser development.
   *

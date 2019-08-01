@@ -214,3 +214,5 @@
   - This is supported in Twitter's bijection library
 - Switch from `org.spire-math:spire:0.13.0` to `org.typelevel:spire:0.16.2`
 - Add new `BuildingFlow` in Akka utils
+- Add Scala 2.13.0
+  - This uses Spire 0.17.0-M1 and may not be binary compatible with 0.17.0 final

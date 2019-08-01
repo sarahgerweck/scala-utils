@@ -32,7 +32,7 @@ trait FormatMethods {
       // precision. We don't want to say things like 4.00 ms when we don't
       // know to that level of detail. (It's misleading & looks weird.)
       if (isMilliPrecision && seconds < 1f) {
-        (1e+3d * seconds).round + " ms"
+        s"${(1e+3d * seconds).round} ms"
       } else {
         f"${1e+3d * seconds}%.3g ms"
       }

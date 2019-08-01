@@ -81,7 +81,7 @@ trait BasicSettings extends ProjectSettings { st: SettingTemplate =>
       if (unusedWarn) {
         options :+= "-Ywarn-unused"
       }
-      if (importWarn) {
+      if (importWarn && sv != SVer2_13) {
         options :+= "-Ywarn-unused-import"
       }
       if (!sv.requireJava8) {
