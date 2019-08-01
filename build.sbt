@@ -5,7 +5,7 @@ import PublishSettings._
 import Helpers._
 
 lazy val root: Project = (project in file ("."))
-  .aggregate(macros, core, twitter, akka, dbutil)
+  .aggregate(macros, core, akka, dbutil)
   .enablePlugins(ModuleSettings)
   .settings (
     name := "Gerweck Utils Root",
@@ -71,17 +71,6 @@ lazy val core: Project = (project in file ("core"))
 
     // Do not include macros as a dependency.
     pomPostProcess := excludePomDeps { (group, artifact) => (group == "org.gerweck.scala") && (artifact startsWith "gerweck-utils-macro") }
-  )
-
-lazy val twitter = (project in file ("twitter"))
-  .enablePlugins(ModuleSettings, SiteSettingsPlugin)
-  .settings(
-    name := "Gerweck Utils Twitter",
-    libraryDependencies ++= basicLogDeps,
-    libraryDependencies += twitterUtil % "optional",
-    addCompilerPlugin(MetalsPlugin.semanticdbModule),
-    addScalacOptions(),
-    addJavacOptions()
   )
 
 lazy val akka: Project = (project in file ("akka"))

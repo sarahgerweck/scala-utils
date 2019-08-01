@@ -12,7 +12,6 @@ object Dependencies {
   final val spireVersion        = "0.13.0"
   final val groovyVersion       = "2.5.7"
   final val json4sVersion       = "3.6.7"
-  final val twitterUtilVersion  = "18.6.0"
   final val scalaParserVersion  = "1.1.2"
   final val scalaXmlVersion     = "1.2.0"
   final val bouncyCastleVersion = "1.62"
@@ -27,7 +26,6 @@ object Dependencies {
   val threeTen         = "org.threeten"        %  "threetenbp"      % threeTenVersion
   val spire            = "org.spire-math"      %% "spire"           % spireVersion
   val groovy           = "org.codehaus.groovy" %  "groovy-all"      % groovyVersion
-  val twitterUtil      = "com.twitter"         %% "util-core"       % twitterUtilVersion
   val json4sNative     = "org.json4s"          %% "json4s-native"   % json4sVersion
   val json4sJackson    = "org.json4s"          %% "json4s-jackson"  % json4sVersion
   val json4sExt        = "org.json4s"          %% "json4s-ext"      % json4sVersion exclude("joda-time", "joda-time") exclude("org.joda", "joda-convert")

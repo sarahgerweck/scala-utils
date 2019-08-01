@@ -207,3 +207,8 @@
   - Updated Liquibase to 3.6.3
   - Updated Slick to 3.3.2
   - Updated Scalatest to 3.0.8
+
+## 5.0
+
+- Remove `gerweck-utils-twitter`
+  - This is supported in Twitter's bijection library
