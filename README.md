@@ -14,8 +14,7 @@ utility libraries, this code is *not* meant to be abuse proof.  If you try to
 do something that seems like it might be a bad idea, you're on your own. :-)
 
 Because of dependencies, this requires Scala 2.11 or higher. Java 8 is
-required for version 4.0 or higher. If you have a pressing need for an earlier
-version, please contact me.
+required for version 4.0 or higher.
 
 ## Installation ##
 
