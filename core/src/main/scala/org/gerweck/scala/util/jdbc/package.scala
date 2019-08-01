@@ -11,7 +11,7 @@ import java.sql.Wrapper
 package object jdbc {
   /** Extension methods for a JDBC `Wrapper` object. */
   implicit final class RichWrapper(val inner: Wrapper) extends AnyVal {
-     /** An extension method to make it more Scala-style to use a [[scala.jdbc.Wrapper]].
+     /** An extension method to make it more Scala-style to use a [[java.sql.Wrapper]].
        *
        * @tparam A the type of the target object to attempt to unwrap
        * @return an [[scala.Option]] that will be defined if the class was a wrapper, and
