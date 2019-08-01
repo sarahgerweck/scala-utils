@@ -4,10 +4,10 @@ object Dependencies {
   final val slf4jVersion        = "1.7.26"
   final val log4sVersion        = "1.8.2"
   final val logbackVersion      = "1.2.3"
-  final val jodaTimeVersion     = "2.10.2"
+  final val jodaTimeVersion     = "2.10.3"
   final val jodaConvertVersion  = "2.2.1"
   final val threeTenVersion     = "1.4.0"
-  final val commonsVfsVersion   = "2.3"
+  final val commonsVfsVersion   = "2.4"
   final val commonsIoVersion    = "2.6"
   final val spireVersion        = "0.13.0"
   final val groovyVersion       = "2.5.7"
@@ -42,7 +42,7 @@ object Dependencies {
   /* ********************************************************************** */
   /*                                Database                                */
   /* ********************************************************************** */
-  final val liquibaseVersion        = "3.6.3"
+  final val liquibaseVersion        = "3.7.0"
   final val liquibaseLoggingVersion = "2.0.0"
   final val slickVersion            = "3.3.2"
 
@@ -74,7 +74,7 @@ object Dependencies {
   /*                                  Akka                                  */
   /* ********************************************************************** */
   final val akkaVersion        = "2.5.23"
-  final val akkaHttpVersion    = "10.1.8"
+  final val akkaHttpVersion    = "10.1.9"
 
   val akkaActor    = "com.typesafe.akka" %% "akka-actor"     % akkaVersion
   val akkaAgent    = "com.typesafe.akka" %% "akka-agent"     % akkaVersion
