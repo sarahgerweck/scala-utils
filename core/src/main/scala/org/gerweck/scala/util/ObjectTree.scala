@@ -26,7 +26,7 @@ object ObjectTree {
     var hitDepthLimit: Boolean = false
     def ind(s: String) = s.linesWithSeparators.map(" " * indent + _).mkString
     def singleLine(s: String) = {
-      s.size < singleLineSizeLimit && s.lines.drop(1).isEmpty
+      s.size < singleLineSizeLimit && s.linesIterator.drop(1).isEmpty
     }
     def smartShow(any: Any, currentDepth: Int): String = {
       if (currentDepth > maxDepth) {
