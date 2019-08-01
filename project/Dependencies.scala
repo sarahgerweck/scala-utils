@@ -2,34 +2,36 @@ import sbt._
 import Helpers._
 
 object Dependencies {
-  final val slf4jVersion        = "1.7.26"
-  final val log4sVersion        = "1.8.2"
-  final val logbackVersion      = "1.2.3"
-  final val jodaTimeVersion     = "2.10.3"
-  final val jodaConvertVersion  = "2.2.1"
-  final val threeTenVersion     = "1.4.0"
-  final val commonsVfsVersion   = "2.4"
-  final val commonsIoVersion    = "2.6"
-  final val groovyVersion       = "2.5.7"
-  final val json4sVersion       = "3.6.7"
-  final val scalaParserVersion  = "1.1.2"
-  final val scalaXmlVersion     = "1.2.0"
-  final val bouncyCastleVersion = "1.62"
+  final val slf4jVersion            = "1.7.26"
+  final val log4sVersion            = "1.8.2"
+  final val logbackVersion          = "1.2.3"
+  final val jodaTimeVersion         = "2.10.3"
+  final val jodaConvertVersion      = "2.2.1"
+  final val threeTenVersion         = "1.4.0"
+  final val commonsVfsVersion       = "2.4"
+  final val commonsIoVersion        = "2.6"
+  final val groovyVersion           = "2.5.7"
+  final val json4sVersion           = "3.6.7"
+  final val scalaParserVersion      = "1.1.2"
+  final val scalaXmlVersion         = "1.2.0"
+  final val bouncyCastleVersion     = "1.62"
+  final val collectionCompatVersion = "2.1.1"
 
-  val log4s            = "org.log4s"           %% "log4s"           % log4sVersion
-  val slf4j            = "org.slf4j"           %  "slf4j-api"       % slf4jVersion
-  val jclBridge        = "org.slf4j"           %  "jcl-over-slf4j"  % slf4jVersion
-  val logback          = "ch.qos.logback"      %  "logback-classic" % logbackVersion
-  val commonsIo        = "commons-io"          %  "commons-io"      % commonsIoVersion
-  val jodaTime         = "joda-time"           %  "joda-time"       % jodaTimeVersion
-  val jodaConvert      = "org.joda"            %  "joda-convert"    % jodaConvertVersion
-  val threeTen         = "org.threeten"        %  "threetenbp"      % threeTenVersion
-  val groovy           = "org.codehaus.groovy" %  "groovy-all"      % groovyVersion
-  val json4sNative     = "org.json4s"          %% "json4s-native"   % json4sVersion
-  val json4sJackson    = "org.json4s"          %% "json4s-jackson"  % json4sVersion
-  val json4sExt        = "org.json4s"          %% "json4s-ext"      % json4sVersion exclude("joda-time", "joda-time") exclude("org.joda", "joda-convert")
-  val bouncyCastle     = "org.bouncycastle"    %  "bcprov-jdk15on"  % bouncyCastleVersion
-  val bouncyCastlePkix = "org.bouncycastle"    %  "bcpkix-jdk15on"  % bouncyCastleVersion
+  val log4s            = "org.log4s"              %% "log4s"                   % log4sVersion
+  val slf4j            = "org.slf4j"              %  "slf4j-api"               % slf4jVersion
+  val jclBridge        = "org.slf4j"              %  "jcl-over-slf4j"          % slf4jVersion
+  val logback          = "ch.qos.logback"         %  "logback-classic"         % logbackVersion
+  val commonsIo        = "commons-io"             %  "commons-io"              % commonsIoVersion
+  val jodaTime         = "joda-time"              %  "joda-time"               % jodaTimeVersion
+  val jodaConvert      = "org.joda"               %  "joda-convert"            % jodaConvertVersion
+  val threeTen         = "org.threeten"           %  "threetenbp"              % threeTenVersion
+  val groovy           = "org.codehaus.groovy"    %  "groovy-all"              % groovyVersion
+  val json4sNative     = "org.json4s"             %% "json4s-native"           % json4sVersion
+  val json4sJackson    = "org.json4s"             %% "json4s-jackson"          % json4sVersion
+  val json4sExt        = "org.json4s"             %% "json4s-ext"              % json4sVersion exclude("joda-time", "joda-time") exclude("org.joda", "joda-convert")
+  val bouncyCastle     = "org.bouncycastle"       %  "bcprov-jdk15on"          % bouncyCastleVersion
+  val bouncyCastlePkix = "org.bouncycastle"       %  "bcpkix-jdk15on"          % bouncyCastleVersion
+  val collectionCompat = "org.scala-lang.modules" %% "scala-collection-compat" % collectionCompatVersion
 
   val spire = {
     Def.map(sver) {

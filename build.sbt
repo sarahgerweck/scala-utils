@@ -62,6 +62,7 @@ lazy val core: Project = (project in file ("core"))
       spire.value % "provided,optional",
       commonsVfs % "optional"
     ),
+    libraryDependencies += collectionCompat,
     libraryDependencies += threeTen % "optional",
     libraryDependencies += scalaTest % "test",
     libraryDependencies += bouncyCastle % "optional",

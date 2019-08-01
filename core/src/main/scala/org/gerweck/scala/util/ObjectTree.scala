@@ -1,5 +1,6 @@
 package org.gerweck.scala.util
 
+import scala.collection.compat._
 import scala.reflect.runtime.universe._
 
 import org.log4s._
@@ -53,15 +54,15 @@ object ObjectTree {
           val shownValue = smartShow(v, depth)
           ind(showKV(showKey(k), smartShow(v, depth), true))
         case a: TraversableOnce[_] =>
-          a.toIterator
-            .map(smartShow(_, depth))
-            .mkString("\n")
+          a.iterator
+           .map(smartShow(_, depth))
+           .mkString("\n")
         case p: Product if p.productArity == 1 && singleLine(smartShow(p.productElement(0), depth)) =>
           p.toString
         case a: Product if a.productArity > 0 =>
           val aMirror = currentMirror.reflect(a)
           val fieldStrings =
-            aMirror.symbol.typeSignature.members.toStream
+            aMirror.symbol.typeSignature.members.to(Stream)
               .collect { case a: TermSymbol => a }
               .filter(a => a.isParamAccessor)
               .filterNot(a => a.isMethod || a.isModule)

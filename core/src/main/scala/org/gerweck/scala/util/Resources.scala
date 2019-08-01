@@ -1,6 +1,6 @@
 package org.gerweck.scala.util
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 import java.io.File
 import java.net.URL
