@@ -52,7 +52,16 @@ lazy val core: Project = (project in file ("core"))
     addScalacOptions(),
     addJavacOptions(),
 
-    libraryDependencies ++= utilsDeps,
+    libraryDependencies ++= basicLogDeps,
+    libraryDependencies ++= Seq(
+      jclBridge % "optional",
+      scalaCheck % "test",
+      commonsIo % "optional",
+      jodaTime % "optional",
+      jodaConvert % "optional",
+      spire.value % "provided,optional",
+      commonsVfs % "optional"
+    ),
     libraryDependencies += threeTen % "optional",
     libraryDependencies += scalaTest % "test",
     libraryDependencies += bouncyCastle % "optional",
@@ -128,14 +137,4 @@ lazy val basicLogDeps = Seq(
   log4s,
   logback % "test",
   groovy % "test"
-)
-
-lazy val utilsDeps = basicLogDeps ++ Seq (
-  jclBridge % "optional",
-  scalaCheck % "test",
-  commonsIo % "optional",
-  jodaTime % "optional",
-  jodaConvert % "optional",
-  spire % "provided,optional",
-  commonsVfs % "optional"
 )
