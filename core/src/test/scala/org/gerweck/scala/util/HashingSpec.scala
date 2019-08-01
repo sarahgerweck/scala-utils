@@ -188,7 +188,7 @@ class HashingSpec extends FlatSpec with Matchers with ScalaCheckPropertyChecks w
       }
     }
   }
-  protected[this] def standardAlgo(selector: StandardHashAlgorithms => HashAlgorithm) {
+  protected[this] def standardAlgo(selector: StandardHashAlgorithms => HashAlgorithm): Unit = {
     val bouncyAlgorithm = selector(BouncyHashAlgorithm)
     val jdkAlgorithm = selector(JdkHashAlgorithm)
 
