@@ -39,7 +39,7 @@ trait LexerUtil extends Scanners with ParserUtil {
 
   // TBD: This might perform better as a macro
   final def chars(s: String, sensitive: Boolean = false): Parser[Vector[Char]] = charParsers.getOrElseUpdate((s, sensitive), {
-    (s :\ success(Vector.empty[Char])) { (head, tailParser) =>
+    s.foldRight(success(Vector.empty[Char])) { (head, tailParser) =>
       @inline def headParser =
         if (sensitive) elem(head)
         else           insensitive(head)
@@ -63,8 +63,8 @@ trait LexerUtil extends Scanners with ParserUtil {
 
   final def longest[A](constants: Iterable[A], chars: A => String, sensitive: Boolean = false): Parser[A] = {
     val sorted = constants.toIndexedSeq sortWith { chars(_).length > chars(_).length }
-    implicit def toParser(a: A) = str(chars(a), sensitive) ^^^ a
-    (toParser(sorted.head) /: sorted.tail) { _ | _ }
+    def toParser(a: A) = str(chars(a), sensitive) ^^^ a
+    sorted.map(toParser).reduce(_ | _)
   }
 
   final def longestString[A](constants: Iterable[String], sensitive: Boolean = false): Parser[String] = {

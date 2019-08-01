@@ -68,7 +68,7 @@ object Resources {
       }
     }
 
-    (Map.empty[String,URL] /: maps) (_ ++ _)
+    maps.foldLeft(Map.empty[String,URL]) (_ ++ _)
   }
 
   def forPackage(name: String): Map[String, URL] = forPackage(Package.getPackage(name))

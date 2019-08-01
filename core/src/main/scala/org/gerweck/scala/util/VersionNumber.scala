@@ -8,7 +8,7 @@ final class VersionNumber(val versionParts: Seq[Int]) extends Ordered[VersionNum
   override def compare(that: VersionNumber) = {
     // TBD: This could be a scalaz lazy foldRight
     // We use zipAll with zero extension because 1.2.0 is the same as 1.2.
-    (versionParts.zipAll(that.versionParts, 0, 0) :\ 0) {
+    versionParts.zipAll(that.versionParts, 0, 0).foldRight(0) {
       case ((a, b), rest) =>
         val current = a compareTo b
         if (current != 0) current else rest
