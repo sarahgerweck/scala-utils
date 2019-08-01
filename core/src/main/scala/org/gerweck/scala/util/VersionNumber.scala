@@ -1,5 +1,7 @@
 package org.gerweck.scala.util
 
+import scala.collection.compat._
+
 /** A class for managing standard version numbers.
   *
   * @author Sarah Gerweck <sarah.a180@gmail.com>
@@ -34,6 +36,6 @@ final class VersionNumber(val versionParts: Seq[Int]) extends Ordered[VersionNum
 }
 
 object VersionNumber {
-  def apply(s: String): VersionNumber = this(s.split("\\.").map(_.toInt))
+  def apply(s: String): VersionNumber = this(s.split("\\.").view.map(_.toInt).to(List))
   def apply(parts: Seq[Int]): VersionNumber = new VersionNumber(parts)
 }
