@@ -1,6 +1,7 @@
 package org.gerweck.scala.util
 
 import scala.reflect.ClassTag
+import scala.util.Try
 
 import java.sql.Wrapper
 
@@ -23,6 +24,22 @@ package object jdbc {
        } else {
          None
        }
+    }
+
+    /** A version of [[RichWrapper.unwrapOption]] that is wrapped with a `Try` and
+      * falls back to a subclass test if the underlying `Wrapper` doesn't suppoort
+      * `isWrapperFor` and `unwrap`.
+      */
+    def safeUnwrapOption[A](implicit ev: ClassTag[A]): Option[A] = {
+      Try(unwrapOption[A])
+        .recover { case e: Exception =>
+          if (ev.runtimeClass.isInstance(inner)) {
+            Some(inner.asInstanceOf[A])
+          } else {
+            None
+          }
+        }
+        .get
     }
   }
 }
