@@ -18,7 +18,7 @@ required for version 4.0 or higher.
 
 ## Installation ##
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "5.0.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils" % "5.0.1"
 
 
 ### Akka Utilities ###
@@ -26,7 +26,7 @@ required for version 4.0 or higher.
 For utilities related to Akka and Akka Streaming, use this include. The Akka
 utilities require Java 8 and Akka 2.4.
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-akka" % "5.0.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-akka" % "5.0.1"
 
 ### DB Utilities ###
 
@@ -34,7 +34,7 @@ Some DB lightweight utilities, based on pure JDBC, are included in the core
 module. However, advanced utilties or those requiring libraries are in a
 separate module. These modules require Java 8 and can be included as such:
 
-    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-db" % "5.0.0"
+    libraryDependencies += "org.gerweck.scala" %% "gerweck-utils-db" % "5.0.1"
 
 ## Contributors
 

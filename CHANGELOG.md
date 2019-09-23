@@ -216,3 +216,9 @@
 - Add new `BuildingFlow` in Akka utils
 - Add Scala 2.13.0
   - This uses Spire 0.17.0-M1 and may not be binary compatible with 0.17.0 final
+
+#### 5.0.1
+
+- Update Scala to 2.12.10
+- Update SBT to 1.3.0
+- Add new `safeUnwrapOption` on JDBC `Wrapper`
